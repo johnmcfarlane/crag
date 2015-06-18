@@ -30,6 +30,7 @@
 #else
 
 #define SIZE_T_FORMAT_SPEC "%zu"
+#define __STDC_FORMAT_MACROS
 
 #endif
 
@@ -79,9 +80,11 @@
 // standard includes.
 
 // C standard library
+
 #include <cassert>
 #include <cctype>
 #include <cerrno>
+#include <cinttypes>
 #include <climits>
 #include <cmath>
 #include <cstddef>
@@ -101,7 +104,6 @@
 #include <condition_variable>
 #include <functional>
 #include <initializer_list>
-#include <inttypes.h>
 #include <iostream>
 #include <limits>
 #include <list>
