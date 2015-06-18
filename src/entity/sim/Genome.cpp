@@ -25,7 +25,11 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // sim::ga::Genome member definitions
 
-Genome::Genome(Genome const & parent1, Genome const & parent2)
+Genome::Genome() noexcept
+{
+}
+
+Genome::Genome(Genome const & parent1, Genome const & parent2) noexcept
 {
 	CRAG_VERIFY_EQUAL(parent1.size(), parent2.size());
 

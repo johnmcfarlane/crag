@@ -179,7 +179,7 @@ namespace crag
 				static constexpr Roster::key_type OrderingKeyCast() noexcept
 				{
 					return reinterpret_cast<Roster::key_type>(
-						static_cast<void *>(
+						reinterpret_cast<void *>(
 							static_cast<void(*) (OBJECT_TYPE &)>(
 								&OrderingKeyCastDummy<OBJECT_TYPE, FUNCTION>)));
 				}
