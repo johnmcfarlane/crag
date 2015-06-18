@@ -61,7 +61,7 @@ void AnimatBody::PostTick() noexcept
 {
 	SphereBody::PostTick();
 
-	_health -= animat_health_loss_per_second * sim_tick_duration;
+	_health -= animat_health_loss_per_second * sim::SignalType(sim_tick_duration);
 	if (_health <= 0)
 	{
 		OnZeroHealth();

@@ -128,7 +128,7 @@ namespace crag
 
 			~Bitmap() noexcept
 			{
-				CRAG_VERIFY_EQUAL(std::count(std::begin(buffer), std::end(buffer), true), 0);
+				CRAG_VERIFY_EQUAL(std::count(std::begin(buffer), std::end(buffer), all_off), buffer.size());
 			}
 
 			constexpr bool empty() const noexcept

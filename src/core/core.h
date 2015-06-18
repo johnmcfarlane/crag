@@ -68,7 +68,22 @@ namespace crag
 		// element_type - given a container of Ts, yields T
 
 		template <typename CONTAINER>
-		using element_type = typename std::remove_reference<decltype(*std::begin(* static_cast<CONTAINER*>(nullptr)))>::type;
+		struct element_type_s;
+
+		template <typename ELEMENT, int N>
+		struct element_type_s <ELEMENT[N]>
+		{
+			using type = ELEMENT;
+		};
+
+		template <typename CONTAINER>
+		struct element_type_s
+		{
+			using type = typename std::remove_const<typename std::remove_reference<decltype(*std::begin(CONTAINER()))>::type>::type;
+		};
+
+		template <typename CONTAINER>
+		using element_type = typename element_type_s<CONTAINER>::type;
 
 		// element_type tests
 		static_assert(std::is_same<char, element_type<char[3]>>::value, "element_type test failed");
@@ -80,7 +95,7 @@ namespace crag
 		// hash_combine - http://www.boost.org/doc/libs/1_33_1/doc/html/hash_combine.html
 
 		// returns new seed
-		constexpr std::size_t hash_combine(std::size_t previous_seed, std::size_t hash_value)
+		inline constexpr std::size_t hash_combine(std::size_t previous_seed, std::size_t hash_value)
 		{
 			return previous_seed ^ (hash_value + 0x9e3779b9 + (previous_seed << 6) + (previous_seed >> 2));
 		}
