@@ -77,7 +77,7 @@ namespace sim
 			OBJECT_NO_COPY(Layer);
 
 			Layer(ga::GenomeReader & genome_reader, int num_inputs, int num_neurons) noexcept;
-			Layer(Layer && rhs) noexcept = default;
+			Layer(Layer &&) noexcept = default;
 
 			// connect together the neighbouring layers in a feed-forward network
 			static void Connect(Layer & output, Layer & intput) noexcept;
@@ -96,10 +96,10 @@ namespace sim
 		public:
 			// functions
 			Network() = default;
-			Network(Network && rhs) = default;
+			Network(Network &&) = default;
 			Network(ga::Genome & genome, std::vector<int> const & num_layer_nodes) noexcept;
 
-			Network & operator=(Network && rhs) = default;
+			Network & operator=(Network &&) = default;
 
 			void ConnectInputs(std::vector<Transmitter *> const & transmitters) noexcept;
 			void ConnectOutputs(std::vector<Receiver *> const & receivers) noexcept;
