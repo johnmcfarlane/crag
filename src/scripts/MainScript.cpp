@@ -127,6 +127,11 @@ namespace
 					sum_gravity += geom::Normalized(body.GetGravitationalForce());
 				};
 
+				if (parent_genomes[0] == parent_genomes[1])
+				{
+					continue;
+				}
+
 				auto child_genome = sim::ga::Genome(* parent_genomes[0], * parent_genomes[1]);
 				auto child_position = sum_position * .5f - geom::Normalized(sum_gravity) * animat_birth_elevation;
 
