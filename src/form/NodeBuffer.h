@@ -60,3 +60,13 @@ namespace form
 		Node const * const _nodes_end;
 	};
 }
+
+#if defined(CRAG_OS_ANDROID)
+namespace std
+{
+	inline form::Node * begin(form::NodeBuffer & nb) { return nb.begin(); }
+	inline form::Node const * begin(form::NodeBuffer const & nb) { return nb.begin(); }
+	inline form::Node * end(form::NodeBuffer & nb) { return nb.end(); }
+	inline form::Node const * end(form::NodeBuffer const & nb) { return nb.end(); }
+}
+#endif

@@ -76,3 +76,13 @@ namespace form
 		Quaterna const * const _quaterne_end;
 	};
 }
+
+#if defined(CRAG_OS_ANDROID)
+namespace std
+{
+	inline form::Quaterna * begin(form::QuaternaBuffer & qb) { return qb.begin(); }
+	inline form::Quaterna const * begin(form::QuaternaBuffer const & qb) { return qb.begin(); }
+	inline form::Quaterna * end(form::QuaternaBuffer & qb) { return qb.end(); }
+	inline form::Quaterna const * end(form::QuaternaBuffer const & qb) { return qb.end(); }
+}
+#endif
