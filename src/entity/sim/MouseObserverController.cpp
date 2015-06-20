@@ -31,7 +31,6 @@ namespace
 	CONFIG_DEFINE(observer_translation_input, 10.08f);
 	CONFIG_DEFINE(observer_rotation_input, 12.6f);
 	CONFIG_DEFINE(observer_mouse_sensitivity, 0.35f);
-	CONFIG_DEFINE(observer_mouse_ray_cast_distance, 1000000000.f);
 
 	// TODO: this value is likely sensitive to screen resolutions
 #if defined(CRAG_OS_X)

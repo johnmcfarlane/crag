@@ -17,15 +17,6 @@
 
 #include "core/ConfigEntry.h"
 
-#if defined(CRAG_RELEASE)
-#define FILE_LOCAL_BEGIN namespace {
-#define FILE_LOCAL_END }
-#else
-#define FILE_LOCAL_BEGIN 
-#define FILE_LOCAL_END 
-#endif
-
-
 using namespace applet;
 
 namespace

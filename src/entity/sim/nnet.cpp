@@ -98,6 +98,12 @@ Layer::Layer(GenomeReader & genome_reader, int num_inputs, int num_neurons) noex
 	}
 }
 
+Layer::Layer(Layer && rhs) noexcept
+: inputs(std::move(rhs.inputs))
+, neurons(std::move(rhs.neurons))
+{
+}
+
 void Layer::Connect(Layer & output, Layer & input) noexcept
 {
 	CRAG_VERIFY_EQUAL(output.neurons.size(), input.inputs.size());
