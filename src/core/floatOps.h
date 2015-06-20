@@ -12,20 +12,13 @@
 
 #include "core/debug.h"
 
-
-#if defined(CRAG_COMPILER_MSVC) && (_M_IX86_FP > 0)
-#define __SSE__
-#endif
-
-
-#if defined(__ppc__)
-#include <ppc_intrinsics.h>
-#endif
-
-#if defined(__SSE__)
+#if defined(CRAG_CPU_X86)
 #include <xmmintrin.h>
 #endif
 
+#if defined(CRAG_CPU_PPC)
+#include <ppc_intrinsics.h>
+#endif
 
 #define PI 3.14159265358979323846264338327950288419716939937510
 
@@ -117,7 +110,7 @@ template<typename T> T InvSqrt (T a)
 	return Inverse (sqrt (a));
 }
 
-#if defined(__ppc__)
+#if defined(CRAG_CPU_PPC)
 
 inline float FastInvSqrt(float a)
 {
@@ -131,9 +124,7 @@ inline double FastInvSqrt(double a)
 	return __frsqrte(a);
 }
 
-#endif	// defined(__ppc__)
-
-#if defined(__SSE__)
+#elif defined(CRAG_CPU_X86)
 
 inline float FastInvSqrt ( float f )
 {
@@ -160,9 +151,7 @@ inline double FastInvSqrt (double d)
 	return r;
 }
 
-#endif	// defined(__SSE__)
-
-#if defined(__arm__) || defined(CRAG_OS_PNACL)
+#else
 
 // This will do the trick at a push.
 template<typename T> T FastInvSqrt(T a)
@@ -170,7 +159,8 @@ template<typename T> T FastInvSqrt(T a)
 	ASSERT(a != 0);
 	return Inverse(sqrt(a));
 }
-#endif	// defined(__arm__))
+
+#endif
 
 template <typename T>
 inline T CubeRoot(T a)

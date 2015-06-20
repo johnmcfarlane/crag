@@ -99,6 +99,29 @@
 #endif
 
 //////////////////////////////////////////////////////////////////////
+// CPU
+
+#if defined(CRAG_COMPILER_MSVC)
+# if defined(_M_IX86) || defined(_M_X64)
+#  define CRAG_CPU_X86
+# endif
+#elif defined(CRAG_COMPILER_GCC) || defined(CRAG_COMPILER_CLANG)
+# if defined(__i386__) || defined(__amd64__)
+#  define CRAG_CPU_X86
+# elif defined(__arm__) || defined(__aarch64__)
+#  define CRAG_CPU_ARM
+# elif defined(__mips__)
+#  define CRAG_CPU_MIPS
+# elif defined(__ppc__)
+#  define CRAG_CPU_PPC
+# endif
+#endif
+
+#if ! (defined(CRAG_CPU_X86) || defined(CRAG_CPU_ARM) || defined(CRAG_CPU_PPC) || defined(CRAG_CPU_MIPS))
+#error unrecognized CPU architecture
+#endif
+
+//////////////////////////////////////////////////////////////////////
 // categories
 
 #if defined(CRAG_OS_ANDROID)
