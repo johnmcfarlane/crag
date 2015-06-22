@@ -144,6 +144,6 @@ endif
 
 LOCAL_SHARED_LIBRARIES := SDL2 ode SDL2_image
 
-LOCAL_LDLIBS := -lGLESv2 -llog
+LOCAL_LDLIBS := -lGLESv2 -llog -latomic
 
 include $(BUILD_SHARED_LIBRARY)
