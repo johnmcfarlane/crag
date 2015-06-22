@@ -197,7 +197,6 @@ void Font::PrintNewLine(geom::Vector2f & position) const
 {
 	vertex_buffer.push_back(vertex_buffer.back());
 
-	Vertex v;
-	v.pos = position;
+	auto v = Vertex { position, geom::Vector2f::Zero() };
 	vertex_buffer.push_back(v);
 }
