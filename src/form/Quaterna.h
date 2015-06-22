@@ -14,9 +14,6 @@
 
 namespace form 
 {
-
-	void swap(Quaterna & a, Quaterna & b);
-
 	////////////////////////////////////////////////////////////////////////////////
 	// Quaterna class
 	
@@ -52,7 +49,13 @@ namespace form
 		{
 			return parent_score < new_parent_score && ! HasGrandChildren();
 		}
-		
+
+		friend void swap(Quaterna & a, Quaterna & b)
+		{
+			std::swap(a.parent_score, b.parent_score);
+			std::swap(a.nodes, b.nodes);
+		}
+
 		float parent_score;	// the score of the node for which this is the children
 		Node * nodes;	// [4]
 	};
