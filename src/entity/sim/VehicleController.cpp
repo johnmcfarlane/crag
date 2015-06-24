@@ -62,7 +62,5 @@ VehicleController::TransmitterVector const & VehicleController::GetTransmitters(
 
 VehicleController::ReceiverVector const & VehicleController::GetReceivers() const noexcept
 {
-	CRAG_VERIFY(* this);
-
 	return _receivers;
 }
