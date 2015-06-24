@@ -69,7 +69,6 @@ LOCAL_SRC_FILES := \
 	$(CRAG_PATH)/form/Object.cpp \
 	$(CRAG_PATH)/form/PointBuffer.cpp \
 	$(CRAG_PATH)/form/Point.cpp \
-	$(CRAG_PATH)/form/Quaterna.cpp \
 	$(CRAG_PATH)/form/QuaternaBuffer.cpp \
 	$(CRAG_PATH)/form/RayCastResult.cpp \
 	$(CRAG_PATH)/form/Polyhedron.cpp \
