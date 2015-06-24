@@ -321,8 +321,8 @@ set(SOURCE_FILES
 
 add_executable(crag ${SOURCE_FILES})
 
-find_library(SDL2_LIBRARY SDL2 lib)
-find_library(SDL2_IMAGE_LIBRARY SDL2_image lib)
+find_library(SDL2_LIBRARY SDL2)
+find_library(SDL2_IMAGE_LIBRARY SDL2_image)
 find_library(ODE_LIBRARY ode /usr/lib)
 
 if (CRAG_RPI)

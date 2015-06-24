@@ -30,9 +30,9 @@ Location::~Location()
 { 
 }
 
-Location::Location(Transformation const & transformation) 
+Location::Location(Transformation const & transformation)
 : _transformation(transformation)
-{ 
+{
 }
 
 Vector3 Location::GetTranslation() const

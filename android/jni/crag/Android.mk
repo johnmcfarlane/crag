@@ -134,16 +134,23 @@ LOCAL_SRC_FILES := \
 
 LOCAL_ALLOW_UNDEFINED_SYMBOLS := true
 
+WARNING_FLAGS := -Wall -Wextra -Wfatal-errors -Werror -Wno-extern-c-compat
+MACRO_FLAGS := -D__STRICT_ANSI__
+OPT_FLAGS := -fno-exceptions -fno-unwind-tables
+COMMON_CPP_FLAGS := $(CMAKE_CXX_FLAGS) $(WARNING_FLAGS) $(MACRO_FLAGS) $(OPT_FLAGS) -std=c++11 -pthread
+DEBUG_CPP_FLAGS := -DPROFILE -O0 -g
+RELEASE_CPP_FLAGS := -DNDEBUG -fno-rtti -Ofast
+
 ifeq ($(APP_OPTIM),debug)
 	NDK_DEBUG=1
-	LOCAL_CPPFLAGS := -std=c++11 -g -pthread -DPROFILE -D__STRICT_ANSI__ -Wall -Wextra -Wfatal-errors -Wno-unused-function -Wno-attributes -Wno-extern-c-compat -fno-rtti -fno-exceptions
+	LOCAL_CPPFLAGS := $(COMMON_CPP_FLAGS) $(DEBUG_CPP_FLAGS)
 else
 	NDK_DEBUG=0
-	LOCAL_CPPFLAGS := -std=c++11 -O2 -pthread -DNDEBUG -D__STRICT_ANSI__ -Wall -Wextra -Wfatal-errors -Wno-unused-function -Wno-attributes -Wno-extern-c-compat -fno-rtti -fno-exceptions
+	LOCAL_CPPFLAGS := $(COMMON_CPP_FLAGS) $(RELEASE_CPP_FLAGS)
 endif
 
 LOCAL_SHARED_LIBRARIES := SDL2 ode SDL2_image
 
-LOCAL_LDLIBS := -lGLESv2 -llog
+LOCAL_LDLIBS := -lGLESv2 -llog -latomic
 
 include $(BUILD_SHARED_LIBRARY)
