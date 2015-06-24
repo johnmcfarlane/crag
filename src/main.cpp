@@ -62,7 +62,7 @@ namespace
 	CONFIG_DEFINE(full_screen, true);
 #endif
 
-	CONFIG_DEFINE(script_mode, 0);
+	CONFIG_DEFINE(script_mode, 1);
 	
 	bool paused = false;
 	
