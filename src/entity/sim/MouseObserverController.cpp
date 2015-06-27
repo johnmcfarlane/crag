@@ -50,7 +50,7 @@ using namespace sim;
 CRAG_ROSTER_OBJECT_DEFINE(
 	MouseObserverController,
 	1,
-	Pool::CallBefore<& MouseObserverController::Tick, Entity, & Entity::Tick>(Engine::GetTickRoster()))
+	Pool::Call<& MouseObserverController::Tick>(Engine::GetTickRoster()))
 
 MouseObserverController::MouseObserverController(Entity & entity)
 : _super(entity)

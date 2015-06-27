@@ -36,7 +36,7 @@ using namespace sim;
 CRAG_ROSTER_OBJECT_DEFINE(
 	PlanetController,
 	10,
-	Pool::CallBefore<& PlanetController::Tick, Entity, & Entity::Tick>(Engine::GetTickRoster()))
+	Pool::Call<& PlanetController::Tick>(Engine::GetTickRoster()))
 
 PlanetController::PlanetController(Entity & entity, Sphere3 const & sphere, int random_seed, int num_craters)
 : Controller(entity)

@@ -260,7 +260,7 @@ namespace
 CRAG_ROSTER_OBJECT_DEFINE(
 	TouchObserverController,
 	1,
-	Pool::CallBefore<& TouchObserverController::Tick, Entity, & Entity::Tick>(Engine::GetTickRoster()))
+	Pool::Call<& TouchObserverController::Tick>(Engine::GetTickRoster()))
 
 TouchObserverController::TouchObserverController(Entity & entity, Transformation const & transformation)
 : Controller(entity)

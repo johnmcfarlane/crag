@@ -113,7 +113,7 @@ namespace
 CRAG_ROSTER_OBJECT_DEFINE(
 	CameraController,
 	1,
-	Pool::CallBefore<& CameraController::Tick, Entity, & Entity::Tick>(Engine::GetTickRoster()))
+	Pool::Call<& CameraController::Tick>(Engine::GetTickRoster()))
 
 CameraController::CameraController(Entity & entity, std::shared_ptr<Entity> const & subject)
 : _super(entity)

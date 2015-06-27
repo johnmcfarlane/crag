@@ -32,7 +32,7 @@ using namespace sim;
 CRAG_ROSTER_OBJECT_DEFINE(
 	Thruster,
 	2000,
-	Pool::CallBefore<& Thruster::Tick, Entity, & Entity::Tick>(Engine::GetTickRoster()),
+	Pool::Call<& Thruster::Tick>(Engine::GetTickRoster()),
 	Pool::Call<& Thruster::UpdateModel>(Engine::GetDrawRoster()))
 
 Thruster::Thruster(Entity & entity, Ray3 const & ray, bool graphical, Scalar thrust_factor)
