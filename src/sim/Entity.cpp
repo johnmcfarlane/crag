@@ -13,11 +13,9 @@
 
 #include "Controller.h"
 #include "Engine.h"
+#include "Model.h"
 
 #include "physics/Location.h"
-
-#include "gfx/Engine.h"
-#include "gfx/object/Object.h"
 
 #include "core/RosterObjectDefine.h"
 
@@ -30,7 +28,7 @@ using namespace sim;
 CRAG_ROSTER_OBJECT_DEFINE(
 	Entity,
 	500,
-	Pool::Call<& Entity::UpdateModels>(Engine::GetDrawRoster()))
+	Pool::NoCall())
 
 Entity::Entity(Engine & engine)
 : super(engine)
@@ -41,14 +39,6 @@ Entity::Entity(Engine & engine)
 Entity::~Entity()
 {
 	CRAG_VERIFY(* this);
-
-	_model.Release();
-}
-
-// placeholder helps govern the order in which stuff gets called by _tick_roster
-void Entity::Tick()
-{
-	ASSERT(false);
 }
 
 void Entity::SetController(ControllerPtr controller)
@@ -87,31 +77,19 @@ physics::Location const * Entity::GetLocation() const
 	return _location.get();
 }
 
-gfx::ObjectHandle Entity::GetModel() const
+void Entity::SetModel(ModelPtr model)
 {
-	return _model;
+	_model = std::move(model);
 }
 
-void Entity::SetModel(gfx::ObjectHandle model)
+Model * Entity::GetModel()
 {
-	_model = model;
+	return _model.get();
 }
 
-void Entity::UpdateModels()
+Model const * Entity::GetModel() const
 {
-	auto location = GetLocation();
-	if (location == nullptr || ! _model.IsInitialized())
-	{
-		return;
-	}
-	
-	Vector3 translation = location->GetTranslation();
-	Matrix33 rotation = location->GetRotation();
-	Transformation transformation(translation, rotation);
-
-	_model.Call([transformation] (gfx::Object & node) {
-		node.SetLocalTransformation(transformation);
-	});
+	return _model.get();
 }
 
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Entity, entity)

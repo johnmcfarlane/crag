@@ -25,6 +25,7 @@
 #include "sim/Entity.h"
 #include "sim/EntityFunctions.h"
 #include "sim/gravity.h"
+#include <sim/Model.h>
 
 #include "physics/defs.h"
 #include "physics/CylinderBody.h"
@@ -616,8 +617,8 @@ namespace
 
 		// graphics
 		gfx::Transformation local_transformation(sphere.center, gfx::Transformation::Matrix33::Identity());
-		gfx::ObjectHandle model = gfx::BallHandle::Create(local_transformation, sphere.radius, color);
-		ball.SetModel(model);
+		gfx::ObjectHandle model_handle = gfx::BallHandle::Create(local_transformation, sphere.radius, color);
+		ball.SetModel(std::move(Entity::ModelPtr(new Model(model_handle, * ball.GetLocation()))));
 	}
 
 	void ConstructObserver(Entity & observer, Vector3 const & position)
@@ -732,7 +733,7 @@ namespace
 		gfx::Transformation local_transformation(position, gfx::Transformation::Matrix33::Identity());
 		gfx::Vector3 scale(1.f, 1.f, 1.f);
 		gfx::ObjectHandle model_handle = gfx::MeshObjectHandle::Create(local_transformation, gfx::Color4f::White(), scale, "ShipVbo", "ShipShadowMesh");
-		entity.SetModel(model_handle);
+		entity.SetModel(std::move(Entity::ModelPtr(new Model(model_handle, * entity.GetLocation()))));
 
 		// create controller
 		auto controller = std::unique_ptr<VehicleController>(new VehicleController(entity));
@@ -768,14 +769,14 @@ namespace
 		// graphics
 		gfx::Vector3 scale(1.f, 1.f, 1.f);
 		gfx::ObjectHandle model_handle = gfx::MeshObjectHandle::Create(transformation, gfx::Color4f::White(), scale, vbo_name, shadow_mesh_name);
-		ufo_entity.SetModel(model_handle);
+		ufo_entity.SetModel(std::move(Entity::ModelPtr(new Model(model_handle, * body))));
 
 		////////////////////////////////////////////////////////////////////////////////
 		// ball
 		
 		std::shared_ptr<Entity> ball_entity;
 		gfx::ObjectHandle exception_object;
-		
+
 		if (_player_type == PlayerType::cos_saucer || _player_type == PlayerType::ball_saucer)
 		{
 			ball_entity = engine.CreateObject<Entity>();
@@ -792,10 +793,10 @@ namespace
 			if (_player_type == PlayerType::ball_saucer)
 			{
 				// graphics
-				gfx::ObjectHandle model = gfx::BallHandle::Create(transformation, saucer_ball_radius, ufo_color3);
-				ball_entity->SetModel(model);
+				gfx::ObjectHandle model_handle = gfx::BallHandle::Create(transformation, saucer_ball_radius, ufo_color3);
+				ball_entity->SetModel(std::move(Entity::ModelPtr(new Model(model_handle, * ball_entity->GetLocation()))));
 				
-				exception_object = model;
+				exception_object = model_handle;
 			}
 			else
 			{

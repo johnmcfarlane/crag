@@ -29,6 +29,8 @@ namespace physics
 
 namespace sim
 {
+	class Model;
+
 	// applies force to an entity; is owned by a controller;
 	// ray is in entity-local coordinate space
 	class Thruster final
@@ -46,7 +48,7 @@ namespace sim
 		CRAG_ROSTER_OBJECT_DECLARE(Thruster);
 		CRAG_VERIFY_INVARIANTS_DECLARE(Thruster);
 
-		void SetParentModel(gfx::ObjectHandle parent_handle);
+		void SetParentModel(Model const & parent_model);
 
 		Entity & GetEntity();
 		Entity const & GetEntity() const;

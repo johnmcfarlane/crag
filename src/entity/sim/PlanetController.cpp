@@ -19,6 +19,7 @@
 
 #include "sim/Entity.h"
 #include "sim/Engine.h"
+#include "sim/Model.h"
 
 #include "form/Engine.h"
 #include "form/Object.h"
@@ -35,7 +36,7 @@ using namespace sim;
 CRAG_ROSTER_OBJECT_DEFINE(
 	PlanetController,
 	10,
-	Pool::CallBefore<& PlanetController::Tick, Entity, & Entity::Tick>(Engine::GetTickRoster()))
+	Pool::Call<& PlanetController::Tick>(Engine::GetTickRoster()))
 
 PlanetController::PlanetController(Entity & entity, Sphere3 const & sphere, int random_seed, int num_craters)
 : Controller(entity)
@@ -97,7 +98,7 @@ void PlanetController::Tick()
 #endif
 
 	// update planet params
-	auto model_handle = entity.GetModel();
+	auto model_handle = entity.GetModel()->GetHandle();
 	model_handle.Call([max_radius] (gfx::Object & object) {
 		auto & planet = core::StaticCast<gfx::Planet &>(object);
 		planet.SetMaxRadius(static_cast<Scalar>(max_radius));
