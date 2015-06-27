@@ -16,8 +16,6 @@ using namespace sim;
 ////////////////////////////////////////////////////////////////////////////////
 // sim::Controller member definitions
 
-//Controller const & Controller::null = null_controller;
-
 Controller::Controller(Entity & entity)
 : _entity(entity)
 {
