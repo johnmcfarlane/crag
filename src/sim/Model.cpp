@@ -26,7 +26,7 @@ using namespace sim;
 
 CRAG_ROSTER_OBJECT_DEFINE(
 	Model,
-	10,
+	100,
 	Pool::Call<& Model::Update>(Engine::GetDrawRoster()));
 
 Model::Model(Handle handle, physics::Location const & location)
