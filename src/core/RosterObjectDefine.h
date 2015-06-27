@@ -98,7 +98,7 @@ namespace crag
 
 				// as Call but also stipulates that FUNCTION be called /after/ LATTER_FUNCTION
 				template <
-					void (FUNCTION)(value_type *),
+					void (value_type::*FUNCTION)(),
 					typename FORMER_OBJECT, void (FORMER_OBJECT::*FORMER_FUNCTION)()>
 				struct CallAfter
 					: Call<FUNCTION>
