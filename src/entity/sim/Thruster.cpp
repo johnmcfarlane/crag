@@ -13,6 +13,7 @@
 
 #include "sim/Entity.h"
 #include "sim/Engine.h"
+#include <sim/Model.h>
 
 #include "../gfx/Thruster.h"
 
@@ -50,9 +51,9 @@ Thruster::Thruster(Entity & entity, Ray3 const & ray, bool graphical, Scalar thr
 
 			_model = gfx::ThrusterHandle::Create(local_transformation, thrust_max);
 		}
-	}
 
-	SetParentModel(entity.GetModel());
+		SetParentModel(* entity.GetModel());
+	}
 
 	CRAG_VERIFY(* this);
 }
@@ -71,13 +72,11 @@ CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Thruster, self)
 	CRAG_VERIFY_OP(self.GetSignal(), <=, 1.f);
 CRAG_VERIFY_INVARIANTS_DEFINE_END
 
-void Thruster::SetParentModel(gfx::ObjectHandle parent_handle)
+void Thruster::SetParentModel(Model const & parent_model)
 {
-	if (! _model.IsInitialized())
-	{
-		return;
-	}
+	CRAG_VERIFY_TRUE(_model.IsInitialized());
 
+	auto parent_handle = parent_model.GetHandle();
 	auto model_handle = _model;
 	gfx::Daemon::Call([model_handle, parent_handle] (gfx::Engine & engine) {
 		engine.OnSetParent(model_handle, parent_handle);

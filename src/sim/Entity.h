@@ -15,11 +15,6 @@
 
 #include "core/RosterObjectDeclare.h"
 
-namespace gfx
-{
-	DECLARE_CLASS_HANDLE(Object);	// gfx::ObjectHandle
-}
-
 namespace physics
 {
 	class Location;
@@ -28,6 +23,7 @@ namespace physics
 namespace sim
 {
 	class Controller;
+	class Model;
 
 	// A thing that exist in the simulation.
 	class Entity : public ipc::ObjectBase<Entity, sim::Engine>
@@ -40,6 +36,7 @@ namespace sim
 
 		using ControllerPtr = std::unique_ptr<Controller>;
 		using LocationPtr = std::unique_ptr<physics::Location>;
+		using ModelPtr = std::unique_ptr<Model>;
 
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
@@ -63,10 +60,10 @@ namespace sim
 		physics::Location const * GetLocation() const;
 
 		// graphics
-		gfx::ObjectHandle GetModel() const;
-		void SetModel(gfx::ObjectHandle model);
-		void UpdateModels();
-		
+		void SetModel(ModelPtr model);
+		Model * GetModel();
+		Model const * GetModel() const;
+
 		// Verification
 		CRAG_VERIFY_INVARIANTS_DECLARE(Entity);
 
@@ -75,6 +72,6 @@ namespace sim
 		// variables
 		ControllerPtr _controller;
 		LocationPtr _location;
-		gfx::ObjectHandle _model;
+		ModelPtr _model;
 	};
 }

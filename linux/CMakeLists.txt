@@ -306,6 +306,8 @@ set(SOURCE_FILES
     ${CRAG_SOURCE_DIRECTORY}/sim/EntityFunctions.h
     ${CRAG_SOURCE_DIRECTORY}/sim/gravity.cpp
     ${CRAG_SOURCE_DIRECTORY}/sim/gravity.h
+    ${CRAG_SOURCE_DIRECTORY}/sim/Model.cpp
+    ${CRAG_SOURCE_DIRECTORY}/sim/Model.h
     ${CRAG_SOURCE_DIRECTORY}/smp/ReadersWriterMutex.cpp
     ${CRAG_SOURCE_DIRECTORY}/smp/ReadersWriterMutex.h
     ${CRAG_SOURCE_DIRECTORY}/smp/Semaphore.cpp

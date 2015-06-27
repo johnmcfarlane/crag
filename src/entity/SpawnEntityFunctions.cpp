@@ -20,6 +20,7 @@
 
 #include "sim/Engine.h"
 #include "sim/Entity.h"
+#include <sim/Model.h>
 
 #include "physics/defs.h"
 #include "physics/BoxBody.h"
@@ -78,8 +79,8 @@ namespace
 
 		// graphics
 		gfx::Transformation local_transformation(spawn_pos, gfx::Transformation::Matrix33::Identity());
-		auto model = gfx::MeshObjectHandle::Create(local_transformation, color, size, "CuboidVbo", "CuboidPlainMesh");
-		box.SetModel(model);
+		auto model_handle = gfx::MeshObjectHandle::Create(local_transformation, color, size, "CuboidVbo", "CuboidPlainMesh");
+		box.SetModel(std::move(Entity::ModelPtr(new Model(model_handle, * box.GetLocation()))));
 	}
 
 	void ConstructSphereBody(Entity & entity, geom::rel::Sphere3 const & sphere, Vector3 const & velocity, float density, float linear_damping)
@@ -102,8 +103,8 @@ namespace
 
 		// graphics
 		gfx::Transformation local_transformation(sphere.center, gfx::Transformation::Matrix33::Identity());
-		gfx::ObjectHandle model = gfx::BallHandle::Create(local_transformation, sphere.radius, color);
-		ball.SetModel(model);
+		gfx::ObjectHandle model_handle = gfx::BallHandle::Create(local_transformation, sphere.radius, color);
+		ball.SetModel(std::move(Entity::ModelPtr(new Model(model_handle, * ball.GetLocation()))));
 	}
 
 	void ConstructCamera(Entity & camera, Vector3 const & position, EntityHandle subject_handle)
@@ -138,8 +139,8 @@ void ConstructAnimat(sim::Entity & entity, sim::Vector3 const & position, sim::g
 
 	// graphics
 	gfx::Transformation local_transformation(sphere.center, gfx::Transformation::Matrix33::Identity(), sphere.radius);
-	gfx::ObjectHandle model = gfx::BallHandle::Create(local_transformation, sphere.radius, gfx::Color4f::Green());
-	entity.SetModel(model);
+	gfx::ObjectHandle model_handle = gfx::BallHandle::Create(local_transformation, sphere.radius, gfx::Color4f::Green());
+	entity.SetModel(std::move(Entity::ModelPtr(new Model(model_handle, * entity.GetLocation()))));
 
 	// controller
 	auto controller = std::unique_ptr<sim::AnimatController>(
@@ -232,8 +233,8 @@ EntityHandle SpawnPlanet(const Sphere3 & sphere, int random_seed, int num_crater
 		entity.SetController(std::move(controller));
 
 		// register with the renderer
-		auto model = gfx::PlanetHandle::Create(gfx::Transformation(sphere.center));
-		entity.SetModel(model);
+		auto model_handle = gfx::PlanetHandle::Create(gfx::Transformation(sphere.center));
+		entity.SetModel(std::move(Entity::ModelPtr(new Model(model_handle, * entity.GetLocation()))));
 	});
 
 	return handle;
@@ -251,10 +252,10 @@ EntityHandle SpawnStar(geom::abs::Sphere3 const & volume, gfx::Color4f const & c
 		entity.SetLocation(std::move(location));
 
 		// graphics
-		auto light = gfx::LightHandle::Create(
+		auto light_handle = gfx::LightHandle::Create(
 			transformation, color, 
 			gfx::LightAttributes { gfx::LightResolution::vertex, gfx::LightType::point, casts_shadow });
-		entity.SetModel(light);
+		entity.SetModel(std::move(Entity::ModelPtr(new Model(light_handle, * entity.GetLocation()))));
 	});
 
 	return sun;
