@@ -46,9 +46,6 @@ namespace sim
 
 		CRAG_ROSTER_OBJECT_DECLARE(Entity);
 
-		// general callbacks
-		void Tick();
-
 		// controller
 		void SetController(ControllerPtr controller);
 		Controller * GetController();

@@ -41,12 +41,6 @@ Entity::~Entity()
 	CRAG_VERIFY(* this);
 }
 
-// placeholder helps govern the order in which stuff gets called by _tick_roster
-void Entity::Tick()
-{
-	ASSERT(false);
-}
-
 void Entity::SetController(ControllerPtr controller)
 {
 	_controller = std::move(controller);
