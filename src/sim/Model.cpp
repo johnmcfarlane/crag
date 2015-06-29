@@ -49,10 +49,7 @@ Model::Handle Model::GetHandle() const
 
 void Model::Update()
 {
-	if (! _handle.IsInitialized())
-	{
-		return;
-	}
+	CRAG_VERIFY_TRUE(_handle.IsInitialized());
 
 	auto transformation = _location.GetTransformation();
 
