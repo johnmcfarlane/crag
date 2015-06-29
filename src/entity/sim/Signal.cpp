@@ -38,30 +38,34 @@ void Receiver::ReceiveSignal(SignalType v) noexcept
 ////////////////////////////////////////////////////////////////////////////////
 //  member defintions
 
-Transmitter::Transmitter(Receiver * r) noexcept
-: receiver(r)
+Transmitter::Transmitter() noexcept
 {
+	static_assert(sizeof(Transmitter) == 4 * sizeof(Receiver *), "type isn't a neat size");
+	CRAG_VERIFY_TRUE(std::all_of(std::begin(receivers), std::end(receivers), [] (Receiver * r) { return r == nullptr; }));
 }
 
 Transmitter::~Transmitter() noexcept
 {
 }
 
-void Transmitter::SetReceiver(Receiver * r) noexcept
+void Transmitter::AddReceiver(Receiver & r) noexcept
 {
-	// no reason not to overwrite a pointer but currently not done
-	CRAG_VERIFY_TRUE(r);
-	CRAG_VERIFY_FALSE(receiver);
+	for (auto & receiver : receivers)
+	{
+		if (! receiver)
+		{
+			receiver = & r;
+			return;
+		}
+	}
 
-	receiver = r;
-}
-
-Receiver * Transmitter::GetReceiver() const noexcept
-{
-	return receiver;
+	DEBUG_BREAK("Transmitter is full");
 }
 
 void Transmitter::TransmitSignal(SignalType v) noexcept
 {
-	receiver->ReceiveSignal(v);
+	ForEachReceiver([&] (Receiver & r)
+	{
+		r.ReceiveSignal(v);
+	});
 }

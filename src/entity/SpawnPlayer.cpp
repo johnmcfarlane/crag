@@ -669,7 +669,7 @@ namespace
 		std::unique_ptr<Transmitter> && transmitter,
 		std::unique_ptr<Receiver> && receiver)
 	{
-		transmitter->SetReceiver(receiver.get());
+		transmitter->AddReceiver(* receiver);
 
 		controller.AddTransmitter(std::move(transmitter));
 		controller.AddReceiver(std::move(receiver));

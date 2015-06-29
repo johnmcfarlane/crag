@@ -114,7 +114,7 @@ void Layer::Connect(Layer & output, Layer & input) noexcept
 	{
 		CRAG_VERIFY_TRUE(i.second != std::end(input.inputs));
 
-		(* i.first)->SetReceiver(i.second->get());
+		(* i.first)->AddReceiver(* * i.second);
 	}
 }
 
@@ -127,7 +127,7 @@ void Layer::ConnectInputs(std::vector<Transmitter *> const & transmitters) noexc
 		iterators.first != std::end(transmitters);
 		++ iterators.first, ++ iterators.second)
 	{
-		(* iterators.first)->SetReceiver(iterators.second->get());
+		(* iterators.first)->AddReceiver(* * iterators.second);
 	}
 }
 
@@ -140,7 +140,7 @@ void Layer::ConnectOutputs(std::vector<Receiver *> const & receivers) noexcept
 		iterators.first != std::end(neurons);
 		++ iterators.first, ++ iterators.second)
 	{
-		(* iterators.first)->SetReceiver(* iterators.second);
+		(* iterators.first)->AddReceiver(* * iterators.second);
 	}
 }
 

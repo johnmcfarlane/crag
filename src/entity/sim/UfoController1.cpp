@@ -51,7 +51,9 @@ UfoController1::UfoController1(Entity & entity, std::shared_ptr<Entity> const & 
 , _num_presses(0)
 {
 	auto thruster = new Thruster(entity, Ray3(Vector3(0.f, 0.f, -.2f), Vector3(0.f, 0.f, max_thrust)), false, 1.f);
-	auto transmitter = new Transmitter(thruster);
+	auto transmitter = new Transmitter();
+	transmitter->AddReceiver(* thruster);
+
 	AddReceiver(ReceiverPtr(thruster));
 	AddTransmitter(TransmitterPtr(transmitter));
 
