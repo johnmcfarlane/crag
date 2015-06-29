@@ -167,7 +167,7 @@ namespace
 		}
 
 		CRAG_VERIFY_OP(index, >=, 0);
-		CRAG_VERIFY_OP(index, <, vertices.size());
+		CRAG_VERIFY_OP(index, <, int(vertices.size()));
 
 		// either way, add index
 		auto & indices = mesh.GetIndices();
