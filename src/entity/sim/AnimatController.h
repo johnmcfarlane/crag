@@ -34,11 +34,10 @@ namespace sim
 
 		AnimatController(Entity & entity, float radius, ga::Genome && genome, HealthPtr && health);
 
-		Receiver & GetHealthReceiver();
-
 		ga::Genome const & GetGenome() const;
 	private:
-		void CreateHealthReceiver();
+		void Tick();
+
 		void CreateSensors(float radius);
 		void CreateThrusters(float radius);
 		void CreateNetwork();

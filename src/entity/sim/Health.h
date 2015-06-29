@@ -32,7 +32,7 @@ namespace sim
 
 		Health(EntityHandle entity_handle) noexcept;
 
-		void AddReceiver(Receiver & reciever) noexcept;
+		Transmitter & GetTransmitter() noexcept;
 
 		void IncrementHealth(SignalType delta) noexcept;
 	private:

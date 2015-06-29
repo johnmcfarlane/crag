@@ -14,12 +14,15 @@
 #include "Health.h"
 #include "Thruster.h"
 
+#include <sim/Engine.h>
+
 #include <core/RosterObjectDefine.h>
 
 using namespace sim;
 
 CONFIG_DEFINE(animat_sensor_length, 5.f);
 CONFIG_DEFINE(animat_thruster_length, 25.f);
+CONFIG_DEFINE(animat_thruster_gain_coefficient, -.0001f);
 
 ////////////////////////////////////////////////////////////////////////////////
 // sim::AnimatController member definitions
@@ -27,7 +30,7 @@ CONFIG_DEFINE(animat_thruster_length, 25.f);
 CRAG_ROSTER_OBJECT_DEFINE(
 	AnimatController,
 	100,
-	Pool::NoCall())
+	Pool::Call<& AnimatController::Tick>(Engine::GetTickRoster()))
 
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(AnimatController, self)
 	CRAG_VERIFY(static_cast<VehicleController const &>(self));
@@ -38,7 +41,6 @@ AnimatController::AnimatController(Entity & entity, float radius, ga::Genome && 
 , _genome(std::move(genome))
 , _health(std::move(health))
 {
-	CreateHealthReceiver();
 	CreateSensors(radius);
 	CreateThrusters(radius);
 	CreateNetwork();
@@ -46,20 +48,22 @@ AnimatController::AnimatController(Entity & entity, float radius, ga::Genome && 
 	CRAG_VERIFY(* this);
 }
 
-Receiver & AnimatController::GetHealthReceiver()
-{
-	CRAG_VERIFY_EQUAL(GetReceivers().size(), 9u);
-	return * GetReceivers().front();
-}
-
 ga::Genome const & AnimatController::GetGenome() const
 {
 	return _genome;
 }
 
-void AnimatController::CreateHealthReceiver()
+void AnimatController::Tick()
 {
-	AddReceiver(ReceiverPtr(new Receiver));
+	auto sum_thrust = 0.f;
+
+	for (auto & receiver : GetReceivers())
+	{
+		auto & thruster = core::StaticCast<Thruster const>(* receiver);
+		sum_thrust += thruster.GetSignal();
+	}
+
+	_health->IncrementHealth(sum_thrust * animat_thruster_gain_coefficient);
 }
 
 void AnimatController::CreateSensors(float radius)
@@ -118,18 +122,20 @@ void AnimatController::CreateThrusters(float radius)
 
 void AnimatController::CreateNetwork()
 {
-	auto trasmitters = core::make_transform(GetTransmitters(), [] (TransmitterPtr const & sensor) {
+	auto transmitters = core::make_transform(GetTransmitters(), [] (TransmitterPtr const & sensor) {
 		return static_cast<Transmitter *>(sensor.get());
 	});
+	transmitters.emplace(std::begin(transmitters), & _health->GetTransmitter());
+
 	auto receivers = core::make_transform(GetReceivers(), [] (ReceiverPtr const & motor) {
 		return static_cast<Receiver *>(motor.get());
 	});
 
 	_network = std::move(nnet::Network(_genome, std::vector<int>{
-		int(trasmitters.size()),
+		int(transmitters.size()),
 		10,
 		int(receivers.size())}));
-	_network.ConnectInputs(trasmitters);
+	_network.ConnectInputs(transmitters);
 	_network.ConnectOutputs(receivers);
 }
 

@@ -47,11 +47,11 @@ Health::Health(EntityHandle entity_handle)
 	CRAG_VERIFY(* this);
 }
 
-void Health::AddReceiver(sim::Receiver & receiver)
+Transmitter & Health::GetTransmitter() noexcept
 {
 	CRAG_VERIFY(* this);
 
-	return _transmitter.AddReceiver(receiver);
+	return _transmitter;
 }
 
 void Health::Tick() noexcept

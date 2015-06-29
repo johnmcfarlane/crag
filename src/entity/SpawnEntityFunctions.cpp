@@ -150,8 +150,7 @@ void ConstructAnimat(sim::Entity & entity, sim::Vector3 const & position, sim::g
 	entity.SetController(std::unique_ptr<sim::AnimatController>(controller));
 
 	// connect health signal
-	health->AddReceiver(controller->GetHealthReceiver());
-	health->AddReceiver(model->GetHealthReceiver());
+	health->GetTransmitter().AddReceiver(model->GetHealthReceiver());
 }
 
 sim::EntityHandle SpawnAnimat(const sim::Vector3 & position)
