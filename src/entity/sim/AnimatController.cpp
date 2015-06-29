@@ -117,7 +117,7 @@ void AnimatController::CreateNetwork()
 
 	_network = std::move(nnet::Network(_genome, std::vector<int>{
 		int(trasmitters.size()),
-		6,
+		10,
 		int(receivers.size())}));
 	_network.ConnectInputs(trasmitters);
 	_network.ConnectOutputs(receivers);
