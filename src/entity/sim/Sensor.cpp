@@ -25,7 +25,7 @@ namespace
 {
 	Ray3 Transform(Ray3 const & local, Entity const & entity)
 	{
-		auto const & location = entity.GetLocation();
+		auto location = entity.GetLocation();
 		auto const & transformation = location->GetTransformation();
 
 		auto global = transformation.Transform(local);

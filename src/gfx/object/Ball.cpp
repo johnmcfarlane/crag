@@ -41,6 +41,11 @@ Ball::Ball(Engine & engine, Transformation const & local_transformation, float r
 	SetVboResource(sphere_quad);
 }
 
+void Ball::SetColor(Color4f const & color)
+{
+	_color = color;
+}
+
 void Ball::UpdateModelViewTransformation(Transformation const & model_view)
 {
 	Quad const & sphere_quad = static_cast<Quad const &>(* GetVboResource());

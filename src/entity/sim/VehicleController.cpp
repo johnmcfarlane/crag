@@ -37,7 +37,10 @@ VehicleController::VehicleController(Entity & entity)
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(VehicleController, self)
 	for (auto & transmitter : self._transmitters)
 	{
-		CRAG_VERIFY_TRUE(transmitter->GetReceiver());
+		transmitter->ForEachReceiver([] (Receiver const & r)
+		{
+			CRAG_VERIFY(r);
+		});
 	}
 	for (auto & receiver : self._receivers)
 	{
@@ -62,7 +65,5 @@ VehicleController::TransmitterVector const & VehicleController::GetTransmitters(
 
 VehicleController::ReceiverVector const & VehicleController::GetReceivers() const noexcept
 {
-	CRAG_VERIFY(* this);
-
 	return _receivers;
 }

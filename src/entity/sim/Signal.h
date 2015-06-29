@@ -34,22 +34,39 @@ namespace sim
 		SignalType value = 0;
 	};
 
-	// transmitting end of a signal; must point to a Transmitter
+	// transmitting end of a signal; must point to one or more Receivers
 	class Transmitter
 		: public crag::counted_object<Receiver>
 	{
 	public:
 		// functions
-		Transmitter(Receiver * r = nullptr) noexcept;
+		Transmitter() noexcept;
 		virtual ~Transmitter() noexcept;
 
-		void SetReceiver(Receiver * r) noexcept;
-		Receiver * GetReceiver() const noexcept;
+		void AddReceiver(Receiver & r) noexcept;
 
 		void TransmitSignal(SignalType v) noexcept;
 
+		template <typename FUNCTION>
+		void ForEachReceiver(FUNCTION function) const noexcept
+		{
+			for (auto receiver : receivers)
+			{
+				if (receiver)
+				{
+					function(* receiver);
+				}
+			}
+		}
+
 	private:
+		// constants
+		static constexpr auto max_num_receivers = 3;
+
+		// types
+		using ReceiverArray = std::array<Receiver *, max_num_receivers>;
+
 		// variables
-		Receiver * receiver = nullptr;
+		ReceiverArray receivers {{ nullptr, nullptr, nullptr }};
 	};
 }

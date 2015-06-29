@@ -21,6 +21,7 @@
 using namespace sim;
 
 CONFIG_DEFINE(animat_sensor_length, 5.f);
+CONFIG_DEFINE(animat_thruster_length, 25.f);
 
 ////////////////////////////////////////////////////////////////////////////////
 // sim::AnimatController member definitions
@@ -34,11 +35,11 @@ CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(AnimatController, self)
 	CRAG_VERIFY(static_cast<VehicleController const &>(self));
 CRAG_VERIFY_INVARIANTS_DEFINE_END
 
-AnimatController::AnimatController(Entity & entity, float radius, TransmitterPtr && health_transmitter, ga::Genome && genome)
+AnimatController::AnimatController(Entity & entity, float radius, ga::Genome && genome)
 : VehicleController(entity)
 , _genome(std::move(genome))
 {
-	AddTransmitter(std::move(health_transmitter));
+	CreateHealthReceiver();
 	CreateSensors(radius);
 	CreateThrusters(radius);
 	CreateNetwork();
@@ -46,9 +47,20 @@ AnimatController::AnimatController(Entity & entity, float radius, TransmitterPtr
 	CRAG_VERIFY(* this);
 }
 
+Receiver & AnimatController::GetHealthReceiver()
+{
+	CRAG_VERIFY_EQUAL(GetReceivers().size(), 9u);
+	return * GetReceivers().front();
+}
+
 ga::Genome const & AnimatController::GetGenome() const
 {
 	return _genome;
+}
+
+void AnimatController::CreateHealthReceiver()
+{
+	AddReceiver(ReceiverPtr(new Receiver));
 }
 
 void AnimatController::CreateSensors(float radius)
@@ -81,24 +93,24 @@ void AnimatController::CreateThrusters(float radius)
 {
 	auto & entity = GetEntity();
 	auto root_third = static_cast<float>(std::sqrt(1. / 3.) * radius);
-	auto direction_scale = 15.f;
 
 	Ray3 ray;
 	for (auto z = 0; z < 2; ++ z)
 	{
 		ray.position.z = z ? root_third : -root_third;
-		ray.direction.z = ray.position.z * direction_scale;
+		ray.direction.z = ray.position.z * animat_thruster_length;
 
 		for (auto y = 0; y < 2; ++ y)
 		{
 			ray.position.y = y ? root_third : -root_third;
-			ray.direction.y = ray.position.y * direction_scale;
+			ray.direction.y = ray.position.y * animat_thruster_length;
 
 			for (auto x = 0; x < 2; ++ x)
 			{
 				ray.position.x = x ? root_third : -root_third;
-				ray.direction.x = ray.position.x * direction_scale;
+				ray.direction.x = ray.position.x * animat_thruster_length;
 
+				CRAG_VERIFY_NEARLY_EQUAL(geom::Magnitude(ray), animat_thruster_length, .0001f);
 				AddReceiver(VehicleController::ReceiverPtr(new Thruster(entity, ray, false, 0.f)));
 			}
 		}
@@ -116,7 +128,7 @@ void AnimatController::CreateNetwork()
 
 	_network = std::move(nnet::Network(_genome, std::vector<int>{
 		int(trasmitters.size()),
-		6,
+		10,
 		int(receivers.size())}));
 	_network.ConnectInputs(trasmitters);
 	_network.ConnectOutputs(receivers);

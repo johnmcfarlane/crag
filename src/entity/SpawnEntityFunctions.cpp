@@ -17,10 +17,10 @@
 #include "entity/physics/PlanetBody.h"
 #include "entity/sim/AnimatController.h"
 #include "entity/sim/PlanetController.h"
+#include <entity/sim/AnimatModel.h>
 
 #include "sim/Engine.h"
 #include "sim/Entity.h"
-#include <sim/Model.h>
 
 #include "physics/defs.h"
 #include "physics/BoxBody.h"
@@ -126,26 +126,27 @@ void ConstructAnimat(sim::Entity & entity, sim::Vector3 const & position, sim::g
 	sim::Engine & engine = entity.GetEngine();
 	physics::Engine & physics_engine = engine.GetPhysicsEngine();
 
-	auto health_transmitter = VehicleController::TransmitterPtr(new Transmitter);
-
 	// physics
 	auto zero_vector = sim::Vector3::Zero();
-	auto body = std::unique_ptr<physics::AnimatBody>(
-		new physics::AnimatBody(
-			sim::Transformation(sphere.center), & zero_vector, physics_engine,
-			sphere.radius, * health_transmitter, entity));
+	auto body = new physics::AnimatBody(
+		sim::Transformation(sphere.center), & zero_vector, physics_engine,
+		sphere.radius, entity);
 	body->SetDensity(1);
-	entity.SetLocation(std::move(body));
+	entity.SetLocation(std::unique_ptr<physics::Location>(body));
 
 	// graphics
 	gfx::Transformation local_transformation(sphere.center, gfx::Transformation::Matrix33::Identity(), sphere.radius);
 	gfx::ObjectHandle model_handle = gfx::BallHandle::Create(local_transformation, sphere.radius, gfx::Color4f::Green());
-	entity.SetModel(std::move(Entity::ModelPtr(new Model(model_handle, * entity.GetLocation()))));
+	auto model = new AnimatModel(model_handle, * body);
+	entity.SetModel(Entity::ModelPtr(model));
 
 	// controller
-	auto controller = std::unique_ptr<sim::AnimatController>(
-		new sim::AnimatController(entity, sphere.radius, std::move(health_transmitter), std::move(genome)));
-	entity.SetController(std::move(controller));
+	auto controller = new sim::AnimatController(entity, sphere.radius, std::move(genome));
+	entity.SetController(std::unique_ptr<sim::AnimatController>(controller));
+
+	// connect health signal
+	body->AddHealthReceiver(controller->GetHealthReceiver());
+	body->AddHealthReceiver(model->GetHealthReceiver());
 }
 
 sim::EntityHandle SpawnAnimat(const sim::Vector3 & position)

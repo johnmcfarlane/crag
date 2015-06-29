@@ -26,7 +26,7 @@ using namespace sim;
 
 CRAG_ROSTER_OBJECT_DEFINE(
 	Model,
-	100,
+	10,
 	Pool::Call<& Model::Update>(Engine::GetDrawRoster()));
 
 Model::Model(Handle handle, physics::Location const & location)
@@ -37,7 +37,7 @@ Model::Model(Handle handle, physics::Location const & location)
 	CRAG_VERIFY_REF(_location);
 }
 
-Model::~Model()
+Model::~Model() noexcept
 {
 	_handle.Release();
 }
@@ -49,10 +49,7 @@ Model::Handle Model::GetHandle() const
 
 void Model::Update()
 {
-	if (! _handle.IsInitialized())
-	{
-		return;
-	}
+	CRAG_VERIFY_TRUE(_handle.IsInitialized());
 
 	auto transformation = _location.GetTransformation();
 

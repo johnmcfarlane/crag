@@ -27,6 +27,8 @@ namespace gfx
 		// functions
 		Ball(Engine & engine, Transformation const & local_transformation, float radius, Color4f const & color);
 
+		void SetColor(Color4f const & color) noexcept;
+
 	private:
 		void UpdateModelViewTransformation(Transformation const & model_view_transformation) override;
 		Transformation const & GetShadowModelViewTransformation() const override;

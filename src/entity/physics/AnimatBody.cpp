@@ -45,14 +45,16 @@ CRAG_ROSTER_OBJECT_DEFINE(
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(AnimatBody, self)
 	CRAG_VERIFY(static_cast<SphereBody const &>(self));
 	CRAG_VERIFY_OP(self._health, >=, 0);
-	CRAG_VERIFY_TRUE(self._health_transmitter.GetReceiver());
+	self._health_transmitter.ForEachReceiver([] (sim::Receiver const & r)
+	{
+		CRAG_VERIFY(r);
+	});
 CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 AnimatBody::AnimatBody(
 	Transformation const & transformation, Vector3 const * velocity, physics::Engine & engine,
-	Scalar radius, sim::Transmitter & health_transmitter, sim::Entity & entity) noexcept
+	Scalar radius, sim::Entity & entity) noexcept
 : SphereBody(transformation, velocity, engine, radius)
-, _health_transmitter(health_transmitter)
 , _entity(entity)
 {
 }
@@ -68,6 +70,11 @@ void AnimatBody::PostTick() noexcept
 	}
 
 	_health_transmitter.TransmitSignal(_health);
+}
+
+void AnimatBody::AddHealthReceiver(sim::Receiver & receiver)
+{
+	return _health_transmitter.AddReceiver(receiver);
 }
 
 void AnimatBody::OnContact(Body & that_body) noexcept

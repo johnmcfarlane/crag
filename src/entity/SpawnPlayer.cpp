@@ -142,31 +142,36 @@ namespace
 	{
 		return lhs.pos == rhs.pos;
 	}
-	
+
+	// adds given vertex to the given mesh
 	template <typename VertexType, typename IndexType>
 	void AddMeshVertex(gfx::Mesh<VertexType, IndexType> & mesh, VertexType vertex)
 	{
 		auto & vertices = mesh.GetVertices();
-		auto num_vertices = vertices.size();
-		
-		auto index = 0u;
-		for (;;)
+		auto begin = std::begin(vertices);
+		auto end = std::end(vertices);
+
+		// find an identical existing vertex
+		auto match = std::find_if(begin, end, [& vertex] (VertexType const & existing) {
+			return existing == vertex;
+		});
+
+		// get its vertex (or one past the end if not found)
+		auto index = std::distance(begin, match);
+
+		// if no match found,
+		if (match == end)
 		{
-			if (index == num_vertices)
-			{
-				vertices.push_back(vertex);
-				break;
-			}
-			
-			if (vertices[index] == vertex)
-			{
-				break;
-			}
-			
-			++ index;
+			// add new vertex
+			vertices.push_back(vertex);
 		}
-		
-		mesh.GetIndices().push_back(index);
+
+		CRAG_VERIFY_OP(index, >=, 0);
+		CRAG_VERIFY_OP(index, <, int(vertices.size()));
+
+		// either way, add index
+		auto & indices = mesh.GetIndices();
+		indices.push_back(index);
 	}
 	
 	// generates and transforms mesh given a transformation function
@@ -197,13 +202,6 @@ namespace
 			ASSERT(destination_vertices.size() <= destination_vertices.capacity());
 			ASSERT(destination_indices.size() == source_indices.size());
 			ASSERT(destination_indices.size() == destination_indices.capacity());
-			
-#if defined(CRAG_DEBUG)
-			if (destination_vertices.size() <= source_vertices.size())
-			{
-				DEBUG_MESSAGE("%d bytes saved", (source_vertices.size() - destination_vertices.size()) * sizeof(typename DestinationMeshType::value_type));
-			}
-#endif
 		}
 
 		return destination;
@@ -671,7 +669,7 @@ namespace
 		std::unique_ptr<Transmitter> && transmitter,
 		std::unique_ptr<Receiver> && receiver)
 	{
-		transmitter->SetReceiver(receiver.get());
+		transmitter->AddReceiver(* receiver);
 
 		controller.AddTransmitter(std::move(transmitter));
 		controller.AddReceiver(std::move(receiver));
