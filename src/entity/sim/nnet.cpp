@@ -55,7 +55,11 @@ CRAG_ROSTER_OBJECT_DEFINE(
 	Pool::Call<& Neuron::Tick>(Engine::GetTickRoster()));
 
 Neuron::Neuron(GenomeReader & genome_reader) noexcept
-	: sigmoid(genome_reader.Read(), genome_reader.Read(), genome_reader.Read(), genome_reader.Read())
+	: sigmoid(
+		genome_reader.Read() - .5f,
+		genome_reader.Read(),
+		genome_reader.Read() - .5f,
+		genome_reader.Read())
 {
 }
 
