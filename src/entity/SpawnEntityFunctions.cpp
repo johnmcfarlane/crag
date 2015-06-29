@@ -159,9 +159,9 @@ sim::EntityHandle SpawnAnimat(const sim::Vector3 & position)
 	auto animat = sim::EntityHandle::Create();
 
 	animat.Call([position] (sim::Entity & entity)
-				{
-					ConstructAnimat(entity, position, sim::ga::Genome());
-				});
+	{
+		ConstructAnimat(entity, position, sim::ga::Genome());
+	});
 
 	return animat;
 }
