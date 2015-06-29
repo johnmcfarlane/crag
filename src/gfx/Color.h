@@ -88,6 +88,11 @@ namespace gfx
 			return * this;
 		}
 
+		friend Color4 operator + (Color4 lhs, Color4 const & rhs)
+		{
+			return lhs += rhs;
+		}
+
 		friend Color4 operator * (Color4 const & lhs, Comp rhs)
 		{
 			return Color4(lhs.r * rhs,
