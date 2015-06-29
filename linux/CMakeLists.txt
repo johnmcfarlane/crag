@@ -77,6 +77,8 @@ set(SOURCE_FILES
     ${CRAG_SOURCE_DIRECTORY}/entity/physics/PlanetBody.h
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/AnimatController.cpp
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/AnimatController.h
+    ${CRAG_SOURCE_DIRECTORY}/entity/sim/AnimatModel.h
+    ${CRAG_SOURCE_DIRECTORY}/entity/sim/AnimatModel.cpp
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/CameraController.cpp
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/CameraController.h
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/Contact.cpp

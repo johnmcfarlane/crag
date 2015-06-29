@@ -27,9 +27,11 @@ namespace physics
 		CRAG_VERIFY_INVARIANTS_DECLARE(AnimatBody);
 
 		AnimatBody(Transformation const & transformation, Vector3 const * velocity, physics::Engine & engine,
-			Scalar radius, sim::Transmitter & health_transmitter, sim::Entity & entity) noexcept;
+			Scalar radius, sim::Entity & entity) noexcept;
 
 		void PostTick() noexcept;
+
+		void AddHealthReceiver(sim::Receiver & reciever);
 
 	private:
 		void OnContact(Body & that_body) noexcept override;
@@ -38,7 +40,7 @@ namespace physics
 
 		// variables
 		sim::SignalType _health = 1.f;
-		sim::Transmitter & _health_transmitter;
 		sim::Entity & _entity;
+		sim::Transmitter _health_transmitter;
 	};
 }

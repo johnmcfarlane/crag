@@ -35,11 +35,11 @@ CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(AnimatController, self)
 	CRAG_VERIFY(static_cast<VehicleController const &>(self));
 CRAG_VERIFY_INVARIANTS_DEFINE_END
 
-AnimatController::AnimatController(Entity & entity, float radius, TransmitterPtr && health_transmitter, ga::Genome && genome)
+AnimatController::AnimatController(Entity & entity, float radius, ga::Genome && genome)
 : VehicleController(entity)
 , _genome(std::move(genome))
 {
-	AddTransmitter(std::move(health_transmitter));
+	CreateHealthReceiver();
 	CreateSensors(radius);
 	CreateThrusters(radius);
 	CreateNetwork();
@@ -47,9 +47,20 @@ AnimatController::AnimatController(Entity & entity, float radius, TransmitterPtr
 	CRAG_VERIFY(* this);
 }
 
+Receiver & AnimatController::GetHealthReceiver()
+{
+	CRAG_VERIFY_EQUAL(GetReceivers().size(), 9u);
+	return * GetReceivers().front();
+}
+
 ga::Genome const & AnimatController::GetGenome() const
 {
 	return _genome;
+}
+
+void AnimatController::CreateHealthReceiver()
+{
+	AddReceiver(ReceiverPtr(new Receiver));
 }
 
 void AnimatController::CreateSensors(float radius)

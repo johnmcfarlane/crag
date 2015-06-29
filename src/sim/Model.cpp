@@ -37,7 +37,7 @@ Model::Model(Handle handle, physics::Location const & location)
 	CRAG_VERIFY_REF(_location);
 }
 
-Model::~Model()
+Model::~Model() noexcept
 {
 	_handle.Release();
 }

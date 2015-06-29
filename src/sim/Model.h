@@ -25,14 +25,14 @@ namespace physics
 
 namespace sim
 {
-	class Model final
+	class Model
 	{
 	public:
 		using Handle = gfx::ObjectHandle;
 
 		CRAG_ROSTER_OBJECT_DECLARE(Model);
 
-		~Model();
+		virtual ~Model() noexcept;
 		Model(Handle handle, physics::Location const & location);
 
 		Handle GetHandle() const;
