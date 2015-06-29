@@ -17,23 +17,27 @@
 
 namespace sim
 {
+	class Health;
+
 	// governs the behevior of a sim::Entity which is an artificial animal
 	class AnimatController : public VehicleController
 	{
 	public:
+		// types
+		using HealthPtr = std::unique_ptr<Health>;
+
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 
 		CRAG_ROSTER_OBJECT_DECLARE(AnimatController);
 		CRAG_VERIFY_INVARIANTS_DECLARE(AnimatController);
 
-		AnimatController(Entity & entity, float radius, ga::Genome && genome);
-
-		Receiver & GetHealthReceiver();
+		AnimatController(Entity & entity, float radius, ga::Genome && genome, HealthPtr && health);
 
 		ga::Genome const & GetGenome() const;
 	private:
-		void CreateHealthReceiver();
+		void Tick();
+
 		void CreateSensors(float radius);
 		void CreateThrusters(float radius);
 		void CreateNetwork();
@@ -45,5 +49,6 @@ namespace sim
 
 		ga::Genome _genome;
 		nnet::Network _network;
+		HealthPtr _health;
 	};
 }

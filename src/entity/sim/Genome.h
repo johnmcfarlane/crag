@@ -1,5 +1,5 @@
 //
-//  scripts/ga/Genome.h
+//  entity/sim/Genome.h
 //  crag
 //
 //  Created by John McFarlane on 2013-03-27.

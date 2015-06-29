@@ -16,8 +16,9 @@
 #include "entity/gfx/Planet.h"
 #include "entity/physics/PlanetBody.h"
 #include "entity/sim/AnimatController.h"
-#include "entity/sim/PlanetController.h"
 #include <entity/sim/AnimatModel.h>
+#include <entity/sim/Health.h>
+#include "entity/sim/PlanetController.h"
 
 #include "sim/Engine.h"
 #include "sim/Entity.h"
@@ -126,11 +127,14 @@ void ConstructAnimat(sim::Entity & entity, sim::Vector3 const & position, sim::g
 	sim::Engine & engine = entity.GetEngine();
 	physics::Engine & physics_engine = engine.GetPhysicsEngine();
 
+	// health
+	auto health = new Health(entity.GetHandle());
+
 	// physics
 	auto zero_vector = sim::Vector3::Zero();
 	auto body = new physics::AnimatBody(
 		sim::Transformation(sphere.center), & zero_vector, physics_engine,
-		sphere.radius, entity);
+		sphere.radius, * health);
 	body->SetDensity(1);
 	entity.SetLocation(std::unique_ptr<physics::Location>(body));
 
@@ -141,12 +145,12 @@ void ConstructAnimat(sim::Entity & entity, sim::Vector3 const & position, sim::g
 	entity.SetModel(Entity::ModelPtr(model));
 
 	// controller
-	auto controller = new sim::AnimatController(entity, sphere.radius, std::move(genome));
+	auto controller = new sim::AnimatController(
+		entity, sphere.radius, std::move(genome), sim::AnimatController::HealthPtr(health));
 	entity.SetController(std::unique_ptr<sim::AnimatController>(controller));
 
 	// connect health signal
-	body->AddHealthReceiver(controller->GetHealthReceiver());
-	body->AddHealthReceiver(model->GetHealthReceiver());
+	health->GetTransmitter().AddReceiver(model->GetHealthReceiver());
 }
 
 sim::EntityHandle SpawnAnimat(const sim::Vector3 & position)
@@ -154,9 +158,9 @@ sim::EntityHandle SpawnAnimat(const sim::Vector3 & position)
 	auto animat = sim::EntityHandle::Create();
 
 	animat.Call([position] (sim::Entity & entity)
-				{
-					ConstructAnimat(entity, position, sim::ga::Genome());
-				});
+	{
+		ConstructAnimat(entity, position, sim::ga::Genome());
+	});
 
 	return animat;
 }

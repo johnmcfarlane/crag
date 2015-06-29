@@ -85,6 +85,8 @@ set(SOURCE_FILES
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/Contact.h
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/Genome.cpp
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/Genome.h
+    ${CRAG_SOURCE_DIRECTORY}/entity/sim/Health.cpp
+    ${CRAG_SOURCE_DIRECTORY}/entity/sim/Health.h
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/KeyboardTransmitter.cpp
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/KeyboardTransmitter.h
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/MoonShader.cpp

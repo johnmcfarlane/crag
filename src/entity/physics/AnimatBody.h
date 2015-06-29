@@ -15,9 +15,14 @@
 
 #include <entity/sim/Signal.h>
 
+namespace sim
+{
+	class Health;
+}
+
 namespace physics
 {
-	// physics for Animat - a sphere with health
+	// physics for Animat - spheres which exchange health on contact
 	class AnimatBody final
 		: public SphereBody
 	{
@@ -27,20 +32,13 @@ namespace physics
 		CRAG_VERIFY_INVARIANTS_DECLARE(AnimatBody);
 
 		AnimatBody(Transformation const & transformation, Vector3 const * velocity, physics::Engine & engine,
-			Scalar radius, sim::Entity & entity) noexcept;
-
-		void PostTick() noexcept;
-
-		void AddHealthReceiver(sim::Receiver & reciever);
+			Scalar radius, sim::Health & health) noexcept;
 
 	private:
 		void OnContact(Body & that_body) noexcept override;
 		bool HasHealth() const noexcept override;
-		void OnZeroHealth() const noexcept;
 
 		// variables
-		sim::SignalType _health = 1.f;
-		sim::Entity & _entity;
-		sim::Transmitter _health_transmitter;
+		sim::Health & _health;
 	};
 }

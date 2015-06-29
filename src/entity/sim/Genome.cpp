@@ -1,5 +1,5 @@
 //
-//  scripts/ga/AnimatController.cpp
+//  entity/sim/Genome.cpp
 //  crag
 //
 //  Created by John McFarlane on 2013-03-01.
