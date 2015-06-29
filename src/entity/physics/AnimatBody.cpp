@@ -11,25 +11,20 @@
 
 #include "AnimatBody.h"
 
+#include <entity/sim/Health.h>
+
 #include <sim/Engine.h>
-#include <sim/Entity.h>
 
 #include <physics/Engine.h>
-
-#include <ipc/Daemon.h>
-#include <ipc/Handle_Impl.h>
 
 #include <core/RosterObjectDefine.h>
 
 using namespace physics;
 
-CONFIG_DECLARE(sim_tick_duration, core::Time);
-
 namespace
 {
 	CONFIG_DEFINE(animat_health_exchange_coefficient, .1f);
-	CONFIG_DEFINE(animat_health_loss_per_second, .01f);
-	CONFIG_DEFINE(animat_health_loss_per_contact, .001f);
+	CONFIG_DEFINE(animat_health_gain_per_contact, -.001f);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -39,70 +34,34 @@ CRAG_ROSTER_OBJECT_DEFINE(
 	AnimatBody,
 	100,
 	Pool::CallBase<Body, & Body::PreTick>(Engine::GetPreTickRoster()),
-	Pool::Call<& AnimatBody::PostTick>(Engine::GetPostTickRoster()));
-
+	Pool::CallBase<Body, & Body::PostTick>(Engine::GetPostTickRoster()));
 
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(AnimatBody, self)
 	CRAG_VERIFY(static_cast<SphereBody const &>(self));
-	CRAG_VERIFY_OP(self._health, >=, 0);
-	self._health_transmitter.ForEachReceiver([] (sim::Receiver const & r)
-	{
-		CRAG_VERIFY(r);
-	});
+	CRAG_VERIFY_REF(self._health);
 CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 AnimatBody::AnimatBody(
 	Transformation const & transformation, Vector3 const * velocity, physics::Engine & engine,
-	Scalar radius, sim::Entity & entity) noexcept
+	Scalar radius, sim::Health & health) noexcept
 : SphereBody(transformation, velocity, engine, radius)
-, _entity(entity)
+, _health(health)
 {
-}
-
-void AnimatBody::PostTick() noexcept
-{
-	SphereBody::PostTick();
-
-	_health -= animat_health_loss_per_second * sim::SignalType(sim_tick_duration);
-	if (_health <= 0)
-	{
-		OnZeroHealth();
-	}
-
-	_health_transmitter.TransmitSignal(_health);
-}
-
-void AnimatBody::AddHealthReceiver(sim::Receiver & receiver)
-{
-	return _health_transmitter.AddReceiver(receiver);
 }
 
 void AnimatBody::OnContact(Body & that_body) noexcept
 {
-	if (! _health)
-	{
-		return;
-	}
-
-	_health -= animat_health_loss_per_contact;
-	if (_health <= 0)
-	{
-		_health = 0;
-		OnZeroHealth();
-	}
-
 	CRAG_VERIFY_OP(& that_body, !=, this);
+
+	_health.IncrementHealth(animat_health_gain_per_contact);
+
 	if (! that_body.HasHealth() || & that_body < this)
 	{
 		return;
 	}
 
 	auto & that_animat_body = core::StaticCast<AnimatBody>(that_body);
-	auto & that_health = that_animat_body._health;
-	if (! that_health)
-	{
-		return;
-	}
+	that_animat_body._health.IncrementHealth(animat_health_gain_per_contact);
 
 	// calculate the height advantage of this animat
 	auto gravity = geom::Normalized(GetGravitationalForce() + that_body.GetGravitationalForce());
@@ -112,41 +71,11 @@ void AnimatBody::OnContact(Body & that_body) noexcept
 	// higher animat wins health from lower animat
 	auto health_delta = height_advantage * animat_health_exchange_coefficient;
 
-	auto steal_health = [] (AnimatBody & stealer, AnimatBody & victim, float amount)
-	{
-		// if all of the victim's health is taken
-		if (victim._health <= amount)
-		{
-			// stealer's reward is capped at total taken
-			stealer._health += victim._health;
-			victim._health = 0;
-			victim.OnZeroHealth();
-		}
-		else
-		{
-			stealer._health += amount;
-			victim._health -= amount;
-		}
-	};
-
-	if (health_delta < 0)
-	{
-		steal_health(that_animat_body, * this, - health_delta);
-	}
-	else if (health_delta > 0)
-	{
-		steal_health(* this, that_animat_body, health_delta);
-	}
+	_health.IncrementHealth(health_delta);
+	that_animat_body._health.IncrementHealth(- health_delta);
 }
 
 bool AnimatBody::HasHealth() const noexcept
 {
 	return true;
-}
-
-void AnimatBody::OnZeroHealth() const noexcept
-{
-	// (delayed) destruction of the victim
-	auto victim_handle = _entity.GetHandle();
-	victim_handle.Release();
 }

@@ -11,12 +11,10 @@
 
 #include "AnimatController.h"
 
+#include "Health.h"
 #include "Thruster.h"
 
-#include "sim/Engine.h"
-#include "sim/Entity.h"
-
-#include "core/RosterObjectDefine.h"
+#include <core/RosterObjectDefine.h>
 
 using namespace sim;
 
@@ -35,9 +33,10 @@ CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(AnimatController, self)
 	CRAG_VERIFY(static_cast<VehicleController const &>(self));
 CRAG_VERIFY_INVARIANTS_DEFINE_END
 
-AnimatController::AnimatController(Entity & entity, float radius, ga::Genome && genome)
+AnimatController::AnimatController(Entity & entity, float radius, ga::Genome && genome, HealthPtr && health)
 : VehicleController(entity)
 , _genome(std::move(genome))
+, _health(std::move(health))
 {
 	CreateHealthReceiver();
 	CreateSensors(radius);
