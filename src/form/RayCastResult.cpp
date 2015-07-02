@@ -33,6 +33,13 @@ RayCastResult::operator bool () const
 	return _distance != _max_distance;
 }
 
+Vector3 RayCastResult::GetNormal() const noexcept
+{
+	CRAG_VERIFY(* this);
+
+	return _normal;
+}
+
 Scalar RayCastResult::GetDistance() const
 {
 	CRAG_VERIFY(* this);
