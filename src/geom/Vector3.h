@@ -66,9 +66,10 @@ namespace geom
 			return reinterpret_cast<S const *>(this);
 		}
 
-		static Vector constexpr Zero() 
+		static Vector const & Zero()
 		{
-			return Vector(0, 0, 0); 
+			static constexpr auto zero_vector = Vector(0, 0, 0);
+			return zero_vector;
 		}
 		
 		static Vector Max()

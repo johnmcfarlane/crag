@@ -131,9 +131,8 @@ void ConstructAnimat(sim::Entity & entity, sim::Vector3 const & position, sim::g
 	auto health = new Health(entity.GetHandle());
 
 	// physics
-	auto zero_vector = sim::Vector3::Zero();
 	auto body = new physics::AnimatBody(
-		sim::Transformation(sphere.center), & zero_vector, physics_engine,
+		sim::Transformation(sphere.center), & sim::Vector3::Zero(), physics_engine,
 		sphere.radius, * health);
 	body->SetDensity(1);
 	entity.SetLocation(std::unique_ptr<physics::Location>(body));
