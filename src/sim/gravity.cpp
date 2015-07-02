@@ -20,7 +20,6 @@
 
 using namespace sim;
 
-
 namespace
 {
 	CONFIG_DEFINE(gravitational_constant, 0.0000000025f);
@@ -29,16 +28,8 @@ namespace
 	// reasonable approximation of the weight vector at that position.
 	Vector3 Weight(Engine & engine, Vector3 pos, Scalar mass)
 	{
-		Vector3 force = Vector3::Zero();
-		
-		engine.ForEachObject([& pos, & force] (Entity const & entity) {
-			auto location = entity.GetLocation();
-			if (location)
-			{
-				force += location->GetGravitationalAttraction(pos);
-			}
-		});
-		
+		Vector3 force = GetGravitationalForce(engine, pos);
+
 		return force * Scalar(mass) * Scalar(gravitational_constant);
 	}
 
@@ -59,6 +50,21 @@ namespace
 		body.SetGravitationalForce(gravity);
 	}
 	
+}
+
+Vector3 sim::GetGravitationalForce(Engine & engine, Vector3 position)
+{
+	Vector3 force = Vector3::Zero();
+
+	engine.ForEachObject([&] (Entity const & entity) {
+		auto location = entity.GetLocation();
+		if (location)
+		{
+			force += location->GetGravitationalAttraction(position);
+		}
+	});
+
+	return force;
 }
 
 void sim::ApplyGravity(Engine & engine, core::Time delta)

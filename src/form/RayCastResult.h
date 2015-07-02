@@ -33,7 +33,9 @@ namespace form
 		RayCastResult(Vector3 const & normal, Scalar distance, Node const * node);
 
 		operator bool () const;
-		
+
+		Vector3 GetNormal() const noexcept;
+
 		Scalar GetDistance() const;
 
 		Node const * GetNode() const;

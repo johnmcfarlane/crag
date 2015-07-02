@@ -33,14 +33,13 @@
 CONFIG_DECLARE(player_type, int);
 CONFIG_DEFINE(num_animats, 50);
 CONFIG_DECLARE(origin_dynamic_enable, bool);
+CONFIG_DEFINE(animat_birth_bump, 1000.f);
 
 using geom::Vector3f;
 using applet::AppletInterface;
 
 namespace 
 {
-	CONFIG_DEFINE(animat_birth_elevation, 10.f);
-
 	////////////////////////////////////////////////////////////////////////////////
 	// types
 	typedef std::vector<sim::EntityHandle> EntityVector;
@@ -99,7 +98,6 @@ namespace
 
 				auto parent_genomes = std::array<sim::ga::Genome const *, 2>();
 				auto sum_position = sim::Vector3::Zero();
-				auto sum_gravity = sim::Vector3::Zero();
 
 				for (auto parent_index = 0; parent_index != 2; ++ parent_index)
 				{
@@ -122,9 +120,7 @@ namespace
 
 					// positional
 					auto & location = * parent_controller->GetEntity().GetLocation();
-					auto & body = core::StaticCast<physics::Body>(location);
-					sum_position += body.GetTranslation();
-					sum_gravity += geom::Normalized(body.GetGravitationalForce());
+					sum_position += location.GetTranslation();
 				};
 
 				if (parent_genomes[0] == parent_genomes[1])
@@ -133,11 +129,11 @@ namespace
 				}
 
 				auto child_genome = sim::ga::Genome(* parent_genomes[0], * parent_genomes[1]);
-				auto child_position = sum_position * .5f - geom::Normalized(sum_gravity) * animat_birth_elevation;
+				auto child_horizontal_position = sum_position * .5f;
 
 				auto handle = sim::EntityHandle::CreateFromUid(ipc::Uid::Create());
 				auto entity = engine.CreateObject<sim::Entity>(handle);
-				ConstructAnimat(* entity, child_position, std::move(child_genome));
+				ConstructAnimat(* entity, child_horizontal_position, std::move(child_genome));
 			}
 		});
 	}

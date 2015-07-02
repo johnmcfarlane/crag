@@ -116,14 +116,6 @@ namespace core
 		DEBUG_MESSAGE("%s", s.str().c_str()); \
 	)
 
-// standard library error reporter
-#define AssertErrno() \
-	DO_STATEMENT ( \
-		if (errno != 0) { \
-			DEBUG_BREAK("errno: %d '%s'", errno, strerror(errno)); \
-		} \
-	)
-
 #define CRAG_DEBUG_ONCE CRAG_ONCE
 
 #else
@@ -138,7 +130,6 @@ namespace core
 #define DEBUG_BREAK(...) UNREACHABLE()
 #define ASSERT(CONDITION) DO_NOTHING
 #define CRAG_DEBUG_DUMP(EXPRESSION) DO_NOTHING
-#define AssertErrno() DO_NOTHING
 #define CRAG_DEBUG_ONCE (false)
 
 #endif

@@ -13,6 +13,9 @@
 
 namespace sim
 {
+	// return the force acting on a particle at given position
+	Vector3 GetGravitationalForce(Engine & engine, Vector3 position);
+
 	// simulates gravitational interactions between the given entities
 	void ApplyGravity(Engine & engine, core::Time delta);
 	
