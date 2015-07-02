@@ -480,7 +480,7 @@ CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(physics::Body, self)
 	
 	if (! self._body_handle)
 	{
-		CRAG_VERIFY(self._gravitational_force == Vector3::Zero());
+		CRAG_VERIFY_EQUAL(self._gravitational_force, Vector3::Zero());
 	}
 CRAG_VERIFY_INVARIANTS_DEFINE_END
 
