@@ -115,7 +115,7 @@ namespace ipc
 		template <typename FUNCTION>
 		void ForEachObject(FUNCTION f)
 		{
-			ForEachPair([& f] (typename ObjectMap::value_type const & pair) {
+			ForEachPair([f] (typename ObjectMap::value_type const & pair) {
 				f(* pair.second);
 			});
 		}
@@ -123,7 +123,7 @@ namespace ipc
 		template <typename FUNCTION>
 		void ForEachObject(FUNCTION f) const
 		{
-			ForEachPair([& f] (typename ObjectMap::value_type const & pair) {
+			ForEachPair([f] (typename ObjectMap::value_type const & pair) {
 				f(* pair.second);
 			});
 		}
