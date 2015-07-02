@@ -22,6 +22,7 @@
 
 #include "sim/Engine.h"
 #include "sim/Entity.h"
+#include <sim/gravity.h>
 
 #include "physics/defs.h"
 #include "physics/BoxBody.h"
@@ -63,7 +64,11 @@ namespace
 	CONFIG_DEFINE(camera_radius, .5f);
 	CONFIG_DEFINE(camera_density, 1.f);
 	CONFIG_DEFINE(camera_linear_damping, 0.5f);
-	
+
+	CONFIG_DEFINE(animat_radius, 1.f);
+	CONFIG_DEFINE(animat_birth_elevation, 5.f);
+	CONFIG_DEFINE(animat_elevation_test_length, 10000.f);
+
 	////////////////////////////////////////////////////////////////////////////////
 	// local functions
 
@@ -119,11 +124,48 @@ namespace
 		auto controller = std::unique_ptr<CameraController>(new CameraController(camera, subject));
 		camera.SetController(std::move(controller));
 	}
+
+	// given a horizontal_position with altitude (- search_radius, search_radius),
+	// return a position that is given distance from ground at that position
+	Vector3 GetElevation(sim::Engine & engine, sim::Vector3 const & horizontal_position, sim::Scalar height, sim::Scalar search_radius)
+	{
+		auto surface = GetSurface(engine, horizontal_position, search_radius);
+
+		// actually in the direction of the surface normal; not the upward direction
+		return geom::Project(surface, height);
+	}
 }
 
-void ConstructAnimat(sim::Entity & entity, sim::Vector3 const & position, sim::ga::Genome && genome)
+sim::Ray3 GetSurface(sim::Engine & engine, sim::Vector3 const & horizontal_position, sim::Scalar search_radius)
 {
-	sim::Sphere3 sphere(position, 1);
+	// determine which way is down at the given position
+	auto gravity = sim::GetGravitationalForce(engine, horizontal_position);
+	auto down_direction = geom::Normalized(gravity);
+
+	// create a downward-pointing unit ray which points through the given position from above
+	auto cast_ray = sim::Ray3(horizontal_position - down_direction * search_radius, down_direction);
+
+	// where does ray hit a surface?
+	auto & physics_engine = engine.GetPhysicsEngine();
+	auto search_diameter = 2.f * search_radius;
+	auto result = physics_engine.CastRay(cast_ray, search_diameter);
+
+	if (! result)
+	{
+		DEBUG_BREAK("CastRay returned no result");
+
+		// of any point on the ray that was tested,
+		// this presumably has the most chance if being in the clear
+		return sim::Ray3(cast_ray.position, - cast_ray.direction);
+	}
+
+	return sim::Ray3(
+		geom::Project(cast_ray, result.GetDistance()),
+		result.GetNormal());
+}
+
+void ConstructAnimat(sim::Entity & entity, sim::Vector3 const & horizontal_position, sim::ga::Genome && genome)
+{
 	sim::Engine & engine = entity.GetEngine();
 	physics::Engine & physics_engine = engine.GetPhysicsEngine();
 
@@ -131,6 +173,8 @@ void ConstructAnimat(sim::Entity & entity, sim::Vector3 const & position, sim::g
 	auto health = new Health(entity.GetHandle());
 
 	// physics
+	auto position = GetElevation(engine, horizontal_position, animat_birth_elevation, animat_elevation_test_length);
+	sim::Sphere3 sphere(position, animat_radius);
 	auto body = new physics::AnimatBody(
 		sim::Transformation(sphere.center), & sim::Vector3::Zero(), physics_engine,
 		sphere.radius, * health);
@@ -277,9 +321,9 @@ std::vector<sim::EntityHandle> SpawnAnimats(sim::Vector3 const & base_position, 
 		offset.y = std::abs(offset.y);
 		Random::sequence.GetGaussians(offset.z, r);
 
-		auto position = base_position + offset * 10.f;
+		auto horizontal_position = base_position + offset * 50.f;
 
-		animat = SpawnAnimat(position);
+		animat = SpawnAnimat(horizontal_position);
 	}
 
 	return animats;
