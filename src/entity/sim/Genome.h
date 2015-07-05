@@ -42,6 +42,7 @@ namespace sim
 
 			GeneType operator[] (size_type index) const noexcept;
 
+			void push_back(GeneType gene);
 			void Grow() noexcept;
 
 		private:

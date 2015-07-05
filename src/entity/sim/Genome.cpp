@@ -96,6 +96,14 @@ GeneType Genome::operator[] (size_type index) const noexcept
 	return _buffer[index];
 }
 
+void Genome::push_back(GeneType gene)
+{
+	CRAG_VERIFY_OP(gene, >=, 0);
+	CRAG_VERIFY_OP(gene, <=, 1);
+
+	_buffer.push_back(gene);
+}
+
 void Genome::Grow() noexcept
 {
 	_buffer.push_back(Random::sequence.GetFloatInclusive<float>());
