@@ -792,7 +792,7 @@ namespace
 			{
 				// graphics
 				gfx::ObjectHandle model_handle = gfx::BallHandle::Create(transformation, saucer_ball_radius, ufo_color3);
-				ball_entity->SetModel(std::move(Entity::ModelPtr(new Model(model_handle, * ball_entity->GetLocation()))));
+				ball_entity->SetModel(std::move(Entity::ModelPtr(new Model(model_handle, * ball_body))));
 				
 				exception_object = model_handle;
 			}
