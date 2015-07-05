@@ -21,8 +21,8 @@
 using namespace sim;
 
 CONFIG_DEFINE(animat_sensor_length, 5.f);
-CONFIG_DEFINE(animat_thruster_length, 25.f);
-CONFIG_DEFINE(animat_thruster_gain_coefficient, -.0001f);
+CONFIG_DEFINE(animat_thruster_length, 15.f);
+CONFIG_DEFINE(animat_thruster_gain_coefficient, -.0002f);
 
 ////////////////////////////////////////////////////////////////////////////////
 // sim::AnimatController member definitions
