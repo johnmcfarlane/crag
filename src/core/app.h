@@ -26,6 +26,7 @@ namespace app
 	char const * GetFullPath(char const * filepath);
 	FileResource LoadFile(char const * filename, bool null_terminate = false);
 	bool SaveFile(char const * filename, FileResource const & buffer);
+	bool SaveFile(char const * filename, void const * data, std::size_t size);
 	
 	// misc
 	void Beep();

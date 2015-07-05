@@ -261,6 +261,11 @@ app::FileResource app::LoadFile(char const * filename, bool null_terminate)
 
 bool app::SaveFile(char const * filename, app::FileResource const & buffer)
 {
+	return SaveFile(filename, static_cast<void const *>(buffer.data()), buffer.size());
+}
+
+bool app::SaveFile(char const * filename, void const * data, std::size_t size)
+{
 	ASSERT(filename);
 
 	// open file
@@ -272,8 +277,8 @@ bool app::SaveFile(char const * filename, app::FileResource const & buffer)
 	}
 
 	// write file
-	auto length = buffer.size();
-	auto written = SDL_RWwrite(destination, buffer.data(), 1, length);
+	auto length = size;
+	auto written = SDL_RWwrite(destination, data, 1, length);
 	if (written != length)
 	{
 		DEBUG_MESSAGE("only wrote " SIZE_T_FORMAT_SPEC " bytes of " SIZE_T_FORMAT_SPEC " byte file, '%s':", written, length, filename);
