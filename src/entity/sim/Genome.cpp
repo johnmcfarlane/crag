@@ -60,6 +60,11 @@ Genome::Genome(Genome const & parent1, Genome const & parent2) noexcept
 	}
 }
 
+bool Genome::empty() const noexcept
+{
+	return _buffer.empty();
+}
+
 Genome::size_type Genome::size() const noexcept
 {
 	return _buffer.size();

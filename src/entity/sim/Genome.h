@@ -31,6 +31,7 @@ namespace sim
 			Genome() noexcept;
 			Genome(Genome const & parent1, Genome const & parent2) noexcept;
 
+			bool empty() const noexcept;
 			size_type size() const noexcept;
 
 			const_iterator begin() const noexcept;
