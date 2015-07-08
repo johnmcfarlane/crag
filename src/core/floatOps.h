@@ -211,6 +211,17 @@ inline bool IsInf(float n)
 	return IsInf(double(n));
 }
 
+//////////////////////////////////////////////////////////////////////
+// Linear Interpolation
+
+namespace crag
+{
+	template <typename S>
+	S lerp(S const & _0, S const & _1, S t)
+	{
+		return (_0 * (S(1) - t)) + (_1 * t);
+	}
+}
 
 //////////////////////////////////////////////////////////////////////
 // Bicubic Interpolation
