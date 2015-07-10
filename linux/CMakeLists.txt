@@ -33,6 +33,7 @@ set(SOURCE_FILES
     ${CRAG_SOURCE_DIRECTORY}/core/Enumeration.h
     ${CRAG_SOURCE_DIRECTORY}/core/EventWatcher.cpp
     ${CRAG_SOURCE_DIRECTORY}/core/EventWatcher.h
+    ${CRAG_SOURCE_DIRECTORY}/core/fixed_point.h
     ${CRAG_SOURCE_DIRECTORY}/core/floatOps.h
     ${CRAG_SOURCE_DIRECTORY}/core/function_ref.h
     ${CRAG_SOURCE_DIRECTORY}/core/GlobalResourceManager.cpp
