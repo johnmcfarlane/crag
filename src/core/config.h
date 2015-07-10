@@ -43,7 +43,7 @@
 #endif
 #elif defined(_MSC_VER)
 #define CRAG_COMPILER_MSVC
-#if _MSC_VER >= 1800	// VS2013 and older
+#if _MSC_VER >= 1800	// >= VS2013
 #define CRAG_COMPILER_MATURE
 #endif
 #else
@@ -59,17 +59,17 @@
 #define WIN32_C2079_WORKAROUND	// undefined struct caused by missing include directive
 #define WIN32_C2338_WORKAROUND	// caused by differences in pointer sizes between VC & other compilers
 
-#if _MSC_VER < 1900	// VS2013
+#if _MSC_VER < 1900	// < VS2015
 #define WIN32_C2327_WORKAROUND	// not a type name, static, or enumerator (intrusive list)
 #define WIN32_C3646_WORKAROUND	// 'noexcept' : unknown override specifier
 #define WIN32_C3861_WORKAROUND	// 'alignof' : identifier not found (__alignof and _snprintf)
 #endif
 
-#if _MSC_VER < 1800	// pre VS2013
+#if _MSC_VER < 1800	// < VS2013
 #define WIN32_C2144_WORKAROUND	// syntax error : 'char' should be preceded by ';' (threadlocal)
 #endif
 
-#if _MSC_VER < 1900	// VS2015
+#if _MSC_VER < 1900	// < VS2015
 #define constexpr const
 #endif
 
