@@ -9,35 +9,37 @@
 
 #pragma once
 
-
-// http://www.opengroup.org/onlinepubs/000095399/functions/rand.html
 class Random
 {
 public:
 	////////////////////////////////////////////////////////////////////////////
 	// types
 	
-	typedef uint32_t ValueType;
-	
+	using generator_type = std::minstd_rand;
+	using result_type = generator_type::result_type;
+
 	////////////////////////////////////////////////////////////////////////////
 	// functions
 	
-	Random(ValueType iseed = 1) : seed(iseed) { }
+	Random(result_type seed = 1) : generator(seed) { }
 	
 	// returns pseudo-random whole number in the range [0, maximum]
-	ValueType GetInt()
+	result_type GetInt()
 	{
-		seed = seed * 1103515245 + 12345;
-		return (static_cast<ValueType>(seed >> (num_bits + 1)) & maximum);
+		return generator();
 	}
 	
 	// returns pseudo-random whole number in the range [0, limit)
-	ValueType GetInt(ValueType limit)
+	result_type GetInt(result_type limit)
 	{
 		uint64_t r = GetInt();
 		r *= limit;
-		r >>= num_bits;
-		return static_cast<ValueType>(r);
+		r /= bound;
+
+		CRAG_VERIFY_OP(r, >=, 0U);
+		CRAG_VERIFY_OP(r, <, limit);
+
+		return static_cast<result_type>(r);
 	}
 
 	// returns pseudo-random number in the range [0, limit)
@@ -117,11 +119,15 @@ public:
 	// constants
 	enum
 	{
-		num_bits = 15,
-		bound = 1 << num_bits,
-		maximum = bound - 1
+		num_bits = 31,
+		bound = generator_type::modulus,
+		maximum = generator_type::max()
 	};
-	
+
+	// would be nicer if maximum - rather than bound - could be used here;
+	// then we'd have same number of even numbers as odd numbers and GetBool would be more accurate
+	static_assert((1UL << num_bits) - 1 == bound, "incorrect hand-coded value for Random::num_bits");
+
 	// global seed
 	static Random sequence;
 	
@@ -129,6 +135,5 @@ private:
 	////////////////////////////////////////////////////////////////////////////
 	// variables
 
-	ValueType seed;
+	generator_type generator;
 };
-
