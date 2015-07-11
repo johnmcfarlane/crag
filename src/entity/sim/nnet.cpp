@@ -56,10 +56,10 @@ CRAG_ROSTER_OBJECT_DEFINE(
 
 Neuron::Neuron(GenomeReader & genome_reader) noexcept
 	: sigmoid(
-		genome_reader.Read() - .5f,
-		genome_reader.Read(),
-		genome_reader.Read() - .5f,
-		genome_reader.Read())
+	genome_reader.Read().closed() - .5f,
+	genome_reader.Read().open(),
+	genome_reader.Read().closed() - .5f,
+	genome_reader.Read().open())
 {
 }
 
@@ -94,7 +94,7 @@ Layer::Layer(GenomeReader & genome_reader, int num_inputs, int num_neurons) noex
 		{
 			input->Connect(Connection{
 				neuron_ptr.get(),
-				genome_reader.Read() * 2.f - 1.f
+				genome_reader.Read().closed() * 2.f - 1.f
 			});
 		}
 
