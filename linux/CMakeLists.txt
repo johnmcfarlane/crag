@@ -84,6 +84,8 @@ set(SOURCE_FILES
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/CameraController.h
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/Contact.cpp
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/Contact.h
+    ${CRAG_SOURCE_DIRECTORY}/entity/sim/Gene.cpp
+    ${CRAG_SOURCE_DIRECTORY}/entity/sim/Gene.h
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/Genome.cpp
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/Genome.h
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/Health.cpp
