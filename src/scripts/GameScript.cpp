@@ -55,7 +55,7 @@ namespace
 
 	CONFIG_DEFINE(profile_max_ticks, std::uint64_t(10000));
 
-	geom::abs::Vector3 player_start_pos(5, 9999400, 0);
+	geom::abs::Vector3 player_start_pos(5, 9998320, 0);
 	size_t max_shapes = 250;
 	bool cleanup_shapes = true;
 	
