@@ -121,6 +121,7 @@ namespace crag
 				return _repr;
 			}
 
+		private:
 			template <typename S, typename std::enable_if<std::is_floating_point<S>::value, int>::type dummy = 0>
 			static constexpr S one() noexcept
 			{
@@ -133,7 +134,6 @@ namespace crag
 				return int_to_repr(1);
 			}
 
-		private:
 			template <typename S>
 			static constexpr S inverse_one() noexcept
 			{
