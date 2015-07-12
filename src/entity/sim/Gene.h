@@ -41,6 +41,9 @@ namespace sim
 			// return a value in the range (0,1)
 			value_type open() const noexcept;
 
+			static Gene from_repr(unit_repr_type repr) noexcept;
+			unit_repr_type to_repr() const noexcept;
+
 		private:
 			unit_type _value;
 		};

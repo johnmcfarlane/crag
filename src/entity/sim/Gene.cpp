@@ -2,6 +2,8 @@
 // Created by john on 7/4/15.
 //
 
+#include "pch.h"
+
 #include "Gene.h"
 
 #include <core/Random.h>
@@ -85,4 +87,18 @@ Gene::value_type Gene::open() const noexcept
 	CRAG_VERIFY(* this);
 
 	return make_open<value_type>(_value);
+}
+
+Gene Gene::from_repr(unit_repr_type repr) noexcept
+{
+	Gene gene;
+	gene._value = unit_type::from_data(repr);
+	return gene;
+}
+
+Gene::unit_repr_type Gene::to_repr() const noexcept
+{
+	CRAG_VERIFY(* this);
+
+	return _value.data();
 }
