@@ -82,7 +82,7 @@ namespace
 				return app::FileResource();
 			}
 
-			auto source_buffer = app::LoadFile(filename);
+			auto source_buffer = app::LoadFile(filename, app::FileType::asset);
 
 			if (!source_buffer.empty())
 			{

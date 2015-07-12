@@ -282,7 +282,7 @@ namespace
 		Lines lines;
 
 		// load
-		auto in_buffer = app::LoadFile(config_filename, true), tmp_buffer = in_buffer;
+		auto in_buffer = app::LoadFile(config_filename, app::FileType::state, true), tmp_buffer = in_buffer;
 		if (! in_buffer.data())
 		{
 			ERROR_MESSAGE("Failed to load config file, \"%s\". Generating fresh copy.", config_filename);
@@ -320,7 +320,7 @@ namespace
 		if (has_changed(in_buffer, out_buffer))
 		{
 			// only save if there's any change
-			if (! app::SaveFile(config_filename, out_buffer))
+			if (! app::SaveFile(config_filename, app::FileType::state, out_buffer))
 			{
 				return false;
 			}

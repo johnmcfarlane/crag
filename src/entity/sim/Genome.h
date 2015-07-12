@@ -9,18 +9,18 @@
 
 #pragma once
 
+#include "Gene.h"
+
 namespace sim
 {
 	namespace ga
 	{
-		using GeneType = float;
-
 		////////////////////////////////////////////////////////////////////////////////
 		// the set of Genes associated with an Animat
 		class Genome
 		{
 			// types
-			using buffer_type = std::vector<GeneType>;
+			using buffer_type = std::vector<Gene>;
 		public:
 			using size_type = buffer_type::size_type;
 			using difference_type = buffer_type::difference_type;
@@ -31,6 +31,7 @@ namespace sim
 			Genome() noexcept;
 			Genome(Genome const & parent1, Genome const & parent2) noexcept;
 
+			bool empty() const noexcept;
 			size_type size() const noexcept;
 
 			const_iterator begin() const noexcept;
@@ -39,8 +40,9 @@ namespace sim
 			const_iterator end() const noexcept;
 			iterator end() noexcept;
 
-			GeneType operator[] (size_type index) const noexcept;
+			Gene operator[] (size_type index) const noexcept;
 
+			void push_back(Gene gene);
 			void Grow() noexcept;
 
 		private:
@@ -57,7 +59,7 @@ namespace sim
 		public:
 			GenomeReader(Genome & genome) noexcept;
 
-			GeneType Read() noexcept;
+			Gene Read() noexcept;
 		private:
 			Genome & _genome;
 			Genome::size_type _position = 0;

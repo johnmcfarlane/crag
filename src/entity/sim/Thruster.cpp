@@ -128,7 +128,7 @@ void Thruster::Tick()
 	auto & location = * GetEntity().GetLocation();
 	auto & body = core::StaticCast<physics::Body>(location);
 	auto & ray = _ray;
-	body.AddRelForceAtRelPos(ray.direction * GetSignal(), ray.position);
+	body.AddRelForceAtRelPos(ray.direction * static_cast<Scalar>(GetSignal()), ray.position);
 }
 
 void Thruster::UpdateModel()

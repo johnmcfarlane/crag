@@ -41,23 +41,15 @@ Genome::Genome(Genome const & parent1, Genome const & parent2) noexcept
 	{
 		CRAG_VERIFY_TRUE(iterators.second != std::end(parent2));
 
-		auto generate_gene = [&] ()
-		{
-			auto splicing = Random::sequence.GetBool() ? * iterators.first : * iterators.second;
-
-			if (Random::sequence.GetBool(mutation_rate))
-			{
-				auto mutation_weight = Random::sequence.GetFloat<GeneType>();
-				auto existing_weight = 1.f - mutation_weight;
-				auto mutated_value = splicing * existing_weight + mutation_weight * mutation_weight;
-				return mutated_value;
-			}
-
-			return splicing;
-		};
-
-		_buffer.push_back(generate_gene());
+		auto const & parent1 = * iterators.first;
+		auto const & parent2 = * iterators.second;
+		_buffer.push_back(Gene(parent1, parent2, Random::sequence, mutation_rate));
 	}
+}
+
+bool Genome::empty() const noexcept
+{
+	return _buffer.empty();
 }
 
 Genome::size_type Genome::size() const noexcept
@@ -85,15 +77,20 @@ Genome::iterator Genome::end() noexcept
 	return std::end(_buffer);
 }
 
-GeneType Genome::operator[] (size_type index) const noexcept
+Gene Genome::operator[] (size_type index) const noexcept
 {
 	CRAG_VERIFY_OP(index, <, size());
 	return _buffer[index];
 }
 
+void Genome::push_back(Gene gene)
+{
+	_buffer.push_back(gene);
+}
+
 void Genome::Grow() noexcept
 {
-	_buffer.push_back(Random::sequence.GetFloatInclusive<float>());
+	_buffer.push_back(Random::sequence);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -104,7 +101,7 @@ GenomeReader::GenomeReader(Genome & genome) noexcept
 {
 }
 
-GeneType GenomeReader::Read() noexcept
+Gene GenomeReader::Read() noexcept
 {
 	if (_position == _genome.size())
 	{

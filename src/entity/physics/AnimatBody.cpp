@@ -24,7 +24,7 @@ using namespace physics;
 namespace
 {
 	CONFIG_DEFINE(animat_health_exchange_coefficient, .1f);
-	CONFIG_DEFINE(animat_health_gain_per_contact, -.001f);
+	CONFIG_DEFINE(animat_health_gain_per_contact, -.005f);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -53,15 +53,18 @@ void AnimatBody::OnContact(Body & that_body) noexcept
 {
 	CRAG_VERIFY_OP(& that_body, !=, this);
 
-	_health.IncrementHealth(animat_health_gain_per_contact);
+	if (! that_body.HasHealth())
+	{
+		_health.IncrementHealth(animat_health_gain_per_contact);
+		return;
+	}
 
-	if (! that_body.HasHealth() || & that_body < this)
+	if (& that_body < this)
 	{
 		return;
 	}
 
 	auto & that_animat_body = core::StaticCast<AnimatBody>(that_body);
-	that_animat_body._health.IncrementHealth(animat_health_gain_per_contact);
 
 	// calculate the height advantage of this animat
 	auto gravity = geom::Normalized(GetGravitationalForce() + that_body.GetGravitationalForce());

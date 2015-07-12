@@ -33,6 +33,7 @@ set(SOURCE_FILES
     ${CRAG_SOURCE_DIRECTORY}/core/Enumeration.h
     ${CRAG_SOURCE_DIRECTORY}/core/EventWatcher.cpp
     ${CRAG_SOURCE_DIRECTORY}/core/EventWatcher.h
+    ${CRAG_SOURCE_DIRECTORY}/core/fixed_point.h
     ${CRAG_SOURCE_DIRECTORY}/core/floatOps.h
     ${CRAG_SOURCE_DIRECTORY}/core/function_ref.h
     ${CRAG_SOURCE_DIRECTORY}/core/GlobalResourceManager.cpp
@@ -83,6 +84,8 @@ set(SOURCE_FILES
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/CameraController.h
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/Contact.cpp
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/Contact.h
+    ${CRAG_SOURCE_DIRECTORY}/entity/sim/Gene.cpp
+    ${CRAG_SOURCE_DIRECTORY}/entity/sim/Gene.h
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/Genome.cpp
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/Genome.h
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/Health.cpp
@@ -105,6 +108,8 @@ set(SOURCE_FILES
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/Sensor.h
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/Signal.cpp
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/Signal.h
+    ${CRAG_SOURCE_DIRECTORY}/entity/sim/ssga.cpp
+    ${CRAG_SOURCE_DIRECTORY}/entity/sim/ssga.h
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/Thruster.cpp
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/Thruster.h
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/TouchObserverController.cpp

@@ -141,7 +141,7 @@ void Image::Clear(Color4b const & color)
 
 void Image::Load(char const * filename)
 {
-	_surface = IMG_Load(app::GetFullPath(filename));
+	_surface = IMG_Load(app::GetAssetPath(filename));
 	if (! _surface)
 	{
 		DEBUG_BREAK("Failed to load image; filename:%s; error:%s", filename, IMG_GetError());

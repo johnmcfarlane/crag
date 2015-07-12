@@ -88,8 +88,9 @@
 #include <cmath>
 #include <cstddef>
 #include <cstdlib>
+#include <cstdio>
 #include <cstring>
-#include <inttypes.h>	// <cinttypes> not available under Android c++_static libs
+#include <cinttypes>
 
 // C++ standard library
 
