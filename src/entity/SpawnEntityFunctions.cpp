@@ -7,6 +7,7 @@
 //  This program is distributed under the terms of the GNU General Public License.
 //
 
+#include <core/fixed_point.h>
 #include "pch.h"
 
 #include "SpawnEntityFunctions.h"
@@ -15,33 +16,24 @@
 
 #include "entity/gfx/Planet.h"
 #include "entity/physics/PlanetBody.h"
-#include "entity/sim/AnimatController.h"
-#include <entity/sim/AnimatModel.h>
-#include <entity/sim/Health.h>
 #include "entity/sim/PlanetController.h"
 
 #include "sim/Engine.h"
 #include "sim/Entity.h"
-#include <sim/gravity.h>
+#include "sim/Model.h"
 
-#include "physics/defs.h"
 #include "physics/BoxBody.h"
-#include "physics/Engine.h"
-#include "physics/GhostBody.h"
 #include "physics/PassiveLocation.h"
-#include "physics/AnimatBody.h"
 
 #include "form/Scene.h"
 
 #include "gfx/Color.h"
 #include "gfx/Engine.h"
-#include "gfx/LitVertex.h"
-#include "gfx/PlainVertex.h"
 #include "gfx/object/Ball.h"
 #include "gfx/object/Light.h"
 #include "gfx/object/MeshObject.h"
+
 #include "core/ConfigEntry.h"
-#include "core/Random.h"
 
 using namespace sim;
 
@@ -64,10 +56,6 @@ namespace
 	CONFIG_DEFINE(camera_radius, .5f);
 	CONFIG_DEFINE(camera_density, 1.f);
 	CONFIG_DEFINE(camera_linear_damping, 0.5f);
-
-	CONFIG_DEFINE(animat_radius, 1.f);
-	CONFIG_DEFINE(animat_birth_elevation, 5.f);
-	CONFIG_DEFINE(animat_elevation_test_length, 10000.f);
 
 	////////////////////////////////////////////////////////////////////////////////
 	// local functions
@@ -124,94 +112,12 @@ namespace
 		auto controller = std::unique_ptr<CameraController>(new CameraController(camera, subject));
 		camera.SetController(std::move(controller));
 	}
-
-	// given a horizontal_position with altitude (- search_radius, search_radius),
-	// return a position that is given distance from ground at that position
-	Vector3 GetElevation(sim::Engine & engine, sim::Vector3 const & horizontal_position, sim::Scalar height, sim::Scalar search_radius)
-	{
-		auto surface = GetSurface(engine, horizontal_position, search_radius);
-
-		// actually in the direction of the surface normal; not the upward direction
-		return geom::Project(surface, height);
-	}
-}
-
-sim::Ray3 GetSurface(sim::Engine & engine, sim::Vector3 const & horizontal_position, sim::Scalar search_radius)
-{
-	// determine which way is down at the given position
-	auto gravity = sim::GetGravitationalForce(engine, horizontal_position);
-	auto down_direction = geom::Normalized(gravity);
-
-	// create a downward-pointing unit ray which points through the given position from above
-	auto cast_ray = sim::Ray3(horizontal_position - down_direction * search_radius, down_direction);
-
-	// where does ray hit a surface?
-	auto & physics_engine = engine.GetPhysicsEngine();
-	auto search_diameter = 2.f * search_radius;
-	auto result = physics_engine.CastRay(cast_ray, search_diameter);
-
-	if (! result)
-	{
-		DEBUG_BREAK("CastRay returned no result");
-
-		// of any point on the ray that was tested,
-		// this presumably has the most chance if being in the clear
-		return sim::Ray3(cast_ray.position, - cast_ray.direction);
-	}
-
-	return sim::Ray3(
-		geom::Project(cast_ray, result.GetDistance()),
-		result.GetNormal());
-}
-
-void ConstructAnimat(sim::Entity & entity, sim::Vector3 const & horizontal_position, sim::ga::Genome && genome)
-{
-	sim::Engine & engine = entity.GetEngine();
-	physics::Engine & physics_engine = engine.GetPhysicsEngine();
-
-	// health
-	auto health = new Health(entity.GetHandle());
-
-	// physics
-	auto position = GetElevation(engine, horizontal_position, animat_birth_elevation, animat_elevation_test_length);
-	sim::Sphere3 sphere(position, animat_radius);
-	auto body = new physics::AnimatBody(
-		sim::Transformation(sphere.center), & sim::Vector3::Zero(), physics_engine,
-		sphere.radius, * health);
-	body->SetDensity(1);
-	entity.SetLocation(std::unique_ptr<physics::Location>(body));
-
-	// graphics
-	gfx::Transformation local_transformation(sphere.center, gfx::Transformation::Matrix33::Identity(), sphere.radius);
-	gfx::ObjectHandle model_handle = gfx::BallHandle::Create(local_transformation, sphere.radius, gfx::Color4f::Green());
-	auto model = new AnimatModel(model_handle, * body);
-	entity.SetModel(Entity::ModelPtr(model));
-
-	// controller
-	auto controller = new sim::AnimatController(
-		entity, sphere.radius, std::move(genome), sim::AnimatController::HealthPtr(health));
-	entity.SetController(std::unique_ptr<sim::AnimatController>(controller));
-
-	// connect health signal
-	health->GetTransmitter().AddReceiver(model->GetHealthReceiver());
-}
-
-sim::EntityHandle SpawnAnimat(const sim::Vector3 & position)
-{
-	auto animat = sim::EntityHandle::Create();
-
-	animat.Call([position] (sim::Entity & entity)
-	{
-		ConstructAnimat(entity, position, sim::ga::Genome());
-	});
-
-	return animat;
 }
 
 EntityHandle SpawnBall(Sphere3 const & sphere, Vector3 const & velocity, gfx::Color4f color)
 {
 	ASSERT(color.a = 1);
-	
+
 	// ball
 	auto ball = EntityHandle::Create();
 
@@ -307,24 +213,4 @@ EntityHandle SpawnStar(geom::abs::Sphere3 const & volume, gfx::Color4f const & c
 	});
 
 	return sun;
-}
-
-std::vector<sim::EntityHandle> SpawnAnimats(sim::Vector3 const & base_position, int num_animats)
-{
-	std::vector<sim::EntityHandle> animats(num_animats);
-
-	for (auto & animat : animats)
-	{
-		sim::Vector3 offset;
-		float r;
-		Random::sequence.GetGaussians(offset.x, offset.y);
-		offset.y = std::abs(offset.y);
-		Random::sequence.GetGaussians(offset.z, r);
-
-		auto horizontal_position = base_position + offset * 50.f;
-
-		animat = SpawnAnimat(horizontal_position);
-	}
-
-	return animats;
 }

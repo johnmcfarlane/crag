@@ -108,6 +108,8 @@ set(SOURCE_FILES
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/Sensor.h
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/Signal.cpp
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/Signal.h
+    ${CRAG_SOURCE_DIRECTORY}/entity/sim/ssga.cpp
+    ${CRAG_SOURCE_DIRECTORY}/entity/sim/ssga.h
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/Thruster.cpp
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/Thruster.h
     ${CRAG_SOURCE_DIRECTORY}/entity/sim/TouchObserverController.cpp
