@@ -9,6 +9,12 @@
 
 #pragma once
 
+#include <climits>
+#include <cmath>
+#include <cinttypes>
+#include <limits>
+#include <type_traits>
+
 namespace crag
 {
 	namespace core
