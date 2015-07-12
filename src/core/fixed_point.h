@@ -121,6 +121,14 @@ namespace crag
 				return _repr;
 			}
 
+			// creates an instance given the underlying representation value
+			static /*constexpr*/ fixed_point from_data(repr_type repr) noexcept
+			{
+				fixed_point fp;
+				fp._repr = repr;
+				return fp;
+			}
+
 		private:
 			template <typename S, typename std::enable_if<std::is_floating_point<S>::value, int>::type dummy = 0>
 			static constexpr S one() noexcept
