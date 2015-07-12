@@ -191,7 +191,7 @@ void app::DeinitGfx()
 	DeinitContext();
 }
 
-char const * app::GetFullPath(char const * filepath)
+char const * app::GetAssetPath(char const * filepath)
 {
 #if defined(CRAG_OS_ANDROID)
 	static constexpr char prefix[] = "assets/";
@@ -204,12 +204,36 @@ char const * app::GetFullPath(char const * filepath)
 #endif
 }
 
-app::FileResource app::LoadFile(char const * filename, bool null_terminate)
+std::string app::GetStatePath(std::string const & filepath)
+{
+#if defined(CRAG_OS_ANDROID)
+	return std::string(SDL_AndroidGetInternalStoragePath()) + filepath;
+#else
+	return filepath;
+#endif
+}
+
+app::FileResource app::LoadFile(char const * filename, app::FileType file_type, bool null_terminate)
 {
 	ASSERT(filename);
 
 	// open file
-	SDL_RWops * source = SDL_RWFromFile(app::GetFullPath(filename), "rb");
+	SDL_RWops * source;
+	switch (file_type)
+	{
+		case app::FileType::asset:
+			source = SDL_RWFromFile(app::GetAssetPath(filename), "rb");
+			break;
+
+		case app::FileType::state:
+			source = SDL_RWFromFile(app::GetStatePath(filename).c_str(), "rb");
+			break;
+
+		default:
+			DEBUG_BREAK("invalid enum value, %d", static_cast<int>(file_type));
+			return FileResource();
+	}
+
 	if (source == nullptr)
 	{
 		DEBUG_MESSAGE("LoadFile: %s", SDL_GetError());
@@ -259,17 +283,32 @@ app::FileResource app::LoadFile(char const * filename, bool null_terminate)
 	return buffer;
 }
 
-bool app::SaveFile(char const * filename, app::FileResource const & buffer)
+bool app::SaveFile(char const * filename, app::FileType file_type, app::FileResource const & buffer)
 {
-	return SaveFile(filename, static_cast<void const *>(buffer.data()), buffer.size());
+	return SaveFile(filename, file_type, static_cast<void const *>(buffer.data()), buffer.size());
 }
 
-bool app::SaveFile(char const * filename, void const * data, std::size_t size)
+bool app::SaveFile(char const * filename, app::FileType file_type, void const * data, std::size_t size)
 {
 	ASSERT(filename);
 
 	// open file
-	SDL_RWops * destination = SDL_RWFromFile(app::GetFullPath(filename), "wb");
+	SDL_RWops * destination;
+	switch (file_type)
+	{
+		case app::FileType::asset:
+			destination = SDL_RWFromFile(app::GetAssetPath(filename), "wb");
+			break;
+
+		case app::FileType::state:
+			destination = SDL_RWFromFile(app::GetStatePath(filename).c_str(), "wb");
+			break;
+
+		default:
+			DEBUG_BREAK("invalid enum value, %d", static_cast<int>(file_type));
+			return false;
+	}
+
 	if (destination == nullptr)
 	{
 		DEBUG_MESSAGE("SaveFile: %s", SDL_GetError());

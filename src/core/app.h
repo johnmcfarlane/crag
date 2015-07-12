@@ -23,10 +23,18 @@ namespace app
 
 	// file access
 	typedef std::vector<char> FileResource;
-	char const * GetFullPath(char const * filepath);
-	FileResource LoadFile(char const * filename, bool null_terminate = false);
-	bool SaveFile(char const * filename, FileResource const & buffer);
-	bool SaveFile(char const * filename, void const * data, std::size_t size);
+	enum class FileType
+	{
+		asset,
+		state
+	};
+
+	char const * GetAssetPath(char const * filepath);
+	std::string GetStatePath(std::string const & filepath);
+
+	FileResource LoadFile(char const * filename, FileType file_type, bool null_terminate = false);
+	bool SaveFile(char const * filename, FileType file_type, FileResource const & buffer);
+	bool SaveFile(char const * filename, FileType file_type, void const * data, std::size_t size);
 	
 	// misc
 	void Beep();
