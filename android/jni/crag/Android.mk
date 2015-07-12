@@ -39,9 +39,12 @@ LOCAL_SRC_FILES := \
 	$(CRAG_PATH)/entity/physics/PlanetBody.cpp \
 	$(CRAG_PATH)/entity/physics/AnimatBody.cpp \
 	$(CRAG_PATH)/entity/sim/AnimatController.cpp \
+	$(CRAG_PATH)/entity/sim/AnimatModel.cpp \
 	$(CRAG_PATH)/entity/sim/CameraController.cpp \
 	$(CRAG_PATH)/entity/sim/Contact.cpp \
 	$(CRAG_PATH)/entity/sim/Genome.cpp \
+	$(CRAG_PATH)/entity/sim/Gene.cpp \
+	$(CRAG_PATH)/entity/sim/Health.cpp \
 	$(CRAG_PATH)/entity/sim/KeyboardTransmitter.cpp \
 	$(CRAG_PATH)/entity/sim/MoonShader.cpp \
 	$(CRAG_PATH)/entity/sim/MouseObserverController.cpp \
@@ -51,6 +54,7 @@ LOCAL_SRC_FILES := \
 	$(CRAG_PATH)/entity/sim/PlanetShader.cpp \
 	$(CRAG_PATH)/entity/sim/Sensor.cpp \
 	$(CRAG_PATH)/entity/sim/Signal.cpp \
+	$(CRAG_PATH)/entity/sim/ssga.cpp \
 	$(CRAG_PATH)/entity/sim/Thruster.cpp \
 	$(CRAG_PATH)/entity/sim/TouchObserverController.cpp \
 	$(CRAG_PATH)/entity/sim/UfoController1.cpp \
@@ -121,6 +125,7 @@ LOCAL_SRC_FILES := \
 	$(CRAG_PATH)/sim/Entity.cpp \
 	$(CRAG_PATH)/sim/EntityFunctions.cpp \
 	$(CRAG_PATH)/sim/gravity.cpp \
+	$(CRAG_PATH)/sim/Model.cpp \
 	$(CRAG_PATH)/ipc/Fiber.cpp \
 	$(CRAG_PATH)/ipc/FiberAndroid.cpp \
 	$(CRAG_PATH)/ipc/FiberPosix.cpp \
