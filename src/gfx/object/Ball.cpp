@@ -41,7 +41,7 @@ Ball::Ball(Engine & engine, Transformation const & local_transformation, float r
 	SetVboResource(sphere_quad);
 }
 
-void Ball::SetColor(Color4f const & color)
+void Ball::SetColor(Color4f const & color) noexcept
 {
 	_color = color;
 }
