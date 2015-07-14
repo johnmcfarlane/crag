@@ -121,7 +121,12 @@ public:
 	{
 		num_bits = 31,
 		bound = generator_type::modulus,
+#if defined(_MSC_VER)
+		// MSVC implementation of std::minstd_rand::max() is not constexpr
+		maximum = generator_type::modulus
+#else
 		maximum = generator_type::max()
+#endif
 	};
 
 	// would be nicer if maximum - rather than bound - could be used here;
