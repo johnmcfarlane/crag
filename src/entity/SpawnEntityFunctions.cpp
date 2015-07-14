@@ -7,7 +7,6 @@
 //  This program is distributed under the terms of the GNU General Public License.
 //
 
-#include <core/fixed_point.h>
 #include "pch.h"
 
 #include "SpawnEntityFunctions.h"
