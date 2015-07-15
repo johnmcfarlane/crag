@@ -77,6 +77,28 @@ namespace crag
 			{
 				return shift_left<-EXPONENT, OUTPUT, INPUT>(i);
 			}
+
+			// returns given power of 2
+			template <typename S, int EXPONENT, typename std::enable_if<EXPONENT == 0, int>::type dummy = 0>
+			constexpr S pow2() noexcept
+			{
+				static_assert(std::is_floating_point<S>::value, "S must be floating-point type");
+				return 1;
+			}
+
+			template <typename S, int EXPONENT, typename std::enable_if<!(EXPONENT <= 0), int>::type dummy = 0>
+			constexpr S pow2() noexcept
+			{
+				static_assert(std::is_floating_point<S>::value, "S must be floating-point type");
+				return pow2<S, EXPONENT - 1>() * S(2);
+			}
+
+			template <typename S, int EXPONENT, typename std::enable_if<!(EXPONENT >= 0), int>::type dummy = 0>
+			constexpr S pow2() noexcept
+			{
+				static_assert(std::is_floating_point<S>::value, "S must be floating-point type");
+				return pow2<S, EXPONENT + 1>() * S(.5);
+			}
 		}
 
 		template <typename REPR_TYPE, int EXPONENT>
