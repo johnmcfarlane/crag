@@ -31,6 +31,52 @@ namespace crag
 
 			template <typename T>
 			using next_size_t = typename next_size<T>::type;
+			// performs a shift operation by a fixed number of bits avoiding two pitfalls:
+			// 1) shifting by a negative amount causes undefined behavior
+			// 2) converting between integer types of different sizes can lose significant bits during shift right
+			template <int EXPONENT, typename OUTPUT, typename INPUT, typename std::enable_if<EXPONENT >= 0 && sizeof(OUTPUT) <= sizeof(INPUT), int>::type dummy = 0>
+			constexpr OUTPUT shift_left(INPUT i) noexcept
+			{
+				static_assert(std::is_integral<INPUT>::value, "INPUT must be integral type");
+				static_assert(std::is_integral<OUTPUT>::value, "OUTPUT must be integral type");
+				return static_cast<OUTPUT>(i) << EXPONENT;
+			}
+
+			template <int EXPONENT, typename OUTPUT, typename INPUT, typename std::enable_if<EXPONENT >= 0 && ! (sizeof(OUTPUT) <= sizeof(INPUT)), char>::type dummy = 0>
+			constexpr OUTPUT shift_left(INPUT i) noexcept
+			{
+				static_assert(std::is_integral<INPUT>::value, "INPUT must be integral type");
+				static_assert(std::is_integral<OUTPUT>::value, "OUTPUT must be integral type");
+				return static_cast<OUTPUT>(i << EXPONENT);
+			}
+
+			template <int EXPONENT, typename OUTPUT, typename INPUT, typename std::enable_if<EXPONENT >= 0 && sizeof(OUTPUT) <= sizeof(INPUT), int>::type dummy = 0>
+			constexpr OUTPUT shift_right(INPUT i) noexcept
+			{
+				static_assert(std::is_integral<INPUT>::value, "INPUT must be integral type");
+				static_assert(std::is_integral<OUTPUT>::value, "OUTPUT must be integral type");
+				return static_cast<OUTPUT>(i >> EXPONENT);
+			}
+
+			template <int EXPONENT, typename OUTPUT, typename INPUT, typename std::enable_if<EXPONENT >= 0 && !(sizeof(OUTPUT) <= sizeof(INPUT)), char>::type dummy = 0>
+			constexpr OUTPUT shift_right(INPUT i) noexcept
+			{
+				static_assert(std::is_integral<INPUT>::value, "INPUT must be integral type");
+				static_assert(std::is_integral<OUTPUT>::value, "OUTPUT must be integral type");
+				return static_cast<OUTPUT>(i) >> EXPONENT;
+			}
+
+			template <int EXPONENT, typename OUTPUT, typename INPUT, typename std::enable_if<(EXPONENT < 0), int>::type dummy = 0>
+			constexpr OUTPUT shift_left(INPUT i) noexcept
+			{
+				return shift_right<-EXPONENT, OUTPUT, INPUT>(i);
+			}
+
+			template <int EXPONENT, typename OUTPUT, typename INPUT, typename std::enable_if<EXPONENT < 0, int>::type dummy = 0>
+			constexpr OUTPUT shift_right(INPUT i) noexcept
+			{
+				return shift_left<-EXPONENT, OUTPUT, INPUT>(i);
+			}
 		}
 
 		template <typename REPR_TYPE, int EXPONENT>
