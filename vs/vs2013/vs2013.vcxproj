@@ -203,9 +203,12 @@
     <ClInclude Include="..\..\src\entity\physics\AnimatBody.h" />
     <ClInclude Include="..\..\src\entity\physics\PlanetBody.h" />
     <ClInclude Include="..\..\src\entity\sim\AnimatController.h" />
+    <ClInclude Include="..\..\src\entity\sim\AnimatModel.h" />
     <ClInclude Include="..\..\src\entity\sim\CameraController.h" />
     <ClInclude Include="..\..\src\entity\sim\Contact.h" />
+    <ClInclude Include="..\..\src\entity\sim\Gene.h" />
     <ClInclude Include="..\..\src\entity\sim\Genome.h" />
+    <ClInclude Include="..\..\src\entity\sim\Health.h" />
     <ClInclude Include="..\..\src\entity\sim\KeyboardTransmitter.h" />
     <ClInclude Include="..\..\src\entity\sim\MoonShader.h" />
     <ClInclude Include="..\..\src\entity\sim\MouseObserverController.h" />
@@ -215,6 +218,7 @@
     <ClInclude Include="..\..\src\entity\sim\PlanetShader.h" />
     <ClInclude Include="..\..\src\entity\sim\Sensor.h" />
     <ClInclude Include="..\..\src\entity\sim\Signal.h" />
+    <ClInclude Include="..\..\src\entity\sim\ssga.h" />
     <ClInclude Include="..\..\src\entity\sim\Thruster.h" />
     <ClInclude Include="..\..\src\entity\sim\TouchObserverController.h" />
     <ClInclude Include="..\..\src\entity\sim\UfoController1.h" />
@@ -337,6 +341,7 @@
     <ClInclude Include="..\..\src\sim\Entity.h" />
     <ClInclude Include="..\..\src\sim\EntityFunctions.h" />
     <ClInclude Include="..\..\src\sim\gravity.h" />
+    <ClInclude Include="..\..\src\sim\Model.h" />
     <ClInclude Include="..\..\src\smp\for_each.h" />
     <ClInclude Include="..\..\src\smp\Future.h" />
     <ClInclude Include="..\..\src\smp\ReadersWriterMutex.h" />
@@ -375,9 +380,12 @@
     <ClCompile Include="..\..\src\entity\physics\AnimatBody.cpp" />
     <ClCompile Include="..\..\src\entity\physics\PlanetBody.cpp" />
     <ClCompile Include="..\..\src\entity\sim\AnimatController.cpp" />
+    <ClCompile Include="..\..\src\entity\sim\AnimatModel.cpp" />
     <ClCompile Include="..\..\src\entity\sim\CameraController.cpp" />
     <ClCompile Include="..\..\src\entity\sim\Contact.cpp" />
+    <ClCompile Include="..\..\src\entity\sim\Gene.cpp" />
     <ClCompile Include="..\..\src\entity\sim\Genome.cpp" />
+    <ClCompile Include="..\..\src\entity\sim\Health.cpp" />
     <ClCompile Include="..\..\src\entity\sim\KeyboardTransmitter.cpp" />
     <ClCompile Include="..\..\src\entity\sim\MoonShader.cpp" />
     <ClCompile Include="..\..\src\entity\sim\MouseObserverController.cpp" />
@@ -387,6 +395,7 @@
     <ClCompile Include="..\..\src\entity\sim\PlanetShader.cpp" />
     <ClCompile Include="..\..\src\entity\sim\Sensor.cpp" />
     <ClCompile Include="..\..\src\entity\sim\Signal.cpp" />
+    <ClCompile Include="..\..\src\entity\sim\ssga.cpp" />
     <ClCompile Include="..\..\src\entity\sim\Thruster.cpp" />
     <ClCompile Include="..\..\src\entity\sim\TouchObserverController.cpp" />
     <ClCompile Include="..\..\src\entity\sim\UfoController1.cpp" />
@@ -498,6 +507,7 @@
     <ClCompile Include="..\..\src\sim\Entity.cpp" />
     <ClCompile Include="..\..\src\sim\EntityFunctions.cpp" />
     <ClCompile Include="..\..\src\sim\gravity.cpp" />
+    <ClCompile Include="..\..\src\sim\Model.cpp" />
     <ClCompile Include="..\..\src\smp\ReadersWriterMutex.cpp" />
     <ClCompile Include="..\..\src\smp\Semaphore.cpp" />
     <ClCompile Include="..\..\src\smp\smp.cpp" />
