@@ -39,7 +39,7 @@ Receiver & AnimatModel::GetHealthReceiver() noexcept
 	return _health_receiver;
 }
 
-void AnimatModel::Update()
+void AnimatModel::Update() noexcept
 {
 	super::Update();
 
