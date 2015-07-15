@@ -86,7 +86,7 @@ Gene::value_type Gene::open() const noexcept
 {
 	CRAG_VERIFY(* this);
 
-	return make_open<value_type>(_value);
+	return make_open<value_type, unit_repr_type>(_value);
 }
 
 Gene Gene::from_repr(unit_repr_type repr) noexcept
