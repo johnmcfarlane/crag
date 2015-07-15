@@ -31,6 +31,7 @@ namespace crag
 
 			template <typename T>
 			using next_size_t = typename next_size<T>::type;
+
 			// performs a shift operation by a fixed number of bits avoiding two pitfalls:
 			// 1) shifting by a negative amount causes undefined behavior
 			// 2) converting between integer types of different sizes can lose significant bits during shift right
@@ -113,19 +114,15 @@ namespace crag
 		// actually storing values in the range [0, 2);
 		// a bit less precise than closed_unit
 		template <typename REPR_TYPE>
-		using closed_unit = fixed_point<REPR_TYPE, 1 - static_cast<int>(sizeof(REPR_TYPE)) * CHAR_BIT>;
-
-		template <typename REPR_TYPE, int EXPONENT, typename S, typename std::enable_if<std::is_floating_point<S>::value, int>::type dummy = 0>
-		fixed_point<REPR_TYPE, EXPONENT> lerp(
-			fixed_point<REPR_TYPE, EXPONENT> from,
-			fixed_point<REPR_TYPE, EXPONENT> to,
-			S t);
+		using closed_unit = fixed_point<
+			typename std::enable_if<std::is_unsigned<REPR_TYPE>::value, REPR_TYPE>::type, 
+			1 - static_cast<int>(sizeof(REPR_TYPE)) * CHAR_BIT>;
 
 		template <typename REPR_TYPE, int EXPONENT>
 		fixed_point<REPR_TYPE, EXPONENT> lerp(
 			fixed_point<REPR_TYPE, EXPONENT> from,
 			fixed_point<REPR_TYPE, EXPONENT> to,
-			closed_unit<REPR_TYPE> t);
+			closed_unit<typename std::make_unsigned<REPR_TYPE>::type> t);
 
 		////////////////////////////////////////////////////////////////////////////////
 		// fixed_point class template definition
@@ -138,18 +135,6 @@ namespace crag
 		template <typename REPR_TYPE, int EXPONENT = 0>
 		class fixed_point
 		{
-			// friends
-			template <typename S, typename std::enable_if<std::is_floating_point<S>::value, int>::type dummy>
-			friend fixed_point lerp(
-				fixed_point<REPR_TYPE, EXPONENT> from,
-				fixed_point<REPR_TYPE, EXPONENT> to,
-				S t);
-
-			friend fixed_point<REPR_TYPE, EXPONENT> lerp<REPR_TYPE, EXPONENT>(
-				fixed_point<REPR_TYPE, EXPONENT> from,
-				fixed_point<REPR_TYPE, EXPONENT> to,
-				closed_unit<REPR_TYPE> t);
-
 		public:
 			// types
 			using repr_type = REPR_TYPE;
@@ -159,6 +144,9 @@ namespace crag
 			constexpr static repr_type repr_max = std::numeric_limits<repr_type>::max();
 			constexpr static std::size_t repr_size = sizeof(repr_type);
 			constexpr static std::size_t repr_num_bits = repr_size * CHAR_BIT;
+
+			// friends
+			friend fixed_point lerp<repr_type, exponent>(fixed_point from, fixed_point to, closed_unit<typename std::make_unsigned<repr_type>::type> t);
 
 			// functions
 			constexpr fixed_point() noexcept {}
@@ -196,7 +184,8 @@ namespace crag
 			}
 
 			// creates an instance given the underlying representation value
-			static /*constexpr*/ fixed_point from_data(repr_type repr) noexcept
+			// TODO: constexpr with c++14?
+			static fixed_point from_data(repr_type repr) noexcept
 			{
 				fixed_point fp;
 				fp._repr = repr;
@@ -207,28 +196,28 @@ namespace crag
 			template <typename S, typename std::enable_if<std::is_floating_point<S>::value, int>::type dummy = 0>
 			static constexpr S one() noexcept
 			{
-				return std::pow(S(.5), EXPONENT);
+				return _impl::pow2<S, - exponent>();
 			}
 
 			template <typename S, typename std::enable_if<std::is_integral<S>::value, int>::type dummy = 0>
 			static constexpr S one() noexcept
 			{
-				return int_to_repr(1);
+				return int_to_repr<S>(1);
 			}
 
 			template <typename S>
 			static constexpr S inverse_one() noexcept
 			{
 				static_assert(std::is_floating_point<S>::value, "S must be floating-point type");
-				return std::pow(S(.5), - EXPONENT);
+				return _impl::pow2<S, exponent>();
 			}
 
 			template <typename S>
-			static constexpr S int_to_repr(S s) noexcept
+			static constexpr repr_type int_to_repr(S s) noexcept
 			{
 				static_assert(std::is_integral<S>::value, "S must be unsigned integral type");
 
-				return (EXPONENT > 0) ? s >> EXPONENT : s << (- EXPONENT);
+				return _impl::shift_right<exponent, repr_type>(s);
 			}
 
 			template <typename S>
@@ -236,14 +225,14 @@ namespace crag
 			{
 				static_assert(std::is_integral<S>::value, "S must be unsigned integral type");
 
-				return (EXPONENT > 0) ? r << EXPONENT : r >> (- EXPONENT);
+				return _impl::shift_left<exponent, S>(r);
 			}
 
 			template <typename S>
-			static constexpr S float_to_repr(S s) noexcept
+			static constexpr repr_type float_to_repr(S s) noexcept
 			{
 				static_assert(std::is_floating_point<S>::value, "S must be floating-point type");
-				return s * one<S>();
+				return static_cast<repr_type>(s * one<S>());
 			}
 
 			template <typename S>
@@ -254,7 +243,7 @@ namespace crag
 			}
 
 			// variables
-			repr_type _repr;
+			repr_type _repr = 0;
 		};
 
 		////////////////////////////////////////////////////////////////////////////////
@@ -266,11 +255,15 @@ namespace crag
 			template <> struct next_size<std::uint8_t> { using type = std::uint16_t; };
 			template <> struct next_size<std::uint16_t> { using type = std::uint32_t; };
 			template <> struct next_size<std::uint32_t> { using type = std::uint64_t; };
+
+			template <> struct next_size<std::int8_t> { using type = std::int16_t; };
+			template <> struct next_size<std::int16_t> { using type = std::int32_t; };
+			template <> struct next_size<std::int32_t> { using type = std::int64_t; };
 		}
 
 		// linear interpolation between two identical specializations of fixed_point
 		// given floatint-point `t` for which result is `from` when t==0 and `to` when t==1
-		template <typename REPR_TYPE, int EXPONENT, typename S, typename std::enable_if<std::is_floating_point<S>::value, int>::type dummy>
+		template <typename REPR_TYPE, int EXPONENT, typename S, typename>
 		fixed_point<REPR_TYPE, EXPONENT> lerp(
 			fixed_point<REPR_TYPE, EXPONENT> from,
 			fixed_point<REPR_TYPE, EXPONENT> to,
@@ -286,7 +279,7 @@ namespace crag
 		fixed_point<REPR_TYPE, EXPONENT> lerp(
 			fixed_point<REPR_TYPE, EXPONENT> from,
 			fixed_point<REPR_TYPE, EXPONENT> to,
-			closed_unit<REPR_TYPE> t)
+			closed_unit<typename std::make_unsigned<REPR_TYPE>::type> t)
 		{
 			using fixed_point = fixed_point<REPR_TYPE, EXPONENT>;
 			using repr_type = typename fixed_point::repr_type;
@@ -302,9 +295,7 @@ namespace crag
 			auto sum = _from + _to;
 
 			auto result = fixed_point();
-			result._repr = (closed_unit::exponent > 0)
-				? static_cast<repr_type>(sum << closed_unit::exponent)
-				: static_cast<repr_type>(sum >> - closed_unit::exponent);
+			result._repr = _impl::shift_left<closed_unit::exponent, repr_type>(sum);
 
 			return result;
 		}
