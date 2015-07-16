@@ -41,7 +41,7 @@ CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Health, self)
 	});
 CRAG_VERIFY_INVARIANTS_DEFINE_END
 
-Health::Health(EntityHandle entity_handle)
+Health::Health(EntityHandle entity_handle) noexcept
 : _entity_handle(entity_handle)
 {
 	CRAG_VERIFY(* this);

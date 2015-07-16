@@ -189,7 +189,7 @@ namespace
 		Genome genome;
 		while (true)
 		{
-			CRAG_VERIFY_FALSE(std::feof(file));
+			CRAG_VERIFY_TRUE(std::feof(file) == 0);
 
 			static_assert(std::is_same<Gene::unit_repr_type, std::uint32_t>::value, "bad assumption about Gene storage type");
 			Gene::unit_repr_type repr;
