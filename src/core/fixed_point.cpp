@@ -121,3 +121,9 @@ static_assert(ou<std::uint8_t>(.5).get<double>() == .5, "crag::core::closed_unit
 static_assert(ou<std::uint16_t>(.125f).get<float>() == .125f, "crag::core::closed_unit test failed");
 static_assert(ou<std::uint16_t>(.640625l).get<float>() == .640625, "crag::core::closed_unit test failed");
 static_assert(ou<std::uint16_t>(1).get<float>() == 0, "crag::core::closed_unit test failed");	// dropped bit
+
+////////////////////////////////////////////////////////////////////////////////
+// crag::core::lerp
+
+static_assert(lerp(fp_u8<-7>(1), fp_u8<-7>(0), .5).get<float>() == .5f, "crag::core::lerp test failed");
+static_assert(lerp(fp_u8<-7>(.125), fp_u8<-7>(.625), .5).get<float>() == .375f, "crag::core::lerp test failed");

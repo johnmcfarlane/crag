@@ -119,7 +119,7 @@ namespace crag
 			1 - static_cast<int>(sizeof(REPR_TYPE)) * CHAR_BIT>;
 
 		template <typename REPR_TYPE, int EXPONENT>
-		fixed_point<REPR_TYPE, EXPONENT> lerp(
+		constexpr fixed_point<REPR_TYPE, EXPONENT> lerp(
 			fixed_point<REPR_TYPE, EXPONENT> from,
 			fixed_point<REPR_TYPE, EXPONENT> to,
 			closed_unit<typename std::make_unsigned<REPR_TYPE>::type> t);
@@ -136,19 +136,34 @@ namespace crag
 		class fixed_point
 		{
 		public:
+			////////////////////////////////////////////////////////////////////////////////
 			// types
+
 			using repr_type = REPR_TYPE;
 
+			////////////////////////////////////////////////////////////////////////////////
 			// constants
+
 			constexpr static int exponent = EXPONENT;
 			constexpr static repr_type repr_max = std::numeric_limits<repr_type>::max();
 			constexpr static std::size_t repr_size = sizeof(repr_type);
 			constexpr static std::size_t repr_num_bits = repr_size * CHAR_BIT;
 
+			////////////////////////////////////////////////////////////////////////////////
 			// friends
-			friend fixed_point lerp<repr_type, exponent>(fixed_point from, fixed_point to, closed_unit<typename std::make_unsigned<repr_type>::type> t);
 
+			friend constexpr fixed_point lerp<repr_type, exponent>(fixed_point from, fixed_point to, closed_unit<typename std::make_unsigned<repr_type>::type> t);
+
+			////////////////////////////////////////////////////////////////////////////////
 			// functions
+
+		private:
+			// constructor taking represenation explicitly using operator++(int)-style trick
+			constexpr fixed_point(repr_type repr, int) noexcept
+				: _repr(repr)
+			{
+			}
+		public:
 			constexpr fixed_point() noexcept {}
 
 			template <typename S, typename std::enable_if<std::is_integral<S>::value, int>::type dummy = 0>
@@ -185,11 +200,9 @@ namespace crag
 
 			// creates an instance given the underlying representation value
 			// TODO: constexpr with c++14?
-			static fixed_point from_data(repr_type repr) noexcept
+			static constexpr fixed_point from_data(repr_type repr) noexcept
 			{
-				fixed_point fp;
-				fp._repr = repr;
-				return fp;
+				return fixed_point(repr, 0);
 			}
 
 		private:
@@ -242,7 +255,9 @@ namespace crag
 				return S(r) * inverse_one<S>();
 			}
 
+			////////////////////////////////////////////////////////////////////////////////
 			// variables
+
 			repr_type _repr = 0;
 		};
 
@@ -264,7 +279,7 @@ namespace crag
 		// linear interpolation between two identical specializations of fixed_point
 		// given floatint-point `t` for which result is `from` when t==0 and `to` when t==1
 		template <typename REPR_TYPE, int EXPONENT, typename S, typename>
-		fixed_point<REPR_TYPE, EXPONENT> lerp(
+		constexpr fixed_point<REPR_TYPE, EXPONENT> lerp(
 			fixed_point<REPR_TYPE, EXPONENT> from,
 			fixed_point<REPR_TYPE, EXPONENT> to,
 			S t)
@@ -276,7 +291,7 @@ namespace crag
 		// linear interpolation between two identical specializations of fixed_point
 		// given closed_unit `t` for which result is `from` when t==0 and `to` when t==1
 		template <typename REPR_TYPE, int EXPONENT>
-		fixed_point<REPR_TYPE, EXPONENT> lerp(
+		constexpr fixed_point<REPR_TYPE, EXPONENT> lerp(
 			fixed_point<REPR_TYPE, EXPONENT> from,
 			fixed_point<REPR_TYPE, EXPONENT> to,
 			closed_unit<typename std::make_unsigned<REPR_TYPE>::type> t)
@@ -284,20 +299,12 @@ namespace crag
 			using fixed_point = fixed_point<REPR_TYPE, EXPONENT>;
 			using repr_type = typename fixed_point::repr_type;
 			using next_repr_type = typename _impl::next_size_t<repr_type>;
-			using closed_unit = closed_unit<REPR_TYPE>;
+			using closed_unit = closed_unit<typename std::make_unsigned<REPR_TYPE>::type>;
 
-			constexpr auto _one = closed_unit::template one<REPR_TYPE>();
-			auto _t = t.data();
-			auto _t_neg = _one - _t;
-
-			auto _from = static_cast<next_repr_type>(from._repr) * _t_neg;
-			auto _to = static_cast<next_repr_type>(to._repr) * _t;
-			auto sum = _from + _to;
-
-			auto result = fixed_point();
-			result._repr = _impl::shift_left<closed_unit::exponent, repr_type>(sum);
-
-			return result;
+			return fixed_point::from_data(
+				_impl::shift_left<closed_unit::exponent, repr_type>(
+					(static_cast<next_repr_type>(from._repr) * (closed_unit::template one<REPR_TYPE>() - t.data())) +
+					(static_cast<next_repr_type>(to._repr) * t.data())));
 		}
 	}
 }
