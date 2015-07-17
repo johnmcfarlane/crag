@@ -303,7 +303,7 @@ namespace crag
 
 			return fixed_point::from_data(
 				_impl::shift_left<closed_unit::exponent, repr_type>(
-					(static_cast<next_repr_type>(from._repr) * (closed_unit::template one<REPR_TYPE>() - t.data())) +
+					(static_cast<next_repr_type>(from._repr) * (closed_unit(1).data() - t.data())) +
 					(static_cast<next_repr_type>(to._repr) * t.data())));
 		}
 	}

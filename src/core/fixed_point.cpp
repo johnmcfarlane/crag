@@ -126,4 +126,9 @@ static_assert(ou<std::uint16_t>(1).get<float>() == 0, "crag::core::closed_unit t
 // crag::core::lerp
 
 static_assert(lerp(fp_u8<-7>(1), fp_u8<-7>(0), .5).get<float>() == .5f, "crag::core::lerp test failed");
-static_assert(lerp(fp_u8<-7>(.125), fp_u8<-7>(.625), .5).get<float>() == .375f, "crag::core::lerp test failed");
+static_assert(lerp(fp_u16<-7>(.125), fp_u16<-7>(.625), .5).get<float>() == .375f, "crag::core::lerp test failed");
+static_assert(lerp(fp_u32<-16>(42123.51323), fp_u32<-16>(432.9191), .812).get<unsigned>() == 8270, "crag::core::lerp test failed");
+
+static_assert(lerp(fp_s8<-6>(1), fp_s8<-6>(0), .5).get<float>() == .5f, "crag::core::lerp test failed");
+static_assert(lerp(fp_s16<-10>(.125), fp_s16<-10>(.625), .5).get<float>() == .375f, "crag::core::lerp test failed");
+static_assert(lerp(fp_s32<-6>(.125), fp_s32<-6>(.625), .25).get<float>() == .25f, "crag::core::lerp test failed");
