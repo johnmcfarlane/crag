@@ -41,9 +41,9 @@ Genome::Genome(Genome const & parent1, Genome const & parent2) noexcept
 	{
 		CRAG_VERIFY_TRUE(iterators.second != std::end(parent2));
 
-		auto const & parent1 = * iterators.first;
-		auto const & parent2 = * iterators.second;
-		_buffer.push_back(Gene(parent1, parent2, Random::sequence, mutation_rate));
+		auto const & parent_gene1 = * iterators.first;
+		auto const & parent_gene2 = * iterators.second;
+		_buffer.push_back(Gene(parent_gene1, parent_gene2, Random::sequence, mutation_rate));
 	}
 }
 

@@ -23,8 +23,11 @@ namespace geom
 		typedef ::geom::Vector<S, N> Vector;
 		typedef ::geom::Triangle<S, N> Triangle;
 
-		Plane() = default;
-		Plane(Plane const &) = default;
+		constexpr Plane(Plane const & that) noexcept
+			: Plane(that.position, that.normal)
+		{ 
+			CRAG_VERIFY(*this);
+		}
 
 		Plane(Vector const & _position, Vector const & _normal)
 		: position(_position)
@@ -36,6 +39,17 @@ namespace geom
 		Plane(Triangle const & triangle) 
 		: Plane(geom::Centroid(triangle), geom::UnitNormal(triangle))
 		{
+		}
+
+		constexpr Plane & operator=(Plane const & rhs) noexcept
+		{
+			CRAG_VERIFY(*this);
+
+			_position = rhs._position;
+			_normal = rhs._normal;
+
+			CRAG_VERIFY(*this);
+			return *this;
 		}
 
 #if defined(CRAG_VERIFY_ENABLED)

@@ -766,8 +766,8 @@ namespace
 
 		// graphics
 		gfx::Vector3 scale(1.f, 1.f, 1.f);
-		gfx::ObjectHandle model_handle = gfx::MeshObjectHandle::Create(transformation, gfx::Color4f::White(), scale, vbo_name, shadow_mesh_name);
-		ufo_entity.SetModel(std::move(Entity::ModelPtr(new Model(model_handle, * body))));
+		gfx::ObjectHandle saucer_model_handle = gfx::MeshObjectHandle::Create(transformation, gfx::Color4f::White(), scale, vbo_name, shadow_mesh_name);
+		ufo_entity.SetModel(std::move(Entity::ModelPtr(new Model(saucer_model_handle, * body))));
 
 		////////////////////////////////////////////////////////////////////////////////
 		// ball
@@ -791,14 +791,14 @@ namespace
 			if (_player_type == PlayerType::ball_saucer)
 			{
 				// graphics
-				gfx::ObjectHandle model_handle = gfx::BallHandle::Create(transformation, saucer_ball_radius, ufo_color3);
-				ball_entity->SetModel(std::move(Entity::ModelPtr(new Model(model_handle, * ball_body))));
+				gfx::ObjectHandle ball_model_handle = gfx::BallHandle::Create(transformation, saucer_ball_radius, ufo_color3);
+				ball_entity->SetModel(std::move(Entity::ModelPtr(new Model(ball_model_handle, * ball_body))));
 				
-				exception_object = model_handle;
+				exception_object = ball_model_handle;
 			}
 			else
 			{
-				exception_object = model_handle;
+				exception_object = saucer_model_handle;
 			}
 
 			ball_entity->SetLocation(std::move(ball_body));
@@ -823,8 +823,8 @@ namespace
 				gfx::Color4f(.25f, .5f, 1.f) * 20.f, 
 				Vector2(std::sin(saucer_search_light_angle), std::cos(saucer_search_light_angle)),
 				exception_object);
-			gfx::Daemon::Call([light_handle, model_handle] (gfx::Engine & engine) {
-				engine.OnSetParent(light_handle, model_handle);
+			gfx::Daemon::Call([light_handle, saucer_model_handle] (gfx::Engine & engine) {
+				engine.OnSetParent(light_handle, saucer_model_handle);
 			});
 		}
 

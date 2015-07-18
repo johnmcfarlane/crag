@@ -32,7 +32,7 @@ namespace sim
 		geom::abs::Scalar GetRandomHeightCoefficient(Random & rnd) const;
 
 		// Mid-Point Calculation 
-		class Params;
+		struct Params;
 		bool CalcMidPointPos_Random(form::Polyhedron & polyhedron, geom::abs::Vector3 & result, Params & params) const;
 		bool CalcMidPointPos_SimpleInterp(form::Polyhedron & polyhedron, geom::abs::Vector3 & result, Params & params) const;
 

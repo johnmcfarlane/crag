@@ -29,7 +29,7 @@ namespace
 	std::size_t GetNumLines(char const * source)
 	{
 		std::size_t num_lines = 1;
-		while (true)
+		for (;;)
 		{
 			switch (* source)
 			{

@@ -114,7 +114,7 @@ void Font::Print(char const * text, geom::Vector2f const & position) const
 void Font::GenerateVerts(char const * text, geom::Vector2f const & position) const
 {
 	geom::Vector2f p = position;
-	while (true)
+	for (;;)
 	{
 		char c = * (text ++);
 

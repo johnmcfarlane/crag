@@ -220,8 +220,8 @@ namespace crag
 			}
 
 			// constants
-			static constexpr auto all_off =  buffer_element_type(0);
-			static constexpr auto all_on =  ~ all_off;
+			static constexpr buffer_element_type all_off = 0;
+			static constexpr buffer_element_type all_on = ~ all_off;
 			static_assert(
 				all_on == std::numeric_limits<buffer_element_type>::max(),
 				"conflicting alternative methods of generating all-set bit masks");
