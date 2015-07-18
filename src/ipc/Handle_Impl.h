@@ -48,102 +48,6 @@ namespace ipc
 		return creation;
 	}
 
-#if ! defined(CRAG_USE_VARIADIC_LAMBDA)
-	template <typename TYPE>
-	void Handle<TYPE>::CreateObject()
-	{
-		using Daemon = typename ObjectType::DaemonType;
-		using Engine = typename ObjectType::EngineType;
-
-		auto uid = Uid::Create();
-		Daemon::Call([uid] (Engine & engine) {
-			engine.template CreateObject<ObjectType>(uid);
-		});
-
-		Release();
-		_uid = uid;
-	}
-
-	template <typename TYPE>
-	template <typename PARAMETER1>
-	void Handle<TYPE>::CreateObject(PARAMETER1 parameter1)
-	{
-		using Daemon = typename ObjectType::DaemonType;
-		using Engine = typename ObjectType::EngineType;
-
-		auto uid = Uid::Create();
-		Daemon::Call([uid, parameter1] (Engine & engine) {
-			engine.template CreateObject<ObjectType, PARAMETER1>(uid, parameter1);
-		});
-
-		Release();
-		_uid = uid;
-	}
-
-	template <typename TYPE>
-	template <typename PARAMETER1, typename PARAMETER2>
-	void Handle<TYPE>::CreateObject(PARAMETER1 parameter1, PARAMETER2 parameter2)
-	{
-		using Daemon = typename ObjectType::DaemonType;
-		using Engine = typename ObjectType::EngineType;
-
-		auto uid = Uid::Create();
-		Daemon::Call([uid, parameter1, parameter2] (Engine & engine) {
-			engine.template CreateObject<ObjectType, PARAMETER1, PARAMETER2>(uid, parameter1, parameter2);
-		});
-
-		Release();
-		_uid = uid;
-	}
-
-	template <typename TYPE>
-	template <typename PARAMETER1, typename PARAMETER2, typename PARAMETER3>
-	void Handle<TYPE>::CreateObject(PARAMETER1 parameter1, PARAMETER2 parameter2, PARAMETER3 parameter3)
-	{
-		using Daemon = typename ObjectType::DaemonType;
-		using Engine = typename ObjectType::EngineType;
-
-		auto uid = Uid::Create();
-		Daemon::Call([uid, parameter1, parameter2, parameter3] (Engine & engine) {
-			engine.template CreateObject<ObjectType, PARAMETER1, PARAMETER2, PARAMETER3>(uid, parameter1, parameter2, parameter3);
-		});
-
-		Release();
-		_uid = uid;
-	}
-
-	template <typename TYPE>
-	template <typename PARAMETER1, typename PARAMETER2, typename PARAMETER3, typename PARAMETER4>
-	void Handle<TYPE>::CreateObject(PARAMETER1 parameter1, PARAMETER2 parameter2, PARAMETER3 parameter3, PARAMETER4 parameter4)
-	{
-		using Daemon = typename ObjectType::DaemonType;
-		using Engine = typename ObjectType::EngineType;
-
-		auto uid = Uid::Create();
-		Daemon::Call([uid, parameter1, parameter2, parameter3, parameter4] (Engine & engine) {
-			engine.template CreateObject<ObjectType, PARAMETER1, PARAMETER2, PARAMETER3, PARAMETER4>(uid, parameter1, parameter2, parameter3, parameter4);
-		});
-
-		Release();
-		_uid = uid;
-	}
-
-	template <typename TYPE>
-	template <typename PARAMETER1, typename PARAMETER2, typename PARAMETER3, typename PARAMETER4, typename PARAMETER5>
-	void Handle<TYPE>::CreateObject(PARAMETER1 parameter1, PARAMETER2 parameter2, PARAMETER3 parameter3, PARAMETER4 parameter4, PARAMETER5 parameter5)
-	{
-		using Daemon = typename ObjectType::DaemonType;
-		using Engine = typename ObjectType::EngineType;
-
-		auto uid = Uid::Create();
-		Daemon::Call([uid, parameter1, parameter2, parameter3, parameter4, parameter5] (Engine & engine) {
-			engine.template CreateObject<ObjectType, PARAMETER1, PARAMETER2, PARAMETER3, PARAMETER4, PARAMETER5>(uid, parameter1, parameter2, parameter3, parameter4, parameter5);
-		});
-
-		Release();
-		_uid = uid;
-	}
-#else
 	template <typename TYPE>
 	template <typename ... PARAMETERS>
 	void Handle<TYPE>::CreateObject(PARAMETERS ... parameters)
@@ -159,7 +63,6 @@ namespace ipc
 
 		* this = handle;
 	}
-#endif
 
 	// Tells simulation to release the object.
 	template <typename TYPE>
