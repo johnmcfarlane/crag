@@ -92,7 +92,7 @@
 #define CRAG_OS_LINUX
 #elif defined(__pnacl__)
 #define CRAG_OS_PNACL
-#elif defined(WIN32)
+#elif defined(_MSC_VER)
 #define CRAG_OS_WINDOWS
 #else
 #error unrecognized platform
