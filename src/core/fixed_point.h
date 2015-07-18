@@ -152,7 +152,16 @@ namespace crag
 			////////////////////////////////////////////////////////////////////////////////
 			// friends
 
+#if defined(CRAG_COMPILER_MSVC)
+#pragma warning(push)
+#pragma warning(disable: 4396)
+#endif
+
 			friend constexpr fixed_point lerp<repr_type, exponent>(fixed_point from, fixed_point to, closed_unit<typename std::make_unsigned<repr_type>::type> t);
+
+#if defined(CRAG_COMPILER_MSVC)
+#pragma warning(pop)
+#endif
 
 			////////////////////////////////////////////////////////////////////////////////
 			// functions
