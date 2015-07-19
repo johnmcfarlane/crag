@@ -9,6 +9,12 @@
 
 #pragma once
 
+#if defined(CRAG_DEBUG) || defined(CRAG_COMPILER_MSVC)
+#define CRAG_HASH_STRING_CONSTEXPR
+#else
+#define CRAG_HASH_STRING_CONSTEXPR constexpr
+#endif
+
 namespace crag
 {
 	namespace core
@@ -27,7 +33,7 @@ namespace crag
 			// functions
 		
 		public:
-			CRAG_CONSTEXPR_CTOR HashString(char const * string)
+			CRAG_HASH_STRING_CONSTEXPR HashString(char const * string)
 			: _value(Calculate(string))
 #if defined(CRAG_DEBUG)
 			, _debug_string(string)
@@ -60,13 +66,13 @@ namespace crag
 			}
 
 		private:
-			static constexpr ValueType Calculate(ValueType hash, char const * str)
+			static CRAG_HASH_STRING_CONSTEXPR ValueType Calculate(ValueType hash, char const * str)
 			{
 				return ( !*str ? hash :
 				Calculate(((hash << 5) + hash) + *str, str + 1));
 			}
 
-			static constexpr ValueType Calculate(char const * str)
+			static CRAG_HASH_STRING_CONSTEXPR ValueType Calculate(char const * str)
 			{
 				return ( !str ? 0 :
 				Calculate(5381, str));

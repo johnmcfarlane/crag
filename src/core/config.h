@@ -57,12 +57,6 @@
 #define constexpr const
 #endif
 
-#define CRAG_CONSTEXPR_CTOR
-
-#else	// CRAG_COMPILER_MSVC
-
-#define CRAG_CONSTEXPR_CTOR constexpr
-
 #endif	// CRAG_COMPILER_MSVC
 
 //////////////////////////////////////////////////////////////////////
