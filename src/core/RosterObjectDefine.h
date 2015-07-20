@@ -40,13 +40,15 @@ namespace crag
 					{
 					}
 
-					void operator() (pool_type & pool) const noexcept
+					CallBase & operator=(CallBase const &) noexcept = delete;
+
+					void operator() (pool_type & p) const noexcept
 					{
 						auto current_key = OrderingKeyCast<OBJECT_TYPE, FUNCTION>();
 
-						roster.AddCommand(current_key, [& pool]()
+						roster.AddCommand(current_key, [& p]()
 						{
-							pool.for_each([] (OBJECT_TYPE & o)
+							p.for_each([] (OBJECT_TYPE & o)
 							{
 								(o.*FUNCTION)();
 							});
@@ -89,9 +91,9 @@ namespace crag
 					{
 					}
 
-					void operator() (pool_type & pool) const noexcept
+					void operator() (pool_type & p) const noexcept
 					{
-						Base::operator() (pool);
+						Base::operator() (p);
 						Order<value_type, FUNCTION, LATTER_OBJECT, LATTER_FUNCTION>(Base::roster);
 					}
 				};

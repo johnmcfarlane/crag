@@ -363,11 +363,6 @@ void LightProgram::SetLights(Color4f const &, Light::List const & lights, LightF
 			
 			if (light_uniforms_iterator == std::end(light_uniforms))
 			{
-				if (CRAG_DEBUG_ONCE)
-				{
-					DEBUG_BREAK("too many lights");
-				}
-
 				return;
 			}
 

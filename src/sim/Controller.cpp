@@ -11,6 +11,8 @@
 
 #include "Controller.h"
 
+#include "Entity.h"
+
 using namespace sim;
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -26,7 +28,7 @@ Controller::~Controller()
 }
 
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Controller, self)
-	// TODO: virtual
+	CRAG_VERIFY_REF(self._entity);
 CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 Entity & Controller::GetEntity()

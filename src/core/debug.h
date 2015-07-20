@@ -116,8 +116,6 @@ namespace core
 		DEBUG_MESSAGE("%s", s.str().c_str()); \
 	)
 
-#define CRAG_DEBUG_ONCE CRAG_ONCE
-
 #else
 
 namespace core
@@ -127,10 +125,9 @@ namespace core
 
 #define CRAG_DEBUG_PARAM(X)
 #define DEBUG_MESSAGE(...) DO_NOTHING
-#define DEBUG_BREAK(...) UNREACHABLE()
+#define DEBUG_BREAK(...) DO_NOTHING
 #define ASSERT(CONDITION) DO_NOTHING
 #define CRAG_DEBUG_DUMP(EXPRESSION) DO_NOTHING
-#define CRAG_DEBUG_ONCE (false)
 
 #endif
 

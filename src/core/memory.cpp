@@ -196,24 +196,35 @@ void * AllocatePage(size_t num_bytes)
 	return p;
 }
 
+#if defined(CRAG_USE_DLMALLOC)
+void FreePage(void * allocation, size_t )
+{
+	ASSERT((reinterpret_cast<uintptr_t>(allocation) & (GetPageSize() - 1)) == 0);
+
+	dlfree(allocation);
+}
+
+#elif defined(CRAG_OS_WINDOWS)
+void FreePage(void * allocation, size_t )
+{
+	ASSERT((reinterpret_cast<uintptr_t>(allocation) & (GetPageSize() - 1)) == 0);
+
+	if (!VirtualFree(allocation, 0, MEM_RELEASE))
+	{
+		DEBUG_BREAK("VirtualFree(%p, 0, MEM_RELEASE) failed with error code, %X", allocation, GetLastError());
+	}
+}
+#else
 void FreePage(void * allocation, size_t num_bytes)
 {
 	ASSERT((reinterpret_cast<uintptr_t>(allocation) & (GetPageSize() - 1)) == 0);
 
-#if defined(CRAG_USE_DLMALLOC)
-	dlfree(allocation);
-#elif defined(CRAG_OS_WINDOWS)
-	if (! VirtualFree(allocation, 0, MEM_RELEASE))
-	{
-		DEBUG_BREAK("VirtualFree(%p, 0, MEM_RELEASE) failed with error code, %X", allocation, GetLastError());
-	}
-#else
 	if (munmap(allocation, num_bytes) != 0)
 	{
 		DEBUG_BREAK("munmap(%p, " SIZE_T_FORMAT_SPEC ") failed with error code, %d", allocation, num_bytes, errno);
 	}
-#endif
 }
+#endif
 
 ////////////////////////////////////////////////////////////////////////////////
 // Global new/delete operators redirect to custom allocation routines

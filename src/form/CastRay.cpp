@@ -260,11 +260,7 @@ namespace
 			&& side_attributes.intersection <= uniforms.length	// within the overall range
 			&& side_attributes.intersection >= 0)
 			{
-				return RayCastResult(geom::Cast<form::Scalar>(plane.normal), side_attributes.intersection, leaf_attributes.node);
-			}
-			else
-			{
-				return RayCastResult();
+				result = RayCastResult(geom::Cast<form::Scalar>(plane.normal), side_attributes.intersection, leaf_attributes.node);
 			}
 
 #if defined(DEBUG_SHOW_LINE)

@@ -36,7 +36,7 @@ namespace
 	Vector3 GetRandomDirection(Random & sequence)
 	{
 		Vector3 random_direction;
-		while (true)
+		for (;;)
 		{
 			random_direction.x = sequence.GetFloatInclusive<Scalar>() - 0.5f;
 			random_direction.y = sequence.GetFloatInclusive<Scalar>() - 0.5f;

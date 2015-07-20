@@ -22,7 +22,7 @@ namespace geom
 	public:
 		typedef S Scalar;
 		
-		CRAG_CONSTEXPR_CTOR Vector()
+		Vector()
 #if defined(CRAG_DEBUG)
 		: x(std::numeric_limits<S>::signaling_NaN())
 		, y(std::numeric_limits<S>::signaling_NaN())

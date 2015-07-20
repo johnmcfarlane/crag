@@ -15,7 +15,7 @@ See [README-rpi.md] for instructions targeted at Raspberry Pi.
    sudo apt-get install git mercurial g++ cmake automake libode-sp-dev libglu1-mesa-dev xorg-dev
    ```
 
-   Crag is regularly tested against G++ and Clang.
+   Crag is regularly tested against G++ 4.9 and Clang 3.6.
 
 2. Clone the project:
 

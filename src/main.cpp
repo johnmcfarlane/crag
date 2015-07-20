@@ -420,17 +420,15 @@ namespace
 
 int main(int argc, char * * argv)
 {
-	do
+#if defined(DEBUG_TEST_DAEMONS)
+	for (;;)
+#endif
 	{
 		if (! CragMain(argc - 1, argv + 1))
 		{
 			return EXIT_FAILURE;
 		}
 	}
-#if defined(DEBUG_TEST_DAEMONS)
-	while (true);
-#else
-	while (false);
-#endif
+
 	return EXIT_SUCCESS;
 }

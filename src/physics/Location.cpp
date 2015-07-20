@@ -16,13 +16,6 @@
 
 using namespace physics;
 
-namespace
-{
-	class NullLocation : public Location
-	{
-	};
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 // Location member definitions
 

@@ -37,9 +37,9 @@ namespace crag
 			{
 				friend Ordering;
 
-				CRAG_CONSTEXPR_CTOR const_iterator(Ordering const * o, size_type i) noexcept : ordering(o), index(i) { }
+				const_iterator(Ordering const * o, size_type i) noexcept : ordering(o), index(i) { }
 			public:
-				CRAG_CONSTEXPR_CTOR const_iterator() = default;
+				const_iterator() = default;
 
 				value_type const & operator*() const noexcept
 				{
@@ -54,12 +54,12 @@ namespace crag
 					return i;
 				}
 
-				friend CRAG_CONSTEXPR_CTOR bool operator==(const_iterator const & lhs, const_iterator const & rhs) noexcept
+				friend bool operator==(const_iterator const & lhs, const_iterator const & rhs) noexcept
 				{
 					return lhs.index == rhs.index && lhs.ordering == rhs.ordering;
 				}
 
-				friend CRAG_CONSTEXPR_CTOR bool operator!=(const_iterator const & lhs, const_iterator const & rhs) noexcept
+				friend bool operator!=(const_iterator const & lhs, const_iterator const & rhs) noexcept
 				{
 					return ! operator==(lhs, rhs);
 				}
@@ -73,7 +73,7 @@ namespace crag
 			{
 				friend Ordering;
 
-				CRAG_CONSTEXPR_CTOR iterator(Ordering * o, size_type i) noexcept : const_iterator(o, i) { }
+				iterator(Ordering * o, size_type i) noexcept : const_iterator(o, i) { }
 			};
 
 			/////////////////////////////////////////////////////////////////////////////

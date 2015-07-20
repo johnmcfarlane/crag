@@ -118,7 +118,7 @@ Transformation Object::GetModelTransformation() const
 	}
 
 	Transformation model_transformation = GetLocalTransformation();
-	while (true)
+	for (;;)
 	{
 		Object const * parent = ancestor->GetParent();
 		if (parent == nullptr)

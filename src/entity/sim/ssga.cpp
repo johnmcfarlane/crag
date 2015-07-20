@@ -187,7 +187,7 @@ namespace
 		}
 
 		Genome genome;
-		while (true)
+		for (;;)
 		{
 			CRAG_VERIFY_TRUE(std::feof(file) == 0);
 

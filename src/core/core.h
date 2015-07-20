@@ -23,18 +23,7 @@
 //////////////////////////////////////////////////////////////////////
 // Missing keywords etc.
 
-#if defined(CRAG_COMPILER_MSVC)
-#if defined(WIN32_C3861_WORKAROUND)
-#define alignof __alignof
-#define snprintf _snprintf
-#endif
-#if defined(WIN32_C3646_WORKAROUND)
-#define noexcept _NOEXCEPT
-#endif
-#if defined(WIN32_C2144_WORKAROUND)
-#define thread_local __declspec(thread)
-#endif
-#elif defined(CRAG_COMPILER_GCC)
+#if defined(CRAG_COMPILER_GCC)
 #define thread_local __thread
 #endif
 

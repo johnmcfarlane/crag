@@ -222,8 +222,8 @@ bool PlanetBody::HandleCollisionWithSolid(Body & body, Sphere3 const & bounding_
 		// switcheroo - replace temporary mesh id with permanent planet id
 		std::for_each(std::begin(contacts), std::begin(contacts) + num_contacts, [&] (ContactGeom & contact)
 		{
-			ASSERT(contact.g1 = body_collision_handle);
-			ASSERT(contact.g2 = mesh_collision_handle);
+			ASSERT(contact.g1 == body_collision_handle);
+			ASSERT(contact.g2 == mesh_collision_handle);
 			contact.g2 = planet_collision_handle;
 		});
 	}

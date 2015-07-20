@@ -147,7 +147,7 @@ void Image::Load(char const * filename)
 		DEBUG_BREAK("Failed to load image; filename:%s; error:%s", filename, IMG_GetError());
 	}
 
-	if (_surface->format->format != opengl_rgba8_format)
+	if (_surface->format->format != static_cast<Uint32>(opengl_rgba8_format))
 	{
 		DEBUG_MESSAGE("Incorrect image format; filename:%s", filename);
 		auto raw_image = std::move(* this);

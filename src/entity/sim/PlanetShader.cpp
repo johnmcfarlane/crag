@@ -49,7 +49,7 @@ namespace
 	{
 		int depth = 0;
 		
-		while (true)
+		for (;;)
 		{
 			n = n->GetParent();
 			if (n == nullptr)
@@ -146,9 +146,11 @@ namespace debug
 ////////////////////////////////////////////////////////////////////////////////
 // PlanetShader::Params
 
-class PlanetShader::Params
+struct PlanetShader::Params
 {
-public:
+	Params(Params const &) noexcept = delete;
+	Params & operator=(Params const &) noexcept = delete;
+
 	form::Node const & a;
 	form::Node const & b;
 	int const index;
