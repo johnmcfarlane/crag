@@ -40,7 +40,7 @@ namespace crag
 					{
 					}
 
-					constexpr CallBase & operator=(CallBase const &) noexcept = delete;
+					CallBase & operator=(CallBase const &) noexcept = delete;
 
 					void operator() (pool_type & p) const noexcept
 					{

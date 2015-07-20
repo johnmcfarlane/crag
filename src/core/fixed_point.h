@@ -118,12 +118,6 @@ namespace crag
 			typename std::enable_if<std::is_unsigned<REPR_TYPE>::value, REPR_TYPE>::type, 
 			1 - static_cast<int>(sizeof(REPR_TYPE)) * CHAR_BIT>;
 
-		template <typename REPR_TYPE, int EXPONENT>
-		constexpr fixed_point<REPR_TYPE, EXPONENT> lerp(
-			fixed_point<REPR_TYPE, EXPONENT> from,
-			fixed_point<REPR_TYPE, EXPONENT> to,
-			closed_unit<typename std::make_unsigned<REPR_TYPE>::type> t);
-
 		////////////////////////////////////////////////////////////////////////////////
 		// fixed_point class template definition
 		//
@@ -148,20 +142,6 @@ namespace crag
 			constexpr static repr_type repr_max = std::numeric_limits<repr_type>::max();
 			constexpr static std::size_t repr_size = sizeof(repr_type);
 			constexpr static std::size_t repr_num_bits = repr_size * CHAR_BIT;
-
-			////////////////////////////////////////////////////////////////////////////////
-			// friends
-
-#if defined(CRAG_COMPILER_MSVC)
-#pragma warning(push)
-#pragma warning(disable: 4396)
-#endif
-
-			friend constexpr fixed_point lerp<repr_type, exponent>(fixed_point from, fixed_point to, closed_unit<typename std::make_unsigned<repr_type>::type> t);
-
-#if defined(CRAG_COMPILER_MSVC)
-#pragma warning(pop)
-#endif
 
 			////////////////////////////////////////////////////////////////////////////////
 			// functions
@@ -312,8 +292,8 @@ namespace crag
 
 			return fixed_point::from_data(
 				_impl::shift_left<closed_unit::exponent, repr_type>(
-					(static_cast<next_repr_type>(from._repr) * (closed_unit(1).data() - t.data())) +
-					(static_cast<next_repr_type>(to._repr) * t.data())));
+					(static_cast<next_repr_type>(from.data()) * (closed_unit(1).data() - t.data())) +
+					(static_cast<next_repr_type>(to.data()) * t.data())));
 		}
 	}
 }

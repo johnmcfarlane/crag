@@ -35,7 +35,7 @@ namespace sim
 		virtual ~Model() noexcept;
 		Model(Handle handle, physics::Location const & location);
 
-		constexpr Model & operator=(Model const &) noexcept = delete;
+		Model & operator=(Model const &) noexcept = delete;
 
 		Handle GetHandle() const;
 

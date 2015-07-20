@@ -148,8 +148,8 @@ namespace debug
 
 struct PlanetShader::Params
 {
-	constexpr Params(Params const &) noexcept = delete;
-	constexpr Params & operator=(Params const &) noexcept = delete;
+	Params(Params const &) noexcept = delete;
+	Params & operator=(Params const &) noexcept = delete;
 
 	form::Node const & a;
 	form::Node const & b;

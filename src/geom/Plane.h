@@ -26,7 +26,6 @@ namespace geom
 		constexpr Plane(Plane const & that) noexcept
 			: Plane(that.position, that.normal)
 		{ 
-			CRAG_VERIFY(*this);
 		}
 
 		Plane(Vector const & _position, Vector const & _normal)
@@ -41,12 +40,12 @@ namespace geom
 		{
 		}
 
-		constexpr Plane & operator=(Plane const & rhs) noexcept
+		Plane & operator=(Plane const & rhs) const noexcept
 		{
 			CRAG_VERIFY(*this);
 
-			_position = rhs._position;
-			_normal = rhs._normal;
+			position = rhs.position;
+			normal = rhs.normal;
 
 			CRAG_VERIFY(*this);
 			return *this;
