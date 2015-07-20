@@ -201,7 +201,6 @@ namespace core
 			CRAG_VERIFY_ARRAY_ELEMENT(& element, _array, reinterpret_cast<value_type const *>(_unlinked_begin));
 		}
 
-#if defined(CRAG_VERIFY_ENABLED)
 		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_BEGIN(object_pool, pool)
 			CRAG_VERIFY_ARRAY_POINTER(reinterpret_cast<value_type *>(pool._free_list_head), pool._array, pool._array_end);
 			CRAG_VERIFY_ARRAY_POINTER(reinterpret_cast<value_type *>(pool._unlinked_begin), reinterpret_cast<value_type *>(pool._free_list_head), pool._array_end);
@@ -221,7 +220,6 @@ namespace core
 			CRAG_VERIFY_EQUAL(_num_allocated, max_free_list_size - free_list_size);
 #endif
 		CRAG_VERIFY_INVARIANTS_DEFINE_TEMPLATE_END
-#endif	// defined(CRAG_VERIFY_ENABLED)
 
 		// element must be any member of the array which is currently not allocated
 		void VerifyFreeElement(value_type const & element) const
@@ -232,7 +230,7 @@ namespace core
 			auto next = reinterpret_cast<value_type const *>(node.next);
 			CRAG_VERIFY_ARRAY_POINTER(next, _array, reinterpret_cast<value_type const *>(_unlinked_begin));
 		}
-#endif
+#endif	// defined(CRAG_VERIFY_ENABLED)
 
 	private:
 		// init/deinit
