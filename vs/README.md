@@ -68,8 +68,6 @@ The ODE project is included in the crag solution but that project needs some pre
   * The ODE project files need to be built by running `crag\vs\crag\premake_ode.bat`. (More details of this step can be found [here](http://opende.sourceforge.net/wiki/index.php/Manual_(Install_and_Use)).
   * Open `crag\vs\ode\build\vs2008\ode.sln` and click OK to the 'One way upgrade'.
   * Build DebugSingleLib and/or ReleaseSingleLib configurations
-//  * Close the solution again
-//  * Add the dNODEBUG pre-processor definition to the DebugDoubleLib and ReleaseDoubleLib configurations. (Still needed?)
 
 ### 3.3 GLEW
 
