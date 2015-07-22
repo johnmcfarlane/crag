@@ -22,10 +22,21 @@ namespace gfx
 	public:
 		typedef Comp Scalar;
 		
-		Color4() : r(0), g(0), b(0), a(Full()) { }
-		Color4(Color4 const & that) : r(that.r), g(that.g), b(that.b), a(that.a) { }
-		Color4(Comp red, Comp green, Comp blue, Comp alpha = Full()) : r(red), g(green), b(blue), a(alpha) { }
-		Color4(Comp intensity, Comp alpha = Full()) : r(intensity), g(intensity), b(intensity), a(alpha) { }
+		constexpr Color4() noexcept
+			: r(0), g(0), b(0), a(Full())
+		{ }
+
+		constexpr Color4(Color4 const & that) noexcept
+			: r(that.r), g(that.g), b(that.b), a(that.a)
+		{ }
+
+		constexpr Color4(Comp red, Comp green, Comp blue, Comp alpha = Full()) noexcept
+			: r(red), g(green), b(blue), a(alpha)
+		{ }
+
+		constexpr Color4(Comp intensity, Comp alpha = Full()) noexcept
+			: r(intensity), g(intensity), b(intensity), a(alpha)
+		{ }
 
 		// conversion to alternative format
 		template <typename ThatComp> Color4(Color4<ThatComp> const & that)
@@ -68,13 +79,13 @@ namespace gfx
 		{
 			return reinterpret_cast<Comp const *>(this);
 		}
-		
-		friend bool operator==(Color4 const & lhs, Color4 const & rhs)
+
+		friend constexpr bool operator==(Color4 const & lhs, Color4 const & rhs) noexcept
 		{
 			return lhs.r == rhs.r && lhs.g == rhs.g && lhs.b == rhs.b && lhs.a == rhs.a;
 		}
-		
-		friend bool operator!=(Color4 const & lhs, Color4 const & rhs)
+
+		friend constexpr bool operator!=(Color4 const & lhs, Color4 const & rhs) noexcept
 		{
 			return lhs.r != rhs.r || lhs.g != rhs.g || lhs.b != rhs.b || lhs.a != rhs.a;
 		}
@@ -88,28 +99,28 @@ namespace gfx
 			return * this;
 		}
 
-		friend Color4 operator + (Color4 lhs, Color4 const & rhs)
+		friend constexpr Color4 operator + (Color4 lhs, Color4 const & rhs) noexcept
 		{
 			return lhs += rhs;
 		}
 
-		friend Color4 operator * (Color4 const & lhs, Comp rhs)
+		friend constexpr Color4 operator * (Color4 const & lhs, Comp rhs) noexcept
 		{
 			return Color4(lhs.r * rhs,
 						  lhs.g * rhs,
 						  lhs.b * rhs,
 						  lhs.a);
 		}
-		
-		friend Color4 operator * (Color4 const & lhs, Color4 const & rhs)
+
+		friend constexpr Color4 operator * (Color4 const & lhs, Color4 const & rhs) noexcept
 		{
 			return Color4(lhs.r * rhs.r,
 						  lhs.g * rhs.g,
 						  lhs.b * rhs.b,
 						  lhs.a * rhs.a);
 		}
-		
-		friend Color4 operator / (Color4 const & lhs, Comp rhs)
+
+		friend constexpr Color4 operator / (Color4 const & lhs, Comp rhs) noexcept
 		{
 			return lhs * (1.f / rhs);
 		}
@@ -133,8 +144,8 @@ namespace gfx
 
 	public:
 
-		static Comp Half();
-		static Comp Full();
+		static constexpr Comp Half() noexcept;
+		static constexpr Comp Full() noexcept;
 
 		static Color4 Black() 
 		{
@@ -205,11 +216,15 @@ namespace gfx
 
 	typedef Color4<float> Color4f;
 	
-	template<> inline float Color4<float>::Half() {
+	template<>
+	inline constexpr float Color4<float>::Half() noexcept
+	{
 		return .5f;
 	}
 	
-	template<> inline float Color4<float>::Full() {
+	template<>
+	inline constexpr float Color4<float>::Full() noexcept
+	{
 		return 1.f;
 	}
 	
@@ -219,11 +234,15 @@ namespace gfx
 
 	typedef Color4<unsigned char> Color4b;
 
-	template<> inline unsigned char Color4<unsigned char>::Half() {
+	template<>
+	inline constexpr unsigned char Color4<unsigned char>::Half() noexcept
+	{
 		return 128;
 	}
 	
-	template<> inline unsigned char Color4<unsigned char>::Full() {
+	template<>
+	inline constexpr unsigned char Color4<unsigned char>::Full() noexcept
+	{
 		return 255;
 	}
 
