@@ -66,7 +66,11 @@ namespace physics
 		return reinterpret_cast<Vector3 const &>(v);
 	}
 
+#if defined(CRAG_COMPILER_MSVC) && defined(CRAG_DEBUG)
+	inline Triangle3 Convert(dVector3 const * t)
+#else
 	inline Triangle3 Convert(std::array<dVector3, 3> const & t)
+#endif
 	{
 		return Triangle3(Convert(t[0]), Convert(t[1]), Convert(t[2]));
 	}

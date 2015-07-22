@@ -92,7 +92,13 @@ void MeshBody::DebugDraw() const
 				& triangle[1],
 				& triangle[2]);
 
+#if defined(CRAG_COMPILER_MSVC) && defined(CRAG_DEBUG)
+		// workaround for problem with VC2015
+		// (see Convert in physics\defs.h)
+		gfx::Debug::AddTriangle(Convert(triangle.data()));
+#else
 		gfx::Debug::AddTriangle(Convert(triangle));
+#endif
 	}
 #endif
 }

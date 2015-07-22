@@ -80,6 +80,8 @@ namespace crag
 				auto index = object_pool.get_index(element);
 
 				auto result = allocated_bitmap.get(index);
+
+#if defined(CRAG_VERIFY_ENABLED)
 				if (result)
 				{
 					object_pool.VerifyAllocatedElement(element);
@@ -88,6 +90,7 @@ namespace crag
 				{
 					object_pool.VerifyFreeElement(element);
 				}
+#endif
 
 				return result;
 			}
