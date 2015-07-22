@@ -43,7 +43,14 @@ namespace
 	////////////////////////////////////////////////////////////////////////////////
 	// setup variables
 	
-	geom::abs::Vector3 observer_start_pos(-1085436, 3474334, 9308749);
+	constexpr auto observer_start_pos = geom::abs::Vector3(-1085436, 3474334, 9308749);
+
+	constexpr auto star_volume_radius = geom::abs::Scalar(1000000.);
+	constexpr auto star_volume_distance = geom::abs::Scalar(100000000.);
+	auto star_volume_center = geom::Resized(geom::abs::Vector3 (.34e6, 137480, .54e6), star_volume_distance);
+	constexpr auto star_color = gfx::Color4f(1.f,.975f,.95f);
+	constexpr auto star_brightness = 7500000000000000.f;
+	constexpr auto star_illumination = star_color * star_brightness;
 
 	////////////////////////////////////////////////////////////////////////////////
 	// variables
@@ -89,10 +96,8 @@ void MainScript(AppletInterface & applet_interface)
 	FUNCTION_NO_REENTRY;
 
 	// Create sun. 
-	geom::abs::Sphere3 star_volume(geom::abs::Vector3(9.34e6, 37480, 3.54e6), 1000000.);
-	star_volume.center = geom::Resized(star_volume.center, 100000000.);
-	gfx::Color4f star_color(gfx::Color4f(1.f,.975f,.95f) * 7500000000000000.f);
-	sim::EntityHandle sun = SpawnStar(star_volume, star_color);
+	auto star_volume = geom::abs::Sphere3(star_volume_center, star_volume_radius);
+	sim::EntityHandle sun = SpawnStar(star_volume, star_illumination);
 	
 	// Create planets
 	sim::EntityHandle planet;
