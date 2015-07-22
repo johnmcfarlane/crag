@@ -47,7 +47,7 @@ namespace
 
 	constexpr auto star_volume_radius = geom::abs::Scalar(1000000.);
 	constexpr auto star_volume_distance = geom::abs::Scalar(100000000.);
-	auto star_volume_center = geom::Resized(geom::abs::Vector3 (9.34e6, 37480, 3.54e6), star_volume_distance);
+	auto star_volume_center = geom::Resized(geom::abs::Vector3 (.34e6, 137480, .54e6), star_volume_distance);
 	constexpr auto star_color = gfx::Color4f(1.f,.975f,.95f);
 	constexpr auto star_brightness = 7500000000000000.f;
 	constexpr auto star_illumination = star_color * star_brightness;
