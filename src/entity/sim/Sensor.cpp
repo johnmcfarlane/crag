@@ -16,6 +16,8 @@
 
 #include "physics/Engine.h"
 
+#include "gfx/axes.h"
+
 #include "core/Random.h"
 #include "core/RosterObjectDefine.h"
 
@@ -31,28 +33,6 @@ namespace
 		auto global = transformation.Transform(local);
 
 		return global;
-	}
-	
-	Vector3 GetRandomDirection(Random & sequence)
-	{
-		Vector3 random_direction;
-		for (;;)
-		{
-			random_direction.x = sequence.GetFloatInclusive<Scalar>() - 0.5f;
-			random_direction.y = sequence.GetFloatInclusive<Scalar>() - 0.5f;
-			random_direction.z = sequence.GetFloatInclusive<Scalar>() - 0.5f;
-			auto length_squared = geom::MagnitudeSq(random_direction);
-			if (length_squared > 1.0f)
-			{
-				continue;
-			}
-			
-			auto inverse_length = FastInvSqrt(length_squared);
-			random_direction *= inverse_length;
-			ASSERT(NearEqual(geom::Magnitude(random_direction), 1.f, 0.001f));
-			
-			return random_direction;
-		}
 	}
 }
 
@@ -105,7 +85,7 @@ void Sensor::GenerateScanRay() noexcept
 
 	scan_ray.direction *= _length;
 	
-	auto random_direction = GetRandomDirection(Random::sequence);
+	auto random_direction = gfx::RandomVector<Scalar>(Random::sequence);
 	scan_ray.direction += random_direction * _length * _variance;
 	
 	auto scan_length = geom::Magnitude(scan_ray.direction);
