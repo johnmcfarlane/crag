@@ -125,7 +125,7 @@ namespace
 		Sphere3 sphere(spawn_position, animat_radius);
 		physics::Engine & physics_engine = engine.GetPhysicsEngine();
 		auto body = new physics::AnimatBody(
-			Transformation(sphere.center), & Vector3::Zero(), physics_engine,
+			sphere.center, & Vector3::Zero(), physics_engine,
 			sphere.radius, * health);
 		body->SetDensity(1);
 		entity->SetLocation(std::unique_ptr<physics::Location>(body));

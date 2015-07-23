@@ -17,6 +17,9 @@
 
 #include <physics/Engine.h>
 
+#include <gfx/axes.h>
+
+#include <core/Random.h>
 #include <core/RosterObjectDefine.h>
 
 using namespace physics;
@@ -42,9 +45,13 @@ CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(AnimatBody, self)
 CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 AnimatBody::AnimatBody(
-	Transformation const & transformation, Vector3 const * velocity, physics::Engine & engine,
+	Vector3 const & position, Vector3 const * velocity, physics::Engine & engine,
 	Scalar radius, sim::Health & health) noexcept
-: SphereBody(transformation, velocity, engine, radius)
+: SphereBody(
+	Transformation(position, gfx::RandomRotation<Scalar>(Random::sequence)),
+	velocity,
+	engine,
+	radius)
 , _health(health)
 {
 }

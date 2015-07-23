@@ -31,7 +31,7 @@ namespace physics
 		CRAG_ROSTER_OBJECT_DECLARE(AnimatBody);
 		CRAG_VERIFY_INVARIANTS_DECLARE(AnimatBody);
 
-		AnimatBody(Transformation const & transformation, Vector3 const * velocity, physics::Engine & engine,
+		AnimatBody(Vector3 const & position, Vector3 const * velocity, physics::Engine & engine,
 			Scalar radius, sim::Health & health) noexcept;
 
 	private:
