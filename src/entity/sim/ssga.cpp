@@ -54,26 +54,6 @@ namespace
 	////////////////////////////////////////////////////////////////////////////////
 	// functions
 
-	// call f with sub-ranges of [begin, end) that are delimited by delimiter
-	template <typename I, typename T = decltype(* I()), typename F>
-	void delimit(I begin, I end, T delimiter, F f) noexcept
-	{
-		for (auto section_begin = begin; section_begin != end;)
-		{
-			auto section_end = std::find(section_begin, end, delimiter);
-
-			f(section_begin, section_end);
-
-			if (section_end != end)
-			{
-				CRAG_VERIFY_EQUAL(* section_end, delimiter);
-				++ section_end;
-			}
-
-			section_begin = section_end;
-		}
-	}
-
 	// given horizontal_position within search_radius distance of formation surface,
 	// return surface ray
 	Ray3 GetSurface(Engine & engine, Vector3 const & horizontal_position, Scalar search_radius)
