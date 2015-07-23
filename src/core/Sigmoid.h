@@ -27,17 +27,16 @@ namespace crag
 			{
 			}
 
-			// given two samples from the curve, find a and b
-			/*CRAG_CONSTEXPR*/ Sigmoid(double x1, double y1, double x2, double y2) noexcept
+			// construct Sigmoid given two samples from the curve;
+			// it should hold that: (*this)(x1) ~= y1
+			// and: (*this)(x2) ~= y2
+			Sigmoid(double x1, double y1, double x2, double y2) noexcept
 			{
 				double l1 = std::log(1. / y1 - 1.);
 				double l2 = std::log(1. / y2 - 1.);
 				double xr = x1 / x2;
 				a = value_type((l1 - l2) / (x1 - x2));
 				b = value_type((l1 - l2 * xr) / (1. - xr));
-
-				CRAG_VERIFY_NEARLY_EQUAL((*this)(value_type(x1)), value_type(y1), value_type(.0005));
-				CRAG_VERIFY_NEARLY_EQUAL((*this)(value_type(x2)), value_type(y2), value_type(.0005));
 			}
 
 			constexpr value_type operator() (value_type x) const noexcept
