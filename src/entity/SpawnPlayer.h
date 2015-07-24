@@ -17,4 +17,4 @@ namespace geom
 }
 
 sim::EntityHandle SpawnRover(sim::Vector3 const & position, sim::Scalar thrust);
-std::array<sim::EntityHandle, 2> SpawnPlayer(sim::Vector3 const & translation, geom::Space const & space);
+std::array<sim::EntityHandle, 2> SpawnPlayer(sim::Vector3 const & position, sim::Vector3 const & forward, geom::Space const & space);

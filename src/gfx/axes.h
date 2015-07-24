@@ -13,6 +13,8 @@
 #include "geom/Ray.h"
 #include "geom/Sphere.h"
 
+#include <core/Random.h>
+
 namespace gfx 
 {
 	enum class Direction
@@ -170,6 +172,33 @@ namespace gfx
 		return rotation;
 	}
 	
+	// return a random unit vector
+	template <typename S>
+	geom::Vector<S, 3> RandomVector(Random & rng)
+	{
+		constexpr auto h = S(1);
+		auto a = rng.GetFloatInclusive<S>(-1, 1);	// [-1, 1]
+		auto o = std::sqrt(h * h - a * a);
+
+		auto theta = rng.GetFloat<S>(PI * 2);	// [0, 2 * PI)
+		return geom::Vector<S, 3>(o * std::cos(theta), o * std::sin(theta), a);
+	}
+
+	// generates random rotation maxtrix
+	template<typename S>
+	geom::Matrix<S, 3, 3> RandomRotation(Random & rng)
+	{
+		for (;;)
+		{
+			auto forward = RandomVector<S>(rng);
+			auto up = RandomVector<S>(rng);
+			if (forward != up)
+			{
+				return Rotation(forward, up);
+			}
+		}
+	}
+
 	// converts matrix from world space to OpenGL space
 	template<typename S>
 	geom::Matrix<S, 4, 4> ToOpenGl(geom::Matrix<S, 4, 4> const & matrix)

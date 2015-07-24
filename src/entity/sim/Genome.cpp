@@ -19,7 +19,7 @@ using namespace sim::ga;
 
 namespace
 {
-	CONFIG_DEFINE(mutation_rate, .01f);
+	CONFIG_DEFINE(mutation_rate, .005f);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

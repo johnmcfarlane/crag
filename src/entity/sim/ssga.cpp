@@ -41,38 +41,18 @@ namespace
 	////////////////////////////////////////////////////////////////////////////////
 	// constants
 
-	CONFIG_DEFINE(max_num_animats, 25);
+	CONFIG_DEFINE(max_num_animats, 30);
 
 	CONFIG_DEFINE(animat_radius, 1.f);
-	CONFIG_DEFINE(animat_birth_elevation, 5.f);
+	CONFIG_DEFINE(animat_birth_elevation, 3.f);
 	CONFIG_DEFINE(animat_elevation_test_length, 10000.f);
-	CONFIG_DEFINE(animat_start_distribution, 25.f);
+	CONFIG_DEFINE(animat_start_distribution, 35.f);
 
-	constexpr geom::abs::Vector3 animat_start_pos(-1085436, 3474334, 9308749);
+	geom::abs::Vector3 animat_start_pos;
 	constexpr auto ga_filename = "ga.csv";
 
 	////////////////////////////////////////////////////////////////////////////////
 	// functions
-
-	// call f with sub-ranges of [begin, end) that are delimited by delimiter
-	template <typename I, typename T = decltype(* I()), typename F>
-	void delimit(I begin, I end, T delimiter, F f) noexcept
-	{
-		for (auto section_begin = begin; section_begin != end;)
-		{
-			auto section_end = std::find(section_begin, end, delimiter);
-
-			f(section_begin, section_end);
-
-			if (section_end != end)
-			{
-				CRAG_VERIFY_EQUAL(* section_end, delimiter);
-				++ section_end;
-			}
-
-			section_begin = section_end;
-		}
-	}
 
 	// given horizontal_position within search_radius distance of formation surface,
 	// return surface ray
@@ -145,7 +125,7 @@ namespace
 		Sphere3 sphere(spawn_position, animat_radius);
 		physics::Engine & physics_engine = engine.GetPhysicsEngine();
 		auto body = new physics::AnimatBody(
-			Transformation(sphere.center), & Vector3::Zero(), physics_engine,
+			sphere.center, & Vector3::Zero(), physics_engine,
 			sphere.radius, * health);
 		body->SetDensity(1);
 		entity->SetLocation(std::unique_ptr<physics::Location>(body));
@@ -157,8 +137,9 @@ namespace
 		entity->SetModel(Entity::ModelPtr(model));
 
 		// controller
+		CRAG_VERIFY_EQUAL(sphere.radius, 1.f);
 		auto controller = new AnimatController(
-			* entity, sphere.radius, std::move(genome), AnimatController::HealthPtr(health));
+			* entity, std::move(genome), AnimatController::HealthPtr(health));
 		entity->SetController(std::unique_ptr<AnimatController>(controller));
 
 		// connect health signal
@@ -322,8 +303,9 @@ namespace
 
 namespace ssga
 {
-	void Init(Engine & engine) noexcept
+	void Init(Engine & engine, geom::abs::Vector3 const & spawn_pos) noexcept
 	{
+		animat_start_pos = spawn_pos;
 		if (! LoadPopulation(engine, ga_filename))
 		{
 			auto gene_pool = std::vector<Genome>(max_num_animats);
@@ -347,7 +329,7 @@ namespace ssga
 		if (num_animats == 0)
 		{
 			ERROR_MESSAGE("There are no animats! Regenerating...");
-			Init(engine);
+			Init(engine, animat_start_pos);
 		}
 		else if (num_animats < max_num_animats)
 		{

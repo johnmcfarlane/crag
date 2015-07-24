@@ -43,7 +43,7 @@ namespace
 #else
 	CONFIG_DEFINE(collisions, true);
 #endif
-	CONFIG_DEFINE(contact_surface_friction, 2.f);	// coulomb friction coefficient
+	CONFIG_DEFINE(contact_surface_friction, 1.f);	// coulomb friction coefficient
 	CONFIG_DEFINE(contact_surface_bounce, .5f);
 	CONFIG_DEFINE(contact_surface_bounce_velocity, .1f);
 

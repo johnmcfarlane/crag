@@ -584,26 +584,26 @@ namespace
 	////////////////////////////////////////////////////////////////////////////////
 	// entity composition
 	
-	void ConstructBody(Entity & entity, sim::Vector3 const & position, Vector3 const & velocity, physics::Mass m)
+	void ConstructBody(Entity & entity, Transformation const & transformation, Vector3 const & velocity, physics::Mass m)
 	{
 		Engine & engine = entity.GetEngine();
 		physics::Engine & physics_engine = engine.GetPhysicsEngine();
 
 		auto body = std::unique_ptr<physics::GhostBody>(
-			new physics::GhostBody(position, velocity, physics_engine));
+			new physics::GhostBody(transformation, velocity, physics_engine));
 		
 		// setting the mass of a shapeless body is somewhat nonsensical
 		body->SetMass(m);
 		entity.SetLocation(std::move(body));
 	}
 
-	void ConstructSphereBody(Entity & entity, Sphere3 const & sphere, Vector3 const & velocity, float density)
+	void ConstructSphereBody(Entity & entity, Transformation const & transformation, Scalar radius, Vector3 const & velocity, float density)
 	{
 		Engine & engine = entity.GetEngine();
 		physics::Engine & physics_engine = engine.GetPhysicsEngine();
 
 		auto body = std::unique_ptr<physics::SphereBody>(
-			new physics::SphereBody(sphere.center, & velocity, physics_engine, sphere.radius));
+			new physics::SphereBody(transformation, & velocity, physics_engine, radius));
 		body->SetDensity(density);
 		entity.SetLocation(std::move(body));
 	}
@@ -611,7 +611,7 @@ namespace
 	void ConstructBall(Entity & ball, Sphere3 sphere, Vector3 const & velocity, gfx::Color4f color)
 	{
 		// physics
-		ConstructSphereBody(ball, sphere, velocity, saucer_ball_density);
+		ConstructSphereBody(ball, sphere.center, sphere.radius, velocity, saucer_ball_density);
 
 		// graphics
 		gfx::Transformation local_transformation(sphere.center, gfx::Transformation::Matrix33::Identity());
@@ -619,27 +619,27 @@ namespace
 		ball.SetModel(std::move(Entity::ModelPtr(new Model(model_handle, * ball.GetLocation()))));
 	}
 
-	void ConstructObserver(Entity & observer, Vector3 const & position)
+	void ConstructObserver(Entity & observer, Transformation const & transformation)
 	{
 		// physics
 		if (! observer_use_touch)
 		{
 			if (observer_physics)
 			{
-				ConstructSphereBody(observer, Sphere3(position, observer_radius), Vector3::Zero(), observer_density);
+				ConstructSphereBody(observer, transformation, observer_radius, Vector3::Zero(), observer_density);
 			}
 			else
 			{
 				physics::Mass m;
 				dMassSetSphere(& m, observer_density, observer_radius);
-				ConstructBody(observer, position, Vector3::Zero(), m);
+				ConstructBody(observer, transformation, Vector3::Zero(), m);
 			}
 		}
 
 		// controller
 		auto controller = [&] () -> std::unique_ptr<Controller>
 		{
-			if (! observer_use_touch)
+			if (! observer_use_touch && true)
 			{
 				if (SDL_SetRelativeMouseMode(SDL_TRUE) == 0)
 				{
@@ -652,7 +652,7 @@ namespace
 				}
 			}
 
-			return std::unique_ptr<Controller>(new TouchObserverController(observer, position));
+			return std::unique_ptr<Controller>(new TouchObserverController(observer, transformation.GetTranslation()));
 		} ();
 		
 		observer.SetController(std::move(controller));
@@ -999,40 +999,64 @@ EntityHandle SpawnRover(Vector3 const & position, Scalar thrust)
 	return vehicle;
 }
 
-std::array<sim::EntityHandle, 2> SpawnPlayer(Vector3 const & translation, geom::Space const & space)
+std::array<sim::EntityHandle, 2> SpawnPlayer(sim::Vector3 const & position, sim::Vector3 const & forward, geom::Space const & space)
 {
 	AddUfoResources();
 	
 	auto player = EntityHandle::Create();
-
-	// TODO: Coordinate system still not right. (Try player_type=3 script_mode=2)
-	auto up = geom::Normalized(translation - space.AbsToRel(geom::abs::Vector3::Zero()));
-	sim::Transformation transformation(translation, gfx::Rotation(up, gfx::Direction::forward));
+	auto up = geom::Normalized(position - space.AbsToRel(geom::abs::Vector3::Zero()));
 
 	auto _player_type = PlayerType(player_type);
 	player.Call([=] (Entity & entity) {
 		switch (_player_type)
 		{
-		case PlayerType::observer:
-			// on PC for all other types, SDL_WINDOW_INPUT_GRABBED is advised
-			ConstructObserver(entity, translation);
-			break;
+			case PlayerType::observer:
+			{
+				sim::Transformation transformation(
+					position,
+					gfx::Rotation(forward, up, gfx::Direction::forward, gfx::Direction::up));
+				ConstructObserver(entity, transformation);
+				break;
+			}
 
-		case PlayerType::arrow:
-			ConstructShip(entity, translation);
-			break;
+			case PlayerType::arrow:
+			{
+				ConstructShip(entity, position);
+				break;
+			}
 
-		case PlayerType::thargoid:
-			ConstructUfo(entity, transformation, "ThargoidVbo", "ThargoidShadowMesh", _player_type, thargoid_thrust, thargoid_radius);
-			break;
+			case PlayerType::thargoid:
+			{
+				sim::Transformation transformation(position, gfx::Rotation(up, gfx::Direction::forward));
+				ConstructUfo(
+					entity, transformation,
+					"ThargoidVbo", "ThargoidShadowMesh",
+					_player_type,
+					thargoid_thrust, thargoid_radius);
+				break;
+			}
 
-		case PlayerType::cos_saucer:
-			ConstructUfo(entity, transformation, saucer_flat_shade_cos ? "CosSaucerFlatLitVbo" : "CosSaucerVbo", "CosSaucerShadowMesh", _player_type, saucer_thrust, saucer_radius);
-			break;
+			case PlayerType::cos_saucer:
+			{
+				sim::Transformation transformation(position, gfx::Rotation(up, gfx::Direction::forward));
+				ConstructUfo(
+					entity, transformation,
+					saucer_flat_shade_cos ? "CosSaucerFlatLitVbo" : "CosSaucerVbo", "CosSaucerShadowMesh",
+					_player_type,
+					saucer_thrust, saucer_radius);
+				break;
+			}
 
-		case PlayerType::ball_saucer:
-			ConstructUfo(entity, transformation, saucer_flat_shade_ball ? "BallSaucerFlatLitVbo" : "BallSaucerVbo", "BallSaucerShadowMesh", _player_type, saucer_thrust, saucer_radius);
-			break;
+			case PlayerType::ball_saucer:
+			{
+				sim::Transformation transformation(position, gfx::Rotation(up, gfx::Direction::forward));
+				ConstructUfo(
+					entity, transformation,
+					saucer_flat_shade_ball ? "BallSaucerFlatLitVbo" : "BallSaucerVbo", "BallSaucerShadowMesh",
+					_player_type,
+					saucer_thrust, saucer_radius);
+				break;
+			}
 		}
 	});
 
@@ -1040,7 +1064,7 @@ std::array<sim::EntityHandle, 2> SpawnPlayer(Vector3 const & translation, geom::
 	sim::EntityHandle camera;
 	if (_player_type != PlayerType::observer)
 	{
-		camera = SpawnCamera(translation + camera_start_offset, player);
+		camera = SpawnCamera(position + camera_start_offset, player);
 	}
 
 	return {{ player, camera }};

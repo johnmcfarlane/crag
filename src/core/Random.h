@@ -88,6 +88,14 @@ public:
 		return inverse * GetInt();
 	}
 
+	// returns pseudo-random number in the range [min, max]
+	template <typename S = float, typename std::enable_if<std::is_floating_point<S>::value, int>::type dummy = 0>
+	S GetFloatInclusive(S min, S max)
+	{
+		auto range = max - min;
+		return min + GetFloatInclusive(range);
+	}
+
 	template <typename S = float>
 	void GetGaussians(S & y1, S & y2)
 	{
