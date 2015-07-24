@@ -16,13 +16,73 @@
 
 #include <sim/Engine.h>
 
+#include <gfx/axes.h>
+
+#include <geom/Intersection.h>
+
+#include <core/Random.h>
 #include <core/RosterObjectDefine.h>
 
 using namespace sim;
 
 CONFIG_DEFINE(animat_sensor_length, 5.f);
+CONFIG_DEFINE(animat_sensor_count, 4);
+CONFIG_DEFINE(animat_sensor_embed_coefficient, .8f);
+
 CONFIG_DEFINE(animat_thruster_length, 15.f);
 CONFIG_DEFINE(animat_thruster_gain_coefficient, -.0002f);
+CONFIG_DEFINE(animat_thruster_count, 4);
+
+namespace
+{
+	Ray3 ShiftedToSphereSurface(Ray3 const & ray)
+	{
+		Scalar t1, t2;
+		if (! geom::GetIntersection(Sphere3(Vector3::Zero(), 1), ray, t1, t2))
+		{
+			CRAG_DEBUG_DUMP(ray);
+			DEBUG_BREAK("GetIntersection failed:");
+			return ray;
+		}
+
+		CRAG_VERIFY_OP(t1, <=, .001f);
+		CRAG_VERIFY_OP(t2, >=, 0.f);
+		return Ray3(
+			geom::Project(ray, t1) * animat_sensor_embed_coefficient,
+			ray.direction);
+	}
+
+	Ray3 ReadRay(ga::GenomeReader & genome_reader)
+	{
+		auto read_signed_unit = [&] ()
+		{
+			return genome_reader.Read().closed() * 2.f - 1.f;
+		};
+		auto read_vector = [&]()
+		{
+			return Vector3(read_signed_unit(), read_signed_unit(), read_signed_unit());
+		};
+
+		auto from = read_vector();
+		auto to = read_vector();
+
+		for (; ;)
+		{
+			auto rejiggered = [](Vector3 const & v)
+			{
+				return geom::Clamped(v + gfx::RandomVector<Scalar>(Random::sequence) * .01f, 1);
+			};
+
+			Ray3 ray;
+			ray.position = rejiggered(from);
+			ray.direction = rejiggered(to) - ray.position;
+			if (ray.direction != Vector3::Zero())
+			{
+				return geom::Normalized(ray);
+			}
+		}
+	}
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // sim::AnimatController member definitions
@@ -36,14 +96,16 @@ CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(AnimatController, self)
 	CRAG_VERIFY(static_cast<VehicleController const &>(self));
 CRAG_VERIFY_INVARIANTS_DEFINE_END
 
-AnimatController::AnimatController(Entity & entity, float radius, ga::Genome && genome, HealthPtr && health)
+AnimatController::AnimatController(Entity & entity, ga::Genome && genome, HealthPtr && health)
 : VehicleController(entity)
 , _genome(std::move(genome))
 , _health(std::move(health))
 {
-	CreateSensors(radius);
-	CreateThrusters(radius);
-	CreateNetwork();
+	ga::GenomeReader genome_reader(_genome);
+
+	CreateSensors(genome_reader);
+	CreateThrusters(genome_reader, entity);
+	CreateNetwork(genome_reader);
 
 	CRAG_VERIFY(* this);
 }
@@ -66,61 +128,29 @@ void AnimatController::Tick()
 	_health->IncrementHealth(sum_thrust * animat_thruster_gain_coefficient);
 }
 
-void AnimatController::CreateSensors(float radius)
+void AnimatController::CreateSensors(ga::GenomeReader & genome_reader)
 {
-	auto const unit_component = static_cast<Scalar>(std::sqrt(1. / 3.));
-
-	Ray3 ray;
-	for (auto z = 0; z < 2; ++ z)
+	for (auto i = animat_sensor_count; i; -- i)
 	{
-		ray.direction.z = z ? unit_component : - unit_component;
-		ray.position.z = ray.direction.z * radius;
-
-		for (auto y = 0; y < 2; ++ y)
-		{
-			ray.direction.y = y ? unit_component : - unit_component;
-			ray.position.y = ray.direction.y * radius;
-
-			for (auto x = 0; x < 2; ++ x)
-			{
-				ray.direction.x = x ? unit_component : - unit_component;
-				ray.position.x = ray.direction.x * radius;
-
-				AddSensor(ray);
-			}
-		}
+		AddSensor(
+			ShiftedToSphereSurface(ReadRay(genome_reader)),
+			genome_reader.Read().closed() * animat_sensor_length);
 	}
 }
 
-void AnimatController::CreateThrusters(float radius)
+void AnimatController::CreateThrusters(ga::GenomeReader & genome_reader, Entity & entity)
 {
-	auto & entity = GetEntity();
-	auto root_third = static_cast<float>(std::sqrt(1. / 3.) * radius);
-
-	Ray3 ray;
-	for (auto z = 0; z < 2; ++ z)
+	for (auto i = animat_sensor_count; i; -- i)
 	{
-		ray.position.z = z ? root_third : -root_third;
-		ray.direction.z = ray.position.z * animat_thruster_length;
-
-		for (auto y = 0; y < 2; ++ y)
-		{
-			ray.position.y = y ? root_third : -root_third;
-			ray.direction.y = ray.position.y * animat_thruster_length;
-
-			for (auto x = 0; x < 2; ++ x)
-			{
-				ray.position.x = x ? root_third : -root_third;
-				ray.direction.x = ray.position.x * animat_thruster_length;
-
-				CRAG_VERIFY_NEARLY_EQUAL(geom::Magnitude(ray), animat_thruster_length, .0001f);
-				AddReceiver(VehicleController::ReceiverPtr(new Thruster(entity, ray, false, 0.f)));
-			}
-		}
+		AddReceiver(VehicleController::ReceiverPtr(new Thruster(
+			entity,
+			ReadRay(genome_reader) * animat_thruster_length,
+			false,
+			0.f)));
 	}
 }
 
-void AnimatController::CreateNetwork()
+void AnimatController::CreateNetwork(ga::GenomeReader & genome_reader)
 {
 	auto transmitters = core::make_transform(GetTransmitters(), [] (TransmitterPtr const & sensor) {
 		return static_cast<Transmitter *>(sensor.get());
@@ -131,7 +161,7 @@ void AnimatController::CreateNetwork()
 		return static_cast<Receiver *>(motor.get());
 	});
 
-	_network = std::move(nnet::Network(_genome, std::vector<int>{
+	_network = std::move(nnet::Network(genome_reader, std::vector<int>{
 		int(transmitters.size()),
 		10,
 		int(receivers.size())}));
@@ -139,7 +169,7 @@ void AnimatController::CreateNetwork()
 	_network.ConnectOutputs(receivers);
 }
 
-void AnimatController::AddSensor(Ray3 const & ray)
+void AnimatController::AddSensor(Ray3 const & ray, Scalar length)
 {
-	AddTransmitter(TransmitterPtr(new Sensor(GetEntity(), ray, animat_sensor_length, 0.2f)));
+	AddTransmitter(TransmitterPtr(new Sensor(GetEntity(), ray, length, 0.2f)));
 }

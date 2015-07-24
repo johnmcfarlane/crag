@@ -32,17 +32,17 @@ namespace sim
 		CRAG_ROSTER_OBJECT_DECLARE(AnimatController);
 		CRAG_VERIFY_INVARIANTS_DECLARE(AnimatController);
 
-		AnimatController(Entity & entity, float radius, ga::Genome && genome, HealthPtr && health);
+		AnimatController(Entity & entity, ga::Genome && genome, HealthPtr && health);
 
 		ga::Genome const & GetGenome() const;
 	private:
 		void Tick();
 
-		void CreateSensors(float radius);
-		void CreateThrusters(float radius);
-		void CreateNetwork();
+		void CreateSensors(ga::GenomeReader & genome_reader);
+		void CreateThrusters(ga::GenomeReader & genome_reader, Entity & entity);
+		void CreateNetwork(ga::GenomeReader & genome_reader);
 
-		void AddSensor(Ray3 const & ray);
+		void AddSensor(Ray3 const & ray, Scalar length);
 
 		////////////////////////////////////////////////////////////////////////////////
 		// variables

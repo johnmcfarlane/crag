@@ -97,7 +97,7 @@ namespace sim
 			// functions
 			Network() = default;
 			Network(Network &&) = default;
-			Network(ga::Genome & genome, std::vector<int> const & num_layer_nodes) noexcept;
+			Network(ga::GenomeReader & genome_reader, std::vector<int> const & num_layer_nodes) noexcept;
 
 			Network & operator=(Network &&) = default;
 

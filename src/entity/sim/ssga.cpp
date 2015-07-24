@@ -41,12 +41,12 @@ namespace
 	////////////////////////////////////////////////////////////////////////////////
 	// constants
 
-	CONFIG_DEFINE(max_num_animats, 25);
+	CONFIG_DEFINE(max_num_animats, 30);
 
 	CONFIG_DEFINE(animat_radius, 1.f);
-	CONFIG_DEFINE(animat_birth_elevation, 5.f);
+	CONFIG_DEFINE(animat_birth_elevation, 3.f);
 	CONFIG_DEFINE(animat_elevation_test_length, 10000.f);
-	CONFIG_DEFINE(animat_start_distribution, 25.f);
+	CONFIG_DEFINE(animat_start_distribution, 35.f);
 
 	geom::abs::Vector3 animat_start_pos;
 	constexpr auto ga_filename = "ga.csv";
@@ -137,8 +137,9 @@ namespace
 		entity->SetModel(Entity::ModelPtr(model));
 
 		// controller
+		CRAG_VERIFY_EQUAL(sphere.radius, 1.f);
 		auto controller = new AnimatController(
-			* entity, sphere.radius, std::move(genome), AnimatController::HealthPtr(health));
+			* entity, std::move(genome), AnimatController::HealthPtr(health));
 		entity->SetController(std::unique_ptr<AnimatController>(controller));
 
 		// connect health signal

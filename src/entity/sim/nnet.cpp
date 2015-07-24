@@ -151,10 +151,8 @@ void Layer::ConnectOutputs(std::vector<Receiver *> const & receivers) noexcept
 ////////////////////////////////////////////////////////////////////////////////
 // sim::nnet::Network
 
-Network::Network(Genome & genome, std::vector<int> const & num_layer_nodes) noexcept
+Network::Network(GenomeReader & genome_reader, std::vector<int> const & num_layer_nodes) noexcept
 {
-	GenomeReader genome_reader(genome);
-
 	auto num_layers = num_layer_nodes.size() - 1;
 	layers.reserve(num_layers);
 
