@@ -25,6 +25,8 @@
 #include "gfx/Engine.h"
 #include "gfx/object/Ball.h"
 
+#include <geom/Space.h>
+
 #include "core/ConfigEntry.h"
 #include "core/EventWatcher.h"
 #include "core/iterable_object_pool.h"
@@ -43,7 +45,9 @@ namespace
 	////////////////////////////////////////////////////////////////////////////////
 	// setup variables
 	
-	constexpr auto observer_start_pos = geom::abs::Vector3(-1085436, 3474334, 9308749);
+	constexpr auto origin = geom::abs::Vector3(-1085436, 3474334, 9308749);
+	constexpr auto observer_start_pos = geom::abs::Vector3(-1085436, 3474314, 9308759);
+	constexpr auto animat_start_pos = geom::abs::Vector3(-1085436, 3474354, 9308749);
 
 	constexpr auto star_volume_radius = geom::abs::Scalar(1000000.);
 	constexpr auto star_volume_distance = geom::abs::Scalar(100000000.);
@@ -104,15 +108,18 @@ void MainScript(AppletInterface & applet_interface)
 	sim::Scalar planet_radius = 9999840;
 	planet = SpawnPlanet(sim::Sphere3(sim::Vector3::Zero(), planet_radius), 3635, 0);
 
-	geom::Space space(observer_start_pos);
+	geom::Space space(origin);
 	InitSpace(applet_interface, space);
 	
 	// Create observer.
-	auto player_and_camera = SpawnPlayer(sim::Vector3::Zero(), space);
+	auto observer_forward = geom::Normalized(geom::Cast<sim::Scalar>(animat_start_pos - observer_start_pos));
+	auto player_and_camera = SpawnPlayer(space.AbsToRel(observer_start_pos), observer_forward, space);
 	
 	gfx::ObjectHandle skybox = SpawnStarfieldSkybox();
 
-	sim::Daemon::Call(& ssga::Init);
+	sim::Daemon::Call([] (sim::Engine & engine) {
+		ssga::Init(engine, animat_start_pos);
+	});
 
 	// main loop
 	while (applet_interface.WaitFor(0))

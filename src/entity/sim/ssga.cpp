@@ -48,7 +48,7 @@ namespace
 	CONFIG_DEFINE(animat_elevation_test_length, 10000.f);
 	CONFIG_DEFINE(animat_start_distribution, 25.f);
 
-	constexpr geom::abs::Vector3 animat_start_pos(-1085436, 3474334, 9308749);
+	geom::abs::Vector3 animat_start_pos;
 	constexpr auto ga_filename = "ga.csv";
 
 	////////////////////////////////////////////////////////////////////////////////
@@ -302,8 +302,9 @@ namespace
 
 namespace ssga
 {
-	void Init(Engine & engine) noexcept
+	void Init(Engine & engine, geom::abs::Vector3 const & spawn_pos) noexcept
 	{
+		animat_start_pos = spawn_pos;
 		if (! LoadPopulation(engine, ga_filename))
 		{
 			auto gene_pool = std::vector<Genome>(max_num_animats);
@@ -327,7 +328,7 @@ namespace ssga
 		if (num_animats == 0)
 		{
 			ERROR_MESSAGE("There are no animats! Regenerating...");
-			Init(engine);
+			Init(engine, animat_start_pos);
 		}
 		else if (num_animats < max_num_animats)
 		{

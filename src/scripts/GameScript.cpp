@@ -239,7 +239,7 @@ void GameScript(AppletInterface & applet_interface)
 #endif
 	
 	// Create player.
-	auto player_and_camera = SpawnPlayer(rel_player_start_pos, space);
+	auto player_and_camera = SpawnPlayer(rel_player_start_pos, sim::Vector3(0, 0, 1), space);
 
 	// ball
 	if (enable_spawn_ball)
