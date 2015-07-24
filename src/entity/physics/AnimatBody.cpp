@@ -27,7 +27,7 @@ using namespace physics;
 namespace
 {
 	CONFIG_DEFINE(animat_health_exchange_coefficient, .1f);
-	CONFIG_DEFINE(animat_health_gain_per_contact, -.005f);
+	CONFIG_DEFINE(animat_health_gain_per_contact, -.003f);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

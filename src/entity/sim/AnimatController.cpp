@@ -30,7 +30,7 @@ CONFIG_DEFINE(animat_sensor_count, 4);
 CONFIG_DEFINE(animat_sensor_embed_coefficient, .8f);
 
 CONFIG_DEFINE(animat_thruster_length, 15.f);
-CONFIG_DEFINE(animat_thruster_gain_coefficient, -.0002f);
+CONFIG_DEFINE(animat_thruster_gain_coefficient, -.0001f);
 CONFIG_DEFINE(animat_thruster_count, 4);
 
 namespace
