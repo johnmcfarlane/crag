@@ -85,6 +85,8 @@ namespace
 
 	CONFIG_DEFINE(observer_radius, .5f);
 	CONFIG_DEFINE(observer_density, 1.f);
+	CONFIG_DEFINE(observer_translation_coefficient_ghost, 1.f);
+	CONFIG_DEFINE(observer_translation_coefficient_physical, 2.f);
 
 	CONFIG_DEFINE(ship_angular_damping, .25f);
 	CONFIG_DEFINE(ship_upward_thrust_gradient, 1.f);
@@ -643,7 +645,9 @@ namespace
 			{
 				if (SDL_SetRelativeMouseMode(SDL_TRUE) == 0)
 				{
-					return std::unique_ptr<Controller>(new MouseObserverController(observer));
+					return std::unique_ptr<Controller>(new MouseObserverController(
+						observer,
+						observer_physics ? observer_translation_coefficient_physical : observer_translation_coefficient_ghost));
 				}
 				else
 				{
