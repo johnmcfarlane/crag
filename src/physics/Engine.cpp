@@ -38,7 +38,7 @@ namespace
 	// config constants
 
 #if defined (CRAG_OS_PNACL)
-	// TODO: crashes in ForEachFactInSphere.h
+	// TODO: crashes in ForEachFaceInSphere.h
 	CONFIG_DEFINE(collisions, false);
 #else
 	CONFIG_DEFINE(collisions, true);
