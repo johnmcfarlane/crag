@@ -639,7 +639,7 @@ namespace
 		// controller
 		auto controller = [&] () -> std::unique_ptr<Controller>
 		{
-			if (! observer_use_touch && true)
+			if (! observer_use_touch)
 			{
 				if (SDL_SetRelativeMouseMode(SDL_TRUE) == 0)
 				{
