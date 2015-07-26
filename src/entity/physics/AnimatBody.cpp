@@ -73,10 +73,20 @@ void AnimatBody::OnContact(Body & that_body) noexcept
 
 	auto & that_animat_body = core::StaticCast<AnimatBody>(that_body);
 
-	// calculate the height advantage of this animat
-	auto gravity = geom::Normalized(GetGravitationalForce() + that_body.GetGravitationalForce());
+	// determine down direction
+	auto sum_gravitational_force = GetGravitationalForce() + that_body.GetGravitationalForce();
+	auto sum_gravitational_force_magnitude = geom::Magnitude(sum_gravitational_force);
+	if (! sum_gravitational_force_magnitude)
+	{
+		// it is unlikely that there can be agreement between the animats upon which direction is down
+		return;
+	}
+	auto down_direction = sum_gravitational_force / sum_gravitational_force_magnitude;
+	CRAG_VERIFY_UNIT(down_direction, .0001f);
+
+	// calculate the height advantage of this animat (hack assumes fairly gradual gravity field)
 	auto displacement = geom::Normalized(that_body.GetTranslation() - GetTranslation());
-	auto height_advantage = geom::DotProduct(gravity, displacement);
+	auto height_advantage = geom::DotProduct(down_direction, displacement);
 
 	// higher animat wins health from lower animat
 	auto health_delta = height_advantage * animat_health_exchange_coefficient;
