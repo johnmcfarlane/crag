@@ -158,13 +158,13 @@ namespace
 	// call GeneratePopulation with gene_pool loaded from file with given filename
 	std::vector<Genome> LoadGenePool(char const * filename) noexcept
 	{
-		using PopulationType = std::vector<Genome>;
-		PopulationType population;
+		using GenePool = std::vector<Genome>;
+		GenePool gene_pool;
 
 		auto file = std::fopen(app::GetStatePath(filename).c_str(), "r");
 		if (! file)
 		{
-			return population;
+			return gene_pool;
 		}
 
 		Genome genome;
@@ -183,11 +183,11 @@ namespace
 					break;
 
 				case EOF:
-					return population;
+					return gene_pool;
 
 				default:
 					ERROR_MESSAGE("%d fields of \"%s\" scanned", num_fields_scanned, filename);
-					return PopulationType();
+					return GenePool();
 			}
 
 			genome.push_back(Gene::from_repr(repr));
@@ -198,14 +198,14 @@ namespace
 					break;
 
 				case '\n':
-					population.push_back(std::move(genome));
+					gene_pool.push_back(std::move(genome));
 					break;
 
 				default:
 					ERROR_MESSAGE(
 						"unrecognized delimeter, %d, on line %d of %s",
-						delimiter, static_cast<int>(population.size()) + 1, filename);
-					return PopulationType();
+						delimiter, static_cast<int>(gene_pool.size()) + 1, filename);
+					return GenePool();
 			}
 		}
 	}
@@ -250,14 +250,14 @@ namespace
 	// or return false
 	bool LoadPopulation(Engine & engine, char const * filename) noexcept
 	{
-		auto population = LoadGenePool(filename);
+		auto gene_pool = LoadGenePool(filename);
 
-		if (population.empty())
+		if (gene_pool.empty())
 		{
 			return false;
 		}
 
-		GeneratePopulation(engine, population);
+		GeneratePopulation(engine, gene_pool);
 		return true;
 	}
 
