@@ -324,19 +324,22 @@ namespace ssga
 		auto num_animats = pool.size();
 		CRAG_VERIFY_OP(num_animats, >=, 0);
 
-		if (num_animats == 0)
+		if (num_animats < max_num_animats)
 		{
-			ERROR_MESSAGE("There are no animats! Regenerating...");
-			Init(engine, animat_start_pos);
-		}
-		else if (num_animats < max_num_animats)
-		{
-			while (pool.size() < max_num_animats)
+			if (num_animats == 0)
 			{
-				Breed(engine);
+				ERROR_MESSAGE("There are no animats! Regenerating...");
+				Init(engine, animat_start_pos);
 			}
+			else
+			{
+				while (pool.size() < max_num_animats)
+				{
+					Breed(engine);
+				}
 
-			SavePopulation(ga_filename);
+				SavePopulation(ga_filename);
+			}
 		}
 
 		CRAG_VERIFY_OP(pool.size(), >=, max_num_animats);
