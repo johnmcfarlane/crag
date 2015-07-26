@@ -303,7 +303,7 @@ void Engine::Run(Daemon::MessageQueue & message_queue)
 void Engine::Tick()
 {
 #if defined(CRAG_SIM_FORMATION_PHYSICS)
-	if (_collision_scene->Tick(_lod_parameters))
+	if (! _collision_scene->IsPaused() && _collision_scene->Tick(_lod_parameters))
 		STAT_SET(form_changed_sim, true);
 	else
 		STAT_SET(form_changed_sim, false);
