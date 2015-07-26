@@ -644,7 +644,7 @@ namespace
 		{
 			if (! observer_use_touch)
 			{
-				if (grab_input && SDL_SetRelativeMouseMode(SDL_TRUE) == 0)
+				if (! grab_input || SDL_SetRelativeMouseMode(SDL_TRUE) == 0)
 				{
 					return std::unique_ptr<Controller>(new MouseObserverController(
 						observer,
