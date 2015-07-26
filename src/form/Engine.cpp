@@ -62,7 +62,6 @@ namespace
 
 Engine::Engine()
 : quit_flag(false)
-, suspend_flag(false)
 , enable_mesh_generation(true)
 , mesh_generation_time(app::GetTime())
 , _enable_adjust_num_quaterna(true)
@@ -140,7 +139,7 @@ void Engine::OnSetRecommendedNumQuaterne(std::size_t recommented_num_quaterne)
 
 void Engine::OnToggleSuspended()
 {
-	suspend_flag = ! suspend_flag;
+	_scene.SetPaused(! _scene.IsPaused());
 }
 
 void Engine::OnToggleMeshGeneration()
@@ -172,7 +171,7 @@ void Engine::Run(Daemon::MessageQueue & message_queue)
 	{
 		message_queue.DispatchMessage(* this);
 
-		if (! suspend_flag)
+		if (! _scene.IsPaused())
 		{
 			Tick();
 		}
@@ -187,7 +186,7 @@ void Engine::Run(Daemon::MessageQueue & message_queue)
 }
 
 // The tick function of the scene thread. 
-// This functions gets called repeatedly either in the scene thread - if there is on -
+// This functions gets called repeatedly either in the scene thread - if there is one -
 // or in the main thread as part of the main render/simulation iteration.
 void Engine::Tick()
 {
@@ -294,16 +293,7 @@ std::shared_ptr<Mesh> Engine::PopMesh()
 
 void Engine::OnSpaceReset()
 {
-	auto& surrounding = _scene.GetSurrounding();
-	auto num_quaterna = surrounding.GetNumQuaternaUsed();
-	_scene.OnSpaceReset(_space);
-	surrounding.SetTargetNumQuaterna(num_quaterna);
-
-	while (surrounding.GetNumQuaternaUsed() < num_quaterna)
-	{
-		TickScene();
-		ASSERT(profile_mode || surrounding.GetTargetNumQuaterna() == num_quaterna);
-	}
+	_scene.OnSpaceReset(_space, _lod_parameters);
 }
 
 bool Engine::IsGrowing() const

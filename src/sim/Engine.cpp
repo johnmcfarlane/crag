@@ -146,7 +146,7 @@ void Engine::operator() (gfx::SetSpaceEvent const & event)
 
 #if defined(CRAG_SIM_FORMATION_PHYSICS)
 	// local collision formation scene
-	_collision_scene->OnSpaceReset(event.space);
+	_collision_scene->OnSpaceReset(event.space, _lod_parameters);
 #endif
 
 	// camera
