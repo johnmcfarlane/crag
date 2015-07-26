@@ -199,6 +199,11 @@ void Engine::OnToggleCollision()
 	_physics_engine->ToggleCollisions();
 }
 
+void Engine::OnToggleFormationSuspended()
+{
+	_collision_scene->SetPaused(! _collision_scene->IsPaused());
+}
+
 core::Time Engine::GetTime() const
 {
 	return _time;

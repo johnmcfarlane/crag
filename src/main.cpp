@@ -117,6 +117,7 @@ namespace
 						
 					case SDL_SCANCODE_I:
 						form::Daemon::Call([] (form::Engine & engine) { engine.OnToggleSuspended(); });
+						sim::Daemon::Call([] (sim::Engine & engine) { engine.OnToggleFormationSuspended(); });
 						break;
 						
 #if defined(DEBUG_TEST_DAEMONS)
