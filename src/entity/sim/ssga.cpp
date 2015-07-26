@@ -256,7 +256,6 @@ namespace
 		{
 			return false;
 		}
-		CRAG_VERIFY_EQUAL(population.size(), std::size_t(max_num_animats));
 
 		GeneratePopulation(engine, population);
 		return true;
@@ -324,7 +323,6 @@ namespace ssga
 
 		auto num_animats = pool.size();
 		CRAG_VERIFY_OP(num_animats, >=, 0);
-		CRAG_VERIFY_OP(num_animats, <=, max_num_animats);
 
 		if (num_animats == 0)
 		{
@@ -341,6 +339,6 @@ namespace ssga
 			SavePopulation(ga_filename);
 		}
 
-		CRAG_VERIFY_EQUAL(pool.size(), max_num_animats);
+		CRAG_VERIFY_OP(pool.size(), >=, max_num_animats);
 	}
 }
