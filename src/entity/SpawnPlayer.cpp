@@ -58,6 +58,7 @@ CONFIG_DEFINE(observer_use_touch, false);
 #elif defined(CRAG_USE_TOUCH)
 CONFIG_DEFINE(observer_use_touch, true);
 #endif
+CONFIG_DEFINE(grab_input, true);
 CONFIG_DEFINE(observer_physics, false);
 CONFIG_DEFINE(ufo_controller_type, 2);
 CONFIG_DEFINE(saucer_ball_radius, .45f);
@@ -643,7 +644,7 @@ namespace
 		{
 			if (! observer_use_touch)
 			{
-				if (SDL_SetRelativeMouseMode(SDL_TRUE) == 0)
+				if (grab_input && SDL_SetRelativeMouseMode(SDL_TRUE) == 0)
 				{
 					return std::unique_ptr<Controller>(new MouseObserverController(
 						observer,
