@@ -384,6 +384,7 @@
     <ClInclude Include="..\..\src\geom\Sphere.h" />
     <ClInclude Include="..\..\src\geom\Transformation.h" />
     <ClInclude Include="..\..\src\geom\Triangle.h" />
+    <ClInclude Include="..\..\src\geom\utils.h" />
     <ClInclude Include="..\..\src\geom\Vector.h" />
     <ClInclude Include="..\..\src\geom\Vector2.h" />
     <ClInclude Include="..\..\src\geom\Vector3.h" />
