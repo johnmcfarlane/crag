@@ -20,7 +20,6 @@
 #include "physics/Body.h"
 #include "physics/Engine.h"
 
-#include "gfx/axes.h"
 #include "gfx/Pov.h"
 #include "gfx/SetCameraEvent.h"
 #include "gfx/SetLodParametersEvent.h"
@@ -31,7 +30,7 @@
 #include "core/Random.h"
 #include "core/RosterObjectDefine.h"
 
-#include "geom/Quaternion.h"
+#include <geom/utils.h>
 
 #if defined(CRAG_DEBUG)
 //#define SPAWN_SHAPES
@@ -131,7 +130,7 @@ namespace
 		typedef geom::Matrix<Scalar, 3, 3> Matrix33;
 		
 		const auto camera_rotation = geom::Cast<Scalar>(camera_transformation.GetRotation());
-		const auto camera_forward = gfx::GetAxis(camera_rotation, gfx::Direction::forward);
+		const auto camera_forward = geom::GetAxis(camera_rotation, geom::Direction::forward);
 		
 		/*//////////////////////////////////////////////////////////////////////////////
 		////////////////////////////////////////////////////////////////////////////////
@@ -226,8 +225,8 @@ namespace
 		const auto get_angle = [] (Vector3 const & v, Matrix33 const & r)
 		{
 			Vector2 c(
-				geom::DotProduct(v, gfx::GetAxis(r, gfx::Direction::right)),
-				geom::DotProduct(v, gfx::GetAxis(r, gfx::Direction::up)));
+				geom::DotProduct(v, geom::GetAxis(r, geom::Direction::right)),
+				geom::DotProduct(v, geom::GetAxis(r, geom::Direction::up)));
 			return std::atan2(c.x, c.y);
 		};
 		
@@ -242,10 +241,10 @@ namespace
 		
 		// the difference between the world and screen rotations dictates output rotaiton
 		const auto rotation_angle = world_rotation_angle - screen_rotation_angle;
-		const auto output_rotation = camera_rotation * geom::Inverse(gfx::Rotation(gfx::Direction::forward, rotation_angle));
+		const auto output_rotation = camera_rotation * geom::Inverse(geom::Rotation(geom::Direction::forward, rotation_angle));
 		
 		// displacement from world position2 to the new camera position
-		auto ws_camera_to_screen_direction2 = ((camera_to_screen_direction2 * camera_rotation) * gfx::Rotation(gfx::Direction::forward, rotation_angle) * geom::Inverse(camera_rotation));
+		auto ws_camera_to_screen_direction2 = ((camera_to_screen_direction2 * camera_rotation) * geom::Rotation(geom::Direction::forward, rotation_angle) * geom::Inverse(camera_rotation));
 		
 		// put it all together and book in to local clinic
 		const auto output_translation = geom::Cast<Scalar>(contact2.world_position) - ws_camera_to_screen_direction2 * camera_to_world_distance2;
@@ -503,15 +502,15 @@ void TouchObserverController::UpdateCamera(Contact const & contact)
 	// extract data about initial camera transformation
 	Vector3 const down_position = _down_transformation.GetTranslation();
 	Matrix33 const down_rotation = _down_transformation.GetRotation();
-	Vector3 const camera_up = gfx::GetAxis(down_rotation, gfx::Direction::up);
+	Vector3 const camera_up = geom::GetAxis(down_rotation, geom::Direction::up);
 	
 	// get 'from' and 'to' finger pointing directions
 	Vector3 relative_down_direction = contact.GetWorldDirection(down_position);
 	Vector3 relative_current_direction = geom::Normalized(GetPixelDirection(contact.GetScreenPosition(), _down_transformation));
 	
 	// convert them into rotations and take the difference
-	auto from_matrix = gfx::Rotation(relative_down_direction, camera_up);
-	auto to_matrix = gfx::Rotation(relative_current_direction, camera_up);
+	auto from_matrix = geom::Rotation(relative_down_direction, camera_up);
+	auto to_matrix = geom::Rotation(relative_current_direction, camera_up);
 	auto required_rotation = Inverse(from_matrix) * (to_matrix);
 	
 	// apply them to camera rotation

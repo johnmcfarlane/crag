@@ -36,7 +36,6 @@
 
 #include "form/Mesh.h"
 
-#include "gfx/axes.h"
 #include "gfx/Engine.h"
 #include "gfx/IndexedVboResource.h"
 #include "gfx/LitVertex.h"
@@ -46,6 +45,7 @@
 #include "gfx/object/MeshObject.h"
 
 #include "geom/Space.h"
+#include <geom/utils.h>
 
 #include "core/app.h"
 #include "core/ConfigEntry.h"
@@ -1019,7 +1019,7 @@ std::array<sim::EntityHandle, 2> SpawnPlayer(sim::Vector3 const & position, sim:
 			{
 				sim::Transformation transformation(
 					position,
-					gfx::Rotation(forward, up, gfx::Direction::forward, gfx::Direction::up));
+					geom::Rotation(forward, up, geom::Direction::forward, geom::Direction::up));
 				ConstructObserver(entity, transformation);
 				break;
 			}
@@ -1032,7 +1032,7 @@ std::array<sim::EntityHandle, 2> SpawnPlayer(sim::Vector3 const & position, sim:
 
 			case PlayerType::thargoid:
 			{
-				sim::Transformation transformation(position, gfx::Rotation(up, gfx::Direction::forward));
+				sim::Transformation transformation(position, geom::Rotation(up, geom::Direction::forward));
 				ConstructUfo(
 					entity, transformation,
 					"ThargoidVbo", "ThargoidShadowMesh",
@@ -1043,7 +1043,7 @@ std::array<sim::EntityHandle, 2> SpawnPlayer(sim::Vector3 const & position, sim:
 
 			case PlayerType::cos_saucer:
 			{
-				sim::Transformation transformation(position, gfx::Rotation(up, gfx::Direction::forward));
+				sim::Transformation transformation(position, geom::Rotation(up, geom::Direction::forward));
 				ConstructUfo(
 					entity, transformation,
 					saucer_flat_shade_cos ? "CosSaucerFlatLitVbo" : "CosSaucerVbo", "CosSaucerShadowMesh",
@@ -1054,7 +1054,7 @@ std::array<sim::EntityHandle, 2> SpawnPlayer(sim::Vector3 const & position, sim:
 
 			case PlayerType::ball_saucer:
 			{
-				sim::Transformation transformation(position, gfx::Rotation(up, gfx::Direction::forward));
+				sim::Transformation transformation(position, geom::Rotation(up, geom::Direction::forward));
 				ConstructUfo(
 					entity, transformation,
 					saucer_flat_shade_ball ? "BallSaucerFlatLitVbo" : "BallSaucerVbo", "BallSaucerShadowMesh",

@@ -18,13 +18,10 @@
 #include "form/ForEachFaceInSphere.h"
 
 #include "gfx/Debug.h"
-#include "gfx/Mesh.h"
 #include "gfx/PlainVertex.h"
 
 #include "core/Random.h"
 #include "core/RosterObjectDefine.h"
-
-#include "geom/Vector.h"
 
 using namespace physics;
 

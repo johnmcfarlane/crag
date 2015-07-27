@@ -16,10 +16,10 @@
 
 #include "physics/Body.h"
 
-#include "gfx/axes.h"
 #include "gfx/Debug.h"
 
 #include "geom/Intersection.h"
+#include <geom/utils.h>
 
 #include "core/ConfigEntry.h"
 #include "core/RosterObjectDefine.h"
@@ -167,7 +167,7 @@ void UfoController2::Tick()
 	auto const & force = GetForce(target_position, horizontal_plane, _thrust);
 	
 	// point at top of UFO
-	auto const & ufo_up = gfx::GetAxis(rotation, gfx::Direction::forward);
+	auto const & ufo_up = geom::GetAxis(rotation, geom::Direction::forward);
 	auto const & ufo_top = translation + ufo_up * saucer_ball_radius;
 
 	body.AddForceAtPos(force, ufo_top);

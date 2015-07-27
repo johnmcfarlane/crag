@@ -20,8 +20,9 @@
 #include "physics/Body.h"
 #include <physics/Engine.h>
 
-#include "gfx/axes.h"
 #include "gfx/Engine.h"
+
+#include <geom/utils.h>
 
 #include "core/RosterObjectDefine.h"
 
@@ -48,7 +49,7 @@ Thruster::Thruster(Entity & entity, Ray3 const & ray, bool graphical, Scalar thr
 		auto thrust_max = Magnitude(ray.direction);
 		if (thrust_max)
 		{
-			Transformation local_transformation(ray.position, gfx::Rotation(ray.direction / thrust_max));
+			Transformation local_transformation(ray.position, geom::Rotation(ray.direction / thrust_max));
 
 			_model = gfx::ThrusterHandle::Create(local_transformation, thrust_max);
 		}
@@ -110,7 +111,7 @@ void Thruster::SetRay(Ray3 const & ray)
 		{
 			// calculate new local light transformation
 			auto thrust_max = Magnitude(ray.direction);
-			Transformation local_transformation(ray.position, gfx::Rotation(ray.direction / thrust_max));
+			Transformation local_transformation(ray.position, geom::Rotation(ray.direction / thrust_max));
 			model.SetLocalTransformation(local_transformation);
 		});
 	}

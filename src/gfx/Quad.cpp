@@ -11,9 +11,8 @@
 
 #include "Quad.h"
 
-#include "axes.h"
-
 #include "geom/Transformation.h"
+#include <geom/utils.h>
 
 using namespace gfx;
 
@@ -83,7 +82,7 @@ Transformation Quad::CalculateModelViewTransformation(Transformation const & lea
 	}
 	
 	Transformation::Vector3 camera_to_center = translation / distance_to_camera;
-	Transformation::Matrix33 rotation = gfx::Rotation(camera_to_center);
+	Transformation::Matrix33 rotation = geom::Rotation(camera_to_center);
 
 	return Transformation(translation, rotation, radius);
 }

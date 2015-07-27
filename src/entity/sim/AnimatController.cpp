@@ -16,9 +16,8 @@
 
 #include <sim/Engine.h>
 
-#include <gfx/axes.h>
-
 #include <geom/Intersection.h>
+#include <geom/utils.h>
 
 #include <core/Random.h>
 #include <core/RosterObjectDefine.h>
@@ -70,7 +69,7 @@ namespace
 		{
 			auto rejiggered = [](Vector3 const & v)
 			{
-				return geom::Clamped(v + gfx::RandomVector<Scalar>(Random::sequence) * .01f, 1);
+				return geom::Clamped(v + geom::RandomVector<Scalar>(Random::sequence) * .01f, 1);
 			};
 
 			Ray3 ray;

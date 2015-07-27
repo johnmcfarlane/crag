@@ -17,7 +17,7 @@
 
 #include <physics/Engine.h>
 
-#include <gfx/axes.h>
+#include <geom/utils.h>
 
 #include <core/Random.h>
 #include <core/RosterObjectDefine.h>
@@ -48,7 +48,7 @@ AnimatBody::AnimatBody(
 	Vector3 const & position, Vector3 const * velocity, physics::Engine & engine,
 	Scalar radius, sim::Health & health) noexcept
 : SphereBody(
-	Transformation(position, gfx::RandomRotation<Scalar>(Random::sequence)),
+	Transformation(position, geom::RandomRotation<Scalar>(Random::sequence)),
 	velocity,
 	engine,
 	radius)
