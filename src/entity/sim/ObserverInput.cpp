@@ -11,12 +11,12 @@
 
 #include "ObserverInput.h"
 
-#include "gfx/axes.h"
+#include <geom/utils.h>
 
 #include "core/app.h"
 
 using namespace sim;
-using gfx::Direction;
+using geom::Direction;
 
 namespace 
 {

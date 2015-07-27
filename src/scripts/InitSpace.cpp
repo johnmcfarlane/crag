@@ -18,7 +18,6 @@
 #include "form/Engine.h"
 #include "form/Scene.h"
 
-#include "gfx/axes.h"
 #include "gfx/Engine.h"
 #include "gfx/SetCameraEvent.h"
 #include "gfx/SetLodParametersEvent.h"

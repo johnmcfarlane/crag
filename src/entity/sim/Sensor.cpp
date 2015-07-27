@@ -16,7 +16,7 @@
 
 #include "physics/Engine.h"
 
-#include "gfx/axes.h"
+#include <geom/utils.h>
 
 #include "core/Random.h"
 #include "core/RosterObjectDefine.h"
@@ -85,7 +85,7 @@ void Sensor::GenerateScanRay() noexcept
 
 	scan_ray.direction *= _length;
 	
-	auto random_direction = gfx::RandomVector<Scalar>(Random::sequence);
+	auto random_direction = geom::RandomVector<Scalar>(Random::sequence);
 	scan_ray.direction += random_direction * _length * _variance;
 	
 	auto scan_length = geom::Magnitude(scan_ray.direction);

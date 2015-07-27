@@ -118,9 +118,9 @@ bool Ball::GenerateShadowVolume(Light const & light, ShadowVolume & shadow_volum
 			far_disc.radius = radius_correction * near_disc.radius * (light_to_ball_distance + far_offset_from_ball) / (light_to_ball_distance - _radius);
 			far_disc.center = light_to_ball_direction * far_offset_from_ball;
 
-			auto shadow_rotation = gfx::Rotation(light_to_ball_direction, gfx::Direction::forward);
-			cos_axis = gfx::GetAxis(shadow_rotation, gfx::Direction::right);
-			sin_axis = gfx::GetAxis(shadow_rotation, gfx::Direction::up);
+			auto shadow_rotation = geom::Rotation(light_to_ball_direction, geom::Direction::forward);
+			cos_axis = geom::GetAxis(shadow_rotation, geom::Direction::right);
+			sin_axis = geom::GetAxis(shadow_rotation, geom::Direction::up);
 		}
 
 		for (auto index = 0; index < shadow_num_strips; ++ index)

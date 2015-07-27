@@ -17,13 +17,13 @@
 
 #include "physics/RayCast.h"
 
-#include "gfx/axes.h"
 #include "gfx/SetCameraEvent.h"
 
 #include "core/ConfigEntry.h"
 #include "core/RosterObjectDefine.h"
 
 #include "geom/Space.h"
+#include <geom/utils.h>
 
 using namespace sim;
 
@@ -57,14 +57,14 @@ namespace
 		if (dot > 1.f || dot < -1.f)
 		{
 			// cannot calculate sensible camera up; use previous value
-			up = gfx::GetAxis(camera_transformation.GetRotation(), gfx::Direction::up);
+			up = geom::GetAxis(camera_transformation.GetRotation(), geom::Direction::up);
 		}
 
 		gfx::SetCameraEvent event = {
 			// calculate sensible camera up
 			geom::Transformation<Scalar>(
 				space.RelToAbs(camera_transformation.GetTranslation()),
-				gfx::Rotation(
+				geom::Rotation(
 					geom::Cast<Scalar>(forward), 
 					geom::Cast<Scalar>(up))),
 			frustum_default_fov

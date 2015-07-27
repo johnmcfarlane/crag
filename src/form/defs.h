@@ -12,8 +12,6 @@
 #include "geom/Ray.h"
 #include "geom/Sphere.h"
 
-#include "gfx/Color.h"
-
 namespace form
 {
 	// forward-delcares

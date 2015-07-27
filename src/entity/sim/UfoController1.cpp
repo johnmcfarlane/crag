@@ -18,7 +18,7 @@
 
 #include "physics/Body.h"
 
-#include "gfx/axes.h"
+#include <geom/utils.h>
 
 #include "core/ConfigEntry.h"
 #include "core/RosterObjectDefine.h"
@@ -123,9 +123,9 @@ void UfoController1::ApplyTilt(Vector2 pointer_delta)
 	auto factor = ufo_controller1_sensitivity / geom::Magnitude(geom::Cast<float>(resolution));
 	Vector2 drag(pointer_delta.x * factor, pointer_delta.y * factor);
 	
-	auto touch_pad_right = gfx::GetAxis(_camera_rotation, gfx::Direction::right);
-	auto touch_pad_up = gfx::GetAxis(_camera_rotation, gfx::Direction::forward);
-	auto touch_pad_normal = gfx::GetAxis(_camera_rotation, gfx::Direction::up);
+	auto touch_pad_right = geom::GetAxis(_camera_rotation, geom::Direction::right);
+	auto touch_pad_up = geom::GetAxis(_camera_rotation, geom::Direction::forward);
+	auto touch_pad_normal = geom::GetAxis(_camera_rotation, geom::Direction::up);
 
 	auto tilt = touch_pad_right * drag.x + touch_pad_up * - drag.y;
 	auto translation = body.GetTranslation();

@@ -20,7 +20,6 @@
 #include "sim/Engine.h"
 #include "sim/Entity.h"
 
-#include "gfx/axes.h"
 #include "gfx/Color.h"
 #include "gfx/Engine.h"
 #include "gfx/object/Object.h"

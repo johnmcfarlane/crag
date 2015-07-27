@@ -16,7 +16,6 @@
 #include "Object.h"
 #include "Surrounding.h"
 
-#include "gfx/axes.h"
 #include "gfx/Engine.h"
 #include "gfx/Messages.h"
 #include "gfx/object/Surrounding.h"
