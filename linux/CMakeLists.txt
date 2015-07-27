@@ -179,6 +179,7 @@ set(SOURCE_FILES
     ${CRAG_SOURCE_DIRECTORY}/geom/Sphere.h
     ${CRAG_SOURCE_DIRECTORY}/geom/Transformation.h
     ${CRAG_SOURCE_DIRECTORY}/geom/Triangle.h
+    ${CRAG_SOURCE_DIRECTORY}/geom/utils.h
     ${CRAG_SOURCE_DIRECTORY}/geom/Vector.h
     ${CRAG_SOURCE_DIRECTORY}/geom/Vector2.h
     ${CRAG_SOURCE_DIRECTORY}/geom/Vector3.h
