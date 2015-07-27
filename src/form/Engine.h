@@ -109,7 +109,6 @@ namespace form
 		gfx::SurroundingHandle _mesh;
 		
 		bool quit_flag;
-		bool suspend_flag;
 		bool enable_mesh_generation;
 		
 		std::stack<std::shared_ptr<Mesh>> _meshes;

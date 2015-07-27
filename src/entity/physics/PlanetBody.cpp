@@ -134,27 +134,26 @@ bool PlanetBody::HandleCollisionWithSolid(Body & body, Sphere3 const & bounding_
 	ASSERT(normals.empty());
 
 	// only applied if the body is embedded and won't register with ODE collision
-	Scalar max_depth = std::numeric_limits<Scalar>::lowest();
-	Vector3 max_depth_normal;
+	Scalar max_distance = std::numeric_limits<Scalar>::lowest();
+	Vector3 max_distance_normal;
 	auto face_functor = [&] (form::Triangle3 const & face, form::Vector3 const & normal)
 	{
 		Vector3 centroid = geom::Centroid(face);
 		form::Plane3 plane(centroid, normal);
 		
 		auto distance = Distance(plane, bounding_sphere.center);
+		if (distance > max_distance)
+		{
+			max_distance = distance;
+			max_distance_normal = normal;
+		}
+
 		if (distance > bounding_sphere.radius)
 		{
 			// body is clear of this poly - even if it was an infinite plane
 			return;
 		}
-		
-		auto depth = bounding_sphere.radius - distance;
-		if (depth > max_depth)
-		{
-			max_depth = depth;
-			max_depth_normal = normal;
-		}
-		
+
 		auto index = vertices.size() + 2;
 		for (auto & point : face.points)
 		{
@@ -171,7 +170,8 @@ bool PlanetBody::HandleCollisionWithSolid(Body & body, Sphere3 const & bounding_
 	{
 		return true;
 	}
-	
+	CRAG_VERIFY_OP(max_distance, >, std::numeric_limits<Scalar>::lowest());
+
     ////////////////////////////////////////////////////////////////////////////////
 	// create physics geometry based on mesh
 
@@ -200,21 +200,20 @@ bool PlanetBody::HandleCollisionWithSolid(Body & body, Sphere3 const & bounding_
 	ASSERT(num_contacts <= contacts.size());
 	
 	// If there's a good chance the body is contained by the polyhedron,
-	if (num_contacts == 0 && max_depth > bounding_sphere.radius * 2.f)
+	if (num_contacts == 0 && max_distance < - bounding_sphere.radius * 2.f)
 	{
 		// add a provisional contact.
 		auto & containment_geom = contacts[num_contacts];
 		num_contacts += spare_contact;
 		
 		Convert(containment_geom.pos, bounding_sphere.center);
-		containment_geom.normal[0] = max_depth_normal.x;
-		containment_geom.normal[1] = max_depth_normal.y;
-		containment_geom.normal[2] = max_depth_normal.z;
-		containment_geom.depth = max_depth;
+		containment_geom.normal[0] = max_distance_normal.x;
+		containment_geom.normal[1] = max_distance_normal.y;
+		containment_geom.normal[2] = max_distance_normal.z;
+		containment_geom.depth = bounding_sphere.radius - max_distance;
 		containment_geom.g1 = body_collision_handle;
 		containment_geom.g2 = planet_collision_handle;
 		
-		CRAG_VERIFY_OP(max_depth, >=, 0);
 		CRAG_VERIFY_OP(containment_geom.depth, >=, 0);
 	}
 	else

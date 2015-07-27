@@ -52,8 +52,9 @@ CRAG_ROSTER_OBJECT_DEFINE(
 	1,
 	Pool::Call<& MouseObserverController::Tick>(Engine::GetTickRoster()))
 
-MouseObserverController::MouseObserverController(Entity & entity)
+MouseObserverController::MouseObserverController(Entity & entity, Scalar translation_coefficient)
 : _super(entity)
+, _translation_coefficient(translation_coefficient)
 , _speed(observer_speed)
 {
 	CRAG_ROSTER_OBJECT_VERIFY(* this);
@@ -145,7 +146,7 @@ void MouseObserverController::ScaleInput(ObserverInput & input) const
 	Scalar dt = Scalar(sim_tick_duration);
 
 	Scalar speed_factor = std::pow(std::pow(10.f, .4f), (_speed << 1) + 1);
-	Scalar translation_factor = observer_translation_input * speed_factor * dt;
+	Scalar translation_factor = _translation_coefficient * observer_translation_input * speed_factor * dt;
 	input[ObserverInput::translation] *= translation_factor;
 
 	Scalar rotation_factor = observer_rotation_input * dt;

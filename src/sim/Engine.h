@@ -98,6 +98,7 @@ namespace sim
 		
 		void OnToggleGravity();
 		void OnToggleCollision();
+		void OnToggleFormationSuspended();
 
 		// accessors
 		core::Time GetTime() const;

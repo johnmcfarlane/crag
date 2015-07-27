@@ -38,7 +38,7 @@ namespace
 	// config constants
 
 #if defined (CRAG_OS_PNACL)
-	// TODO: crashes in ForEachFactInSphere.h
+	// TODO: crashes in ForEachFaceInSphere.h
 	CONFIG_DEFINE(collisions, false);
 #else
 	CONFIG_DEFINE(collisions, true);
@@ -385,6 +385,7 @@ void Engine::AddContacts(ContactGeom const * begin, ContactGeom const * end)
 		// geometry sanity tests
 		CRAG_VERIFY_OP(contact_geom.g1, !=, contact_geom.g2);
 		CRAG_VERIFY_OP(contact_geom.depth, >=, 0);
+		CRAG_VERIFY_UNIT(Convert(contact_geom.normal), .01f);
 
 		_contact.geom = contact_geom;
 		_contacts.push_back(_contact);

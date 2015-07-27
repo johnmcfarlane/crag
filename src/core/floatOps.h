@@ -106,7 +106,6 @@ template<typename T> T Inverse (T a)
 
 template<typename T> T InvSqrt (T a)
 {
-	ASSERT(a != 0);
 	return Inverse (sqrt (a));
 }
 

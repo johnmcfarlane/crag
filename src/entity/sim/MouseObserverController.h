@@ -30,7 +30,7 @@ namespace sim
 		typedef Controller _super;
 	public:
 		// functions
-		MouseObserverController(Entity & entity);
+		MouseObserverController(Entity & entity, Scalar translation_coefficient);
 
 		CRAG_ROSTER_OBJECT_DECLARE(MouseObserverController);
 	private:
@@ -51,6 +51,7 @@ namespace sim
 		physics::Body const & GetBody() const;
 
 		// variables
+		Scalar const _translation_coefficient;
 		int _speed;
 		core::EventWatcher _event_watcher;
 		bool _collidable;

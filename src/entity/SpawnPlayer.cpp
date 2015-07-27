@@ -58,6 +58,7 @@ CONFIG_DEFINE(observer_use_touch, false);
 #elif defined(CRAG_USE_TOUCH)
 CONFIG_DEFINE(observer_use_touch, true);
 #endif
+CONFIG_DEFINE(grab_input, true);
 CONFIG_DEFINE(observer_physics, false);
 CONFIG_DEFINE(ufo_controller_type, 2);
 CONFIG_DEFINE(saucer_ball_radius, .45f);
@@ -85,6 +86,8 @@ namespace
 
 	CONFIG_DEFINE(observer_radius, .5f);
 	CONFIG_DEFINE(observer_density, 1.f);
+	CONFIG_DEFINE(observer_translation_coefficient_ghost, 1.f);
+	CONFIG_DEFINE(observer_translation_coefficient_physical, 2.f);
 
 	CONFIG_DEFINE(ship_angular_damping, .25f);
 	CONFIG_DEFINE(ship_upward_thrust_gradient, 1.f);
@@ -639,11 +642,13 @@ namespace
 		// controller
 		auto controller = [&] () -> std::unique_ptr<Controller>
 		{
-			if (! observer_use_touch && true)
+			if (! observer_use_touch)
 			{
-				if (SDL_SetRelativeMouseMode(SDL_TRUE) == 0)
+				if (! grab_input || SDL_SetRelativeMouseMode(SDL_TRUE) == 0)
 				{
-					return std::unique_ptr<Controller>(new MouseObserverController(observer));
+					return std::unique_ptr<Controller>(new MouseObserverController(
+						observer,
+						observer_physics ? observer_translation_coefficient_physical : observer_translation_coefficient_ghost));
 				}
 				else
 				{

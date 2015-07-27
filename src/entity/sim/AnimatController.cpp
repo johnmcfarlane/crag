@@ -140,7 +140,7 @@ void AnimatController::CreateSensors(ga::GenomeReader & genome_reader)
 
 void AnimatController::CreateThrusters(ga::GenomeReader & genome_reader, Entity & entity)
 {
-	for (auto i = animat_sensor_count; i; -- i)
+	for (auto i = animat_thruster_count; i; -- i)
 	{
 		AddReceiver(VehicleController::ReceiverPtr(new Thruster(
 			entity,

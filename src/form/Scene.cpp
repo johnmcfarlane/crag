@@ -66,17 +66,34 @@ Surrounding const & Scene::GetSurrounding() const
 }
 
 // Change the local co-ordinate system so that 0,0,0 in local space is o in global space.
-void Scene::OnSpaceReset(geom::Space const & space) 
+void Scene::OnSpaceReset(geom::Space const & space, gfx::LodParameters const & lod_parameters)
 {
+	auto num_quaterna = _surrounding->GetNumQuaternaUsed();
+
 	// The difficult bit: fix all our data which relied on the old space.
 	ResetFormations(space);
-	
-	_is_settled = false;
+
+	_surrounding->SetTargetNumQuaterna(num_quaterna);
+
+	while (_surrounding->GetNumQuaternaUsed() < num_quaterna)
+	{
+		Tick(lod_parameters);
+	}
 }
 
 bool Scene::IsSettled() const
 {
 	return _is_settled;
+}
+
+bool Scene::IsPaused() const
+{
+	return _is_paused;
+}
+
+void Scene::SetPaused(bool paused)
+{
+	_is_paused = paused;
 }
 
 void Scene::AddFormation(Formation & formation, geom::Space const & space)
@@ -115,6 +132,7 @@ Polyhedron const * Scene::GetPolyhedron(Formation const & formation) const
 bool Scene::Tick(gfx::LodParameters const & lod_parameters)
 {
 	CRAG_VERIFY(lod_parameters);
+	CRAG_VERIFY_FALSE(_is_paused);
 	
 	bool changed = _surrounding->Tick(lod_parameters);
 	TickModels();
@@ -171,6 +189,8 @@ void Scene::ResetFormations(geom::Space const & space)
 	{
 		InitPolyhedron(pair, space);
 	}
+
+	_is_settled = false;
 }
 
 void Scene::TickPolyhedron(Polyhedron & polyhedron)
