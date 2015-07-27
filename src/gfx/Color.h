@@ -90,7 +90,7 @@ namespace gfx
 			return lhs.r != rhs.r || lhs.g != rhs.g || lhs.b != rhs.b || lhs.a != rhs.a;
 		}
 		
-		Color4 & operator += (Color4 const & rhs)
+		Color4 & operator += (Color4 const & rhs) noexcept
 		{
 			r += rhs.r;
 			g += rhs.g;
@@ -99,9 +99,9 @@ namespace gfx
 			return * this;
 		}
 
-		friend constexpr Color4 operator + (Color4 lhs, Color4 const & rhs) noexcept
+		friend constexpr Color4 operator + (Color4 const & lhs, Color4 const & rhs) noexcept
 		{
-			return lhs += rhs;
+			return Color4(lhs.r + rhs.r, lhs.g + rhs.g, lhs.b + rhs.b, lhs.a + rhs.a);
 		}
 
 		friend constexpr Color4 operator * (Color4 const & lhs, Comp rhs) noexcept
