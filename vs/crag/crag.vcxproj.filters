@@ -36,9 +36,6 @@
     <ClCompile Include="..\..\src\core\EventWatcher.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\core\fixed_point.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\core\GlobalResourceManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -969,6 +966,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\geom\utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gfx\axes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
