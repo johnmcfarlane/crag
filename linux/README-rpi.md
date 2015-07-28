@@ -21,9 +21,7 @@ This file details how to build and run [Crag](https://github.com/johnmcfarlane/c
 
    `sudo apt-get install git mercurial cmake automake libode-sp-dev`
 
-3. Clone the project:
-
-   `git clone https://github.com/johnmcfarlane/crag.git`
+3. Clone the project using the instructions in [the main README.md](../README.md).
 
 4. Run the setup script which installs Debian packages and other dependencies:
 

@@ -17,11 +17,7 @@ See [README-rpi.md] for instructions targeted at Raspberry Pi.
 
    Crag is regularly tested against G++ 4.9 and Clang 3.6.
 
-2. Clone the project:
-
-   ```
-   git clone https://github.com/johnmcfarlane/crag.git
-   ```
+2. Clone the project using the instructions in [the main README.md](../README.md).
 
 3. Run the setup script which installs Debian packages and other dependencies:
 
