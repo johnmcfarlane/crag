@@ -32,6 +32,7 @@ You may find the correct download [here](http://www.microsoft.com/download/en/de
 
 First, you need to get the crag source code from [GitHub](https://github.com/johnmcfarlane/crag).
 VS2015 comes with Git support as well as a GitHub plugin.
+There are instructions on how to clone the repo in [the main README.md](../README.md).
 
 ## 3 Dependencies
 
