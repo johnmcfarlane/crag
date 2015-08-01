@@ -159,7 +159,7 @@ void Skybox::Render(Engine const &) const
 	// Note: Skybox is being drawn very tiny but with z test off. This stops writing.
 	glDepthMask(GL_FALSE);
 
-	auto const & vbo = core::StaticCast<SkyboxVboResource const &>(* GetVboResource());
+	auto const & vbo = core::StaticCast<SkyboxVboResource const>(* GetVboResource());
 	
 	auto & texture = * _texture;
 	texture.Bind();

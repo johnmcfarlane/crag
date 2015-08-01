@@ -100,7 +100,7 @@ void PlanetController::Tick()
 	// update planet params
 	auto model_handle = entity.GetModel()->GetHandle();
 	model_handle.Call([max_radius] (gfx::Object & object) {
-		auto & planet = core::StaticCast<gfx::Planet &>(object);
+		auto & planet = core::StaticCast<gfx::Planet>(object);
 		planet.SetMaxRadius(static_cast<Scalar>(max_radius));
 	});
 }
