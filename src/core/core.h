@@ -99,7 +99,7 @@ namespace core
 	// performs a compile-time cast from type, From, to type, To;
 	// in debug builds, performs a run-time test that cast is valid;
 	// must have RTTI turned on in debug builds for this to work
-	template <typename To, typename From>
+	template <typename To, typename From, typename std::enable_if<std::is_base_of<From, To>::value || std::is_base_of<To, From>::value, int>::type dummy = 0>
 	To & StaticCast(From & object)
 	{
 		To & cast = static_cast<To &>(object);
@@ -109,6 +109,12 @@ namespace core
 #endif
 
 		return cast;
+	}
+
+	template <typename To, typename From, typename std::enable_if<! (std::is_base_of<From, To>::value || std::is_base_of<To, From>::value), int>::type dummy = 0>
+	To StaticCast(From object)
+	{
+		return object;
 	}
 
 	//////////////////////////////////////////////////////////////////////
