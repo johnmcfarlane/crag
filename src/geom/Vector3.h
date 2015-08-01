@@ -201,7 +201,7 @@ namespace geom
 		return out << v.x << ',' << v.y << ',' << v.z;
 	}
 
-	template<typename S> ::std::istream & operator >> (::std::istream & in, Vector<S, 3> const & v)
+	template<typename S> ::std::istream & operator >> (::std::istream & in, Vector<S, 3> & v)
 	{
 		return in >> v.x >> ',' >> v.y >> ',' >> v.z;
 	}
