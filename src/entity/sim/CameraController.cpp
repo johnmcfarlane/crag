@@ -50,7 +50,7 @@ namespace
 	// send a 'set camera' event
 	void UpdateCamera(Transformation const & camera_transformation, geom::Space const & space, Vector3 const & forward, Vector3 up)
 	{
-		using geom::abs::Scalar;
+		using Scalar = geom::abs::Scalar;
 
 		// if subject is above or below camera,
 		auto dot = geom::DotProduct(forward, up);

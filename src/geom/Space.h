@@ -16,9 +16,10 @@
 namespace geom
 {
 	// relative space types
-	namespace rel
+	template <typename SCALAR>
+	struct Precision
 	{
-		typedef float Scalar;
+		typedef SCALAR Scalar;
 		typedef Vector<Scalar, 2> Vector2;
 		typedef Vector<Scalar, 3> Vector3;
 		typedef Ray<Scalar, 3> Ray3;
@@ -26,20 +27,10 @@ namespace geom
 		typedef Matrix<Scalar, 3, 3> Matrix33;
 		typedef Matrix<Scalar, 4, 4> Matrix44;
 		typedef Transformation<Scalar> Transformation;
-	}
+	};
 
-	// absolute space types
-	namespace abs
-	{
-		typedef double Scalar;
-		typedef Vector<Scalar, 2> Vector2;
-		typedef Vector<Scalar, 3> Vector3;
-		typedef Ray<Scalar, 3> Ray3;
-		typedef Sphere<Scalar, 3> Sphere3;
-		typedef Matrix<Scalar, 3, 3> Matrix33;
-		typedef Matrix<Scalar, 4, 4> Matrix44;
-		typedef Transformation<Scalar> Transformation;
-	}
+	using rel = Precision<float>;
+	using abs = Precision<double>;
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Space class definition
