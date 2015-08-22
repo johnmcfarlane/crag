@@ -114,7 +114,7 @@ namespace core
 	template <typename To, typename From, typename std::enable_if<! (std::is_base_of<From, To>::value || std::is_base_of<To, From>::value), int>::type dummy = 0>
 	To StaticCast(From object)
 	{
-		return object;
+		return static_cast<To>(object);
 	}
 
 	//////////////////////////////////////////////////////////////////////

@@ -60,8 +60,8 @@ namespace
 // sim::ga::Gene member definitions
 
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Gene, self)
-	CRAG_VERIFY_OP(self._value.get<float>(), >=, 0.f);
-	CRAG_VERIFY_OP(self._value.get<float>(), <=, 1.f);
+	CRAG_VERIFY_OP(static_cast<float>(self._value), >=, 0.f);
+	CRAG_VERIFY_OP(static_cast<float>(self._value), <=, 1.f);
 CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 Gene::Gene(Random & r) noexcept
@@ -79,7 +79,7 @@ Gene::Gene(Gene parent1, Gene parent2, Random & r, float mutation_rate) noexcept
 Gene::value_type Gene::closed() const noexcept
 {
 	CRAG_VERIFY(* this);
-	return _value.get<value_type>();
+	return static_cast<float>(_value);
 }
 
 Gene::value_type Gene::open() const noexcept

@@ -31,6 +31,6 @@ namespace core
 	template <typename To, typename Fp_Repr_Type, int Exponent>
 	To StaticCast(crag::core::fixed_point<Fp_Repr_Type, Exponent> const & object) noexcept
 	{
-		return object.template get<To>();
+		return static_cast<To>(object);
 	};
 }

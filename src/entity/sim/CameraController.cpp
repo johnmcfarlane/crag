@@ -50,8 +50,6 @@ namespace
 	// send a 'set camera' event
 	void UpdateCamera(Transformation const & camera_transformation, geom::Space const & space, Vector3 const & forward, Vector3 up)
 	{
-		using Scalar = geom::abs::Scalar;
-
 		// if subject is above or below camera,
 		auto dot = geom::DotProduct(forward, up);
 		if (dot > 1.f || dot < -1.f)
@@ -62,11 +60,11 @@ namespace
 
 		gfx::SetCameraEvent event = {
 			// calculate sensible camera up
-			geom::Transformation<Scalar>(
+			geom::Transformation<geom::abs::Scalar>(
 				space.RelToAbs(camera_transformation.GetTranslation()),
 				geom::Rotation(
-					geom::Cast<Scalar>(forward), 
-					geom::Cast<Scalar>(up))),
+					geom::Cast<geom::abs::Scalar>(forward),
+					geom::Cast<geom::abs::Scalar>(up))),
 			frustum_default_fov
 		};
 
