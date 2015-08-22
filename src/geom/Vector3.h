@@ -15,7 +15,7 @@
 namespace geom
 {
 	//////////////////////////////////////////////////////////////////
-	// 3-dimensional partical specialization of Vector
+	// 3-dimensional partial specialization of Vector
 
 	template<typename S> class Vector<S, 3>
 	{
