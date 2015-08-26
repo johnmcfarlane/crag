@@ -32,7 +32,7 @@ See [README-rpi.md] for instructions targeted at Raspberry Pi.
    ```
    make
    ```
-   
+
    (You can speed up compilation on multicore systems using the [jobs](https://www.gnu.org/software/make/manual/html_node/Parallel.html) option.)
 
 3. Run:
@@ -69,7 +69,7 @@ See [README-rpi.md] for instructions targeted at Raspberry Pi.
    ```
    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DNDEBUG -fno-rtti -Ofast -g")
    ```
-   
+
    and add:
    ```
    set(CMAKE_EXE_LINKER_FLAGS "-g")
@@ -79,13 +79,13 @@ See [README-rpi.md] for instructions targeted at Raspberry Pi.
    ```
    cd crag/linux
    cmake -DCMAKE_BUILD_TYPE=Profile
-   valgrind --tool=callgrind ./crag 
+   valgrind --tool=callgrind ./crag
    kcachegrind callgrind.out.XXXXX &
    ```
 
 ## CLion IDE
 
-[CLion](https://www.jetbrains.com/clion/) is a yet-to-be released IDE from [JetBrains](https://www.jetbrains.com/). 
+[CLion](https://www.jetbrains.com/clion/) is a yet-to-be released IDE from [JetBrains](https://www.jetbrains.com/).
 Crag includes tentative Linux support for it.
 To try it out:
 
@@ -103,5 +103,5 @@ To try it out:
 
 ### Troubleshooting
 
-If you receive a build message complaining that a file "has been modified since the precompiled header 'pch.h.gch/.c++' was built", 
+If you receive a build message complaining that a file "has been modified since the precompiled header 'pch.h.gch/.c++' was built",
 you will need to select the Clean option from the Run menu.
