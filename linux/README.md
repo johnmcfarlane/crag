@@ -12,19 +12,12 @@ See [README-rpi.md] for instructions targeted at Raspberry Pi.
 1. Install the necessary packages:
 
    ```
-   sudo apt-get install git mercurial g++ cmake automake libode-sp-dev libglu1-mesa-dev xorg-dev
+   sudo apt-get install git mercurial g++ cmake automake libode-sp-dev libglu1-mesa-dev xorg-dev libsdl2-dev libsdl2-image-dev libode-sp-dev
    ```
 
    Crag is regularly tested against G++ 4.9 and Clang 3.6.
 
 2. Clone the project using the instructions in [the main README.md](../README.md).
-
-3. Run the setup script which installs Debian packages and other dependencies:
-
-   ```
-   cd crag/linux
-   ./setup.sh
-   ```
 
 ## Run
 
