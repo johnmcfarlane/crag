@@ -3,7 +3,7 @@
 ## Introduction
 
 This file details how to build and run [Crag](https://github.com/johnmcfarlane/crag) on PCs running [Debian](https://www.debian.org/) GNU Linux.
-It is tested against [Ubuntu 14.04](http://releases.ubuntu.com/trusty/) but should be straight-forward to get working on recent [Debian Jessie](https://www.debian.org/releases/jessie/) desktop releases.
+It is tested against [Debian 8.1](http://releases.ubuntu.com/trusty/) but should be straight-forward to get working on recent [Ubuntu](https://www.debian.org/releases/jessie/) desktop releases.
 
 See [README-rpi.md] for instructions targeted at Raspberry Pi.
 
@@ -15,7 +15,7 @@ See [README-rpi.md] for instructions targeted at Raspberry Pi.
    sudo apt-get install git mercurial g++ cmake automake libode-sp-dev libglu1-mesa-dev xorg-dev libsdl2-dev libsdl2-image-dev libode-sp-dev
    ```
 
-   Crag is regularly tested against G++ 4.9 and Clang 3.6.
+   Crag is regularly tested against G++ 4.9 and Clang 3.5.
 
 2. Clone the project using the instructions in [the main README.md](../README.md).
 
@@ -77,7 +77,6 @@ See [README-rpi.md] for instructions targeted at Raspberry Pi.
 
 1. Then:
    ```
-   cd crag/linux
    cmake -DCMAKE_BUILD_TYPE=Profile
    valgrind --tool=callgrind ./crag
    kcachegrind callgrind.out.XXXXX &

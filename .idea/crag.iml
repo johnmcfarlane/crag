@@ -1,0 +1,664 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="CPP_MODULE" version="4">
+  <component name="NewModuleRootManager">
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/CMakeLists.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/PrecompiledHeader.cmake" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/applet/Applet.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/applet/Applet.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/applet/AppletInterface.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/applet/AppletInterface_Impl.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/applet/Engine.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/applet/Engine.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/core/ConfigEntry.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/core/ConfigEntry.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/core/ConfigInit.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/core/Enumeration.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/core/EventWatcher.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/core/EventWatcher.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/core/GlobalResourceManager.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/core/GlobalResourceManager.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/core/HashString.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/core/Random.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/core/Random.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/core/Resource.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/core/Resource.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/core/ResourceHandle.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/core/ResourceManager.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/core/ResourceManager.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/core/Roster.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/core/Roster.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/core/RosterObjectDeclare.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/core/RosterObjectDefine.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/core/Sigmoid.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/core/Statistics.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/core/Statistics.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/core/TypeId.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/core/TypeId.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/core/app.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/core/app.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/core/config.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/core/core.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/core/counted_object.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/core/debug.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/core/debug.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/core/fixed_point.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/core/floatOps.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/core/function_ref.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/core/intOps.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/core/intrusive_list.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/core/memory.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/core/memory.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/core/object_pool.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/core/pointer_union.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/core/profile.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/core/profile.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/core/ring_buffer.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/core/verify.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/core/windows.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/entity/SpawnEntityFunctions.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/entity/SpawnEntityFunctions.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/entity/SpawnPlayer.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/entity/SpawnPlayer.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/entity/SpawnSkybox.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/entity/SpawnSkybox.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/entity/gfx/Planet.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/entity/gfx/Planet.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/entity/gfx/Puff.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/entity/gfx/Puff.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/entity/gfx/Thruster.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/entity/gfx/Thruster.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/entity/physics/AnimatBody.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/entity/physics/AnimatBody.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/entity/physics/PlanetBody.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/entity/physics/PlanetBody.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/entity/sim/AnimatController.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/entity/sim/AnimatController.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/entity/sim/AnimatModel.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/entity/sim/AnimatModel.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/entity/sim/CameraController.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/entity/sim/CameraController.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/entity/sim/Contact.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/entity/sim/Contact.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/entity/sim/Gene.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/entity/sim/Gene.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/entity/sim/Genome.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/entity/sim/Genome.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/entity/sim/Health.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/entity/sim/Health.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/entity/sim/KeyboardTransmitter.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/entity/sim/KeyboardTransmitter.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/entity/sim/MoonShader.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/entity/sim/MoonShader.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/entity/sim/MouseObserverController.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/entity/sim/MouseObserverController.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/entity/sim/ObserverInput.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/entity/sim/ObserverInput.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/entity/sim/PlanetController.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/entity/sim/PlanetController.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/entity/sim/PlanetShader.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/entity/sim/PlanetShader.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/entity/sim/Sensor.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/entity/sim/Sensor.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/entity/sim/Signal.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/entity/sim/Signal.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/entity/sim/Thruster.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/entity/sim/Thruster.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/entity/sim/TouchObserverController.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/entity/sim/TouchObserverController.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/entity/sim/UfoController1.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/entity/sim/UfoController1.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/entity/sim/UfoController2.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/entity/sim/UfoController2.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/entity/sim/VehicleController.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/entity/sim/VehicleController.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/entity/sim/nnet.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/entity/sim/nnet.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/entity/sim/ssga.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/entity/sim/ssga.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/form/CalculateNodeScoreFunctor.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/form/CalculateNodeScoreFunctor.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/form/CastRay.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/form/CastRay.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/form/Engine.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/form/Engine.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/form/ForEachChildNode.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/form/ForEachFaceInSphere.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/form/ForEachNodeFace.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/form/Formation.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/form/Formation.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/form/GatherExpandableNodesFunctor.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/form/Mesh.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/form/Mesh.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/form/MeshProperties.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/form/Node.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/form/Node.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/form/NodeBuffer.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/form/NodeBuffer.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/form/Object.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/form/Object.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/form/Point.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/form/Point.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/form/PointBuffer.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/form/PointBuffer.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/form/Polyhedron.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/form/Polyhedron.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/form/Quaterna.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/form/QuaternaBuffer.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/form/QuaternaBuffer.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/form/RayCastResult.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/form/RayCastResult.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/form/Scene.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/form/Scene.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/form/Shader.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/form/Surrounding.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/form/Surrounding.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/form/defs.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/geom/Distance.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/geom/Intersection.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/geom/Magnitude.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/geom/Matrix.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/geom/Matrix33.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/geom/Matrix44.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/geom/MatrixOps.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/geom/Plane.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/geom/Quaternion.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/geom/Ray.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/geom/Space.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/geom/Sphere.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/geom/Transformation.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/geom/Triangle.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/geom/Vector.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/geom/Vector2.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/geom/Vector3.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/geom/Vector4.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/geom/utils.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/BufferObject.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/Color.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/Debug.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/Debug.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/Engine.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/Engine.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/Font.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/Font.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/Frustum.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/Frustum.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/GenerateShadowVolumeMesh.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/Image.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/Image.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/IndexBufferObject.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/IndexedVboResource.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/LightType.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/LitVertex.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/LitVertex.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/LodParameters.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/Mesh.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/Messages.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/NonIndexedVboResource.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/PlainVertex.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/PlainVertex.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/Pov.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/Pov.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/Program.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/Program.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/Quad.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/Quad.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/RegisterResources.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/RegisterResources.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/RenderBuffer.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/RenderBuffer.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/Scene.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/Scene.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/SetCameraEvent.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/SetLodParametersEvent.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/SetSpaceEvent.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/Shader.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/Shader.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/ShadowMap.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/ShadowVolume.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/Texture.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/Texture2d.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/Texture2d.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/TextureCubeMap.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/TextureCubeMap.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/Uniform.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/Uniform.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/VboResource.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/VertexBufferObject.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/axes.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/defs.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/glHelpers.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/glHelpers.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/object/Ball.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/object/Ball.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/object/Light.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/object/Light.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/object/MeshObject.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/object/MeshObject.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/object/Object.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/object/Object.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/object/SearchLight.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/object/SearchLight.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/object/Skybox.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/object/Skybox.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/object/Surrounding.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gfx/object/Surrounding.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/ipc/Daemon.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/ipc/EngineBase.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/ipc/Fiber.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/ipc/Fiber.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/ipc/FiberAndroid.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/ipc/FiberAndroid.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/ipc/FiberPosix.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/ipc/FiberPosix.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/ipc/FiberWin.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/ipc/FiberWin.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/ipc/Future.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/ipc/Handle.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/ipc/Handle_Impl.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/ipc/Listener.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/ipc/ListenerInterface.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/ipc/ListenerInterface.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/ipc/MessageQueue.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/ipc/MessageQueue_Impl.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/ipc/ObjectBase.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/ipc/Uid.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/ipc/Uid.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/pch.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/pch.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/physics/Body.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/physics/Body.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/physics/BoxBody.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/physics/BoxBody.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/physics/CylinderBody.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/physics/CylinderBody.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/physics/Engine.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/physics/Engine.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/physics/GhostBody.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/physics/GhostBody.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/physics/Location.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/physics/Location.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/physics/MeshBody.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/physics/MeshBody.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/physics/PassiveLocation.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/physics/PassiveLocation.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/physics/RayCast.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/physics/RayCast.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/physics/SphereBody.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/physics/SphereBody.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/physics/defs.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/scripts/GameScript.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/scripts/GameScript.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/scripts/InitSpace.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/scripts/InitSpace.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/scripts/MainScript.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/scripts/MainScript.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/scripts/MonitorOrigin.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/scripts/MonitorOrigin.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/scripts/RegulatorScript.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/scripts/RegulatorScript.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/sim/Controller.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/sim/Controller.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/sim/Engine.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/sim/Engine.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/sim/Entity.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/sim/Entity.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/sim/EntityFunctions.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/sim/EntityFunctions.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/sim/Model.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/sim/Model.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/sim/defs.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/sim/gravity.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/sim/gravity.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/smp/ReadersWriterMutex.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/smp/ReadersWriterMutex.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/smp/Semaphore.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/smp/Semaphore.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/smp/SimpleMutex.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/smp/Thread.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/smp/Thread.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/smp/smp.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/smp/smp.h" isTestSource="false" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module-library">
+      <library name="Header Search Paths">
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/SG14" />
+          <root url="file://$MODULE_DIR$/src" />
+          <root url="file:///usr/include" />
+          <root url="file:///usr/lib/gcc/x86_64-linux-gnu/4.9/include" />
+          <root url="file:///usr/local/include" />
+        </CLASSES>
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/SG14" />
+          <root url="file://$MODULE_DIR$/src" />
+          <root url="file:///usr/include" />
+          <root url="file:///usr/lib/gcc/x86_64-linux-gnu/4.9/include" />
+          <root url="file:///usr/local/include" />
+        </SOURCES>
+        <excluded>
+          <root url="file://$MODULE_DIR$/src/entity/sim/ssga.cpp" />
+          <root url="file://$MODULE_DIR$/src/scripts/RegulatorScript.cpp" />
+          <root url="file://$MODULE_DIR$/src/scripts/GameScript.cpp" />
+          <root url="file://$MODULE_DIR$/src/scripts/InitSpace.h" />
+          <root url="file://$MODULE_DIR$/src/scripts/MonitorOrigin.h" />
+          <root url="file://$MODULE_DIR$/src/scripts/GameScript.h" />
+          <root url="file://$MODULE_DIR$/src/scripts/InitSpace.cpp" />
+          <root url="file://$MODULE_DIR$/src/scripts/MainScript.cpp" />
+          <root url="file://$MODULE_DIR$/src/scripts/RegulatorScript.h" />
+          <root url="file://$MODULE_DIR$/src/scripts/MainScript.h" />
+          <root url="file://$MODULE_DIR$/src/scripts/MonitorOrigin.cpp" />
+          <root url="file://$MODULE_DIR$/src/physics/GhostBody.h" />
+          <root url="file://$MODULE_DIR$/src/physics/SphereBody.cpp" />
+          <root url="file://$MODULE_DIR$/src/physics/MeshBody.cpp" />
+          <root url="file://$MODULE_DIR$/src/physics/CylinderBody.cpp" />
+          <root url="file://$MODULE_DIR$/src/physics/CylinderBody.h" />
+          <root url="file://$MODULE_DIR$/src/physics/BoxBody.h" />
+          <root url="file://$MODULE_DIR$/src/physics/MeshBody.h" />
+          <root url="file://$MODULE_DIR$/src/physics/Location.h" />
+          <root url="file://$MODULE_DIR$/src/physics/PassiveLocation.cpp" />
+          <root url="file://$MODULE_DIR$/src/physics/GhostBody.cpp" />
+          <root url="file://$MODULE_DIR$/src/physics/Body.h" />
+          <root url="file://$MODULE_DIR$/src/physics/RayCast.h" />
+          <root url="file://$MODULE_DIR$/src/physics/Body.cpp" />
+          <root url="file://$MODULE_DIR$/src/physics/RayCast.cpp" />
+          <root url="file://$MODULE_DIR$/src/physics/defs.h" />
+          <root url="file://$MODULE_DIR$/src/physics/SphereBody.h" />
+          <root url="file://$MODULE_DIR$/src/physics/Location.cpp" />
+          <root url="file://$MODULE_DIR$/src/physics/PassiveLocation.h" />
+          <root url="file://$MODULE_DIR$/src/physics/BoxBody.cpp" />
+          <root url="file://$MODULE_DIR$/src/physics/Engine.cpp" />
+          <root url="file://$MODULE_DIR$/src/physics/Engine.h" />
+          <root url="file://$MODULE_DIR$/src/entity/physics/AnimatBody.cpp" />
+          <root url="file://$MODULE_DIR$/src/entity/physics/PlanetBody.h" />
+          <root url="file://$MODULE_DIR$/src/entity/physics/PlanetBody.cpp" />
+          <root url="file://$MODULE_DIR$/src/entity/physics/AnimatBody.h" />
+          <root url="file://$MODULE_DIR$/src/entity/sim/TouchObserverController.h" />
+          <root url="file://$MODULE_DIR$/src/entity/sim/VehicleController.h" />
+          <root url="file://$MODULE_DIR$/src/entity/sim/MoonShader.cpp" />
+          <root url="file://$MODULE_DIR$/src/entity/sim/UfoController1.h" />
+          <root url="file://$MODULE_DIR$/src/entity/sim/Contact.cpp" />
+          <root url="file://$MODULE_DIR$/src/entity/sim/UfoController2.h" />
+          <root url="file://$MODULE_DIR$/src/entity/sim/UfoController1.cpp" />
+          <root url="file://$MODULE_DIR$/src/entity/sim/MoonShader.h" />
+          <root url="file://$MODULE_DIR$/src/entity/sim/ssga.h" />
+          <root url="file://$MODULE_DIR$/src/entity/sim/PlanetShader.cpp" />
+          <root url="file://$MODULE_DIR$/src/entity/sim/AnimatController.h" />
+          <root url="file://$MODULE_DIR$/src/entity/sim/TouchObserverController.cpp" />
+          <root url="file://$MODULE_DIR$/src/entity/sim/ObserverInput.cpp" />
+          <root url="file://$MODULE_DIR$/src/entity/sim/Health.h" />
+          <root url="file://$MODULE_DIR$/src/entity/sim/ObserverInput.h" />
+          <root url="file://$MODULE_DIR$/src/entity/sim/KeyboardTransmitter.cpp" />
+          <root url="file://$MODULE_DIR$/src/entity/sim/Health.cpp" />
+          <root url="file://$MODULE_DIR$/src/entity/sim/MouseObserverController.cpp" />
+          <root url="file://$MODULE_DIR$/src/entity/sim/Signal.h" />
+          <root url="file://$MODULE_DIR$/src/entity/sim/Thruster.h" />
+          <root url="file://$MODULE_DIR$/src/PrecompiledHeader.cmake" />
+          <root url="file://$MODULE_DIR$/src/entity/sim/AnimatController.cpp" />
+          <root url="file://$MODULE_DIR$/src/entity/sim/nnet.cpp" />
+          <root url="file://$MODULE_DIR$/src/entity/sim/AnimatModel.h" />
+          <root url="file://$MODULE_DIR$/src/entity/sim/VehicleController.cpp" />
+          <root url="file://$MODULE_DIR$/src/entity/sim/Genome.h" />
+          <root url="file://$MODULE_DIR$/src/entity/sim/nnet.h" />
+          <root url="file://$MODULE_DIR$/src/entity/sim/CameraController.h" />
+          <root url="file://$MODULE_DIR$/src/entity/sim/CameraController.cpp" />
+          <root url="file://$MODULE_DIR$/src/entity/sim/Genome.cpp" />
+          <root url="file://$MODULE_DIR$/src/entity/sim/PlanetShader.h" />
+          <root url="file://$MODULE_DIR$/src/entity/sim/PlanetController.cpp" />
+          <root url="file://$MODULE_DIR$/src/entity/sim/UfoController2.cpp" />
+          <root url="file://$MODULE_DIR$/src/entity/sim/Sensor.cpp" />
+          <root url="file://$MODULE_DIR$/src/entity/sim/Signal.cpp" />
+          <root url="file://$MODULE_DIR$/src/entity/sim/KeyboardTransmitter.h" />
+          <root url="file://$MODULE_DIR$/src/entity/sim/Contact.h" />
+          <root url="file://$MODULE_DIR$/src/entity/sim/Gene.cpp" />
+          <root url="file://$MODULE_DIR$/src/entity/sim/Gene.h" />
+          <root url="file://$MODULE_DIR$/src/entity/sim/PlanetController.h" />
+          <root url="file://$MODULE_DIR$/src/entity/sim/Thruster.cpp" />
+          <root url="file://$MODULE_DIR$/src/entity/sim/MouseObserverController.h" />
+          <root url="file://$MODULE_DIR$/src/entity/sim/AnimatModel.cpp" />
+          <root url="file://$MODULE_DIR$/src/entity/sim/Sensor.h" />
+          <root url="file://$MODULE_DIR$/src/entity/gfx/Thruster.h" />
+          <root url="file://$MODULE_DIR$/src/entity/gfx/Puff.h" />
+          <root url="file://$MODULE_DIR$/src/entity/gfx/Planet.cpp" />
+          <root url="file://$MODULE_DIR$/src/entity/gfx/Thruster.cpp" />
+          <root url="file://$MODULE_DIR$/src/entity/gfx/Puff.cpp" />
+          <root url="file://$MODULE_DIR$/src/entity/gfx/Planet.h" />
+          <root url="file://$MODULE_DIR$/src/entity/SpawnEntityFunctions.cpp" />
+          <root url="file://$MODULE_DIR$/src/entity/SpawnSkybox.cpp" />
+          <root url="file://$MODULE_DIR$/src/entity/SpawnSkybox.h" />
+          <root url="file://$MODULE_DIR$/src/entity/SpawnPlayer.cpp" />
+          <root url="file://$MODULE_DIR$/src/entity/SpawnEntityFunctions.h" />
+          <root url="file://$MODULE_DIR$/src/entity/SpawnPlayer.h" />
+          <root url="file://$MODULE_DIR$/src/applet/AppletInterface_Impl.h" />
+          <root url="file://$MODULE_DIR$/src/applet/Applet.cpp" />
+          <root url="file://$MODULE_DIR$/src/applet/Engine.cpp" />
+          <root url="file://$MODULE_DIR$/src/applet/Applet.h" />
+          <root url="file://$MODULE_DIR$/src/applet/AppletInterface.h" />
+          <root url="file://$MODULE_DIR$/src/applet/Engine.h" />
+          <root url="file://$MODULE_DIR$/src/geom/Distance.h" />
+          <root url="file://$MODULE_DIR$/src/geom/Sphere.h" />
+          <root url="file://$MODULE_DIR$/src/geom/Triangle.h" />
+          <root url="file://$MODULE_DIR$/src/geom/Plane.h" />
+          <root url="file://$MODULE_DIR$/src/geom/Vector.h" />
+          <root url="file://$MODULE_DIR$/src/geom/Matrix.h" />
+          <root url="file://$MODULE_DIR$/src/geom/Vector2.h" />
+          <root url="file://$MODULE_DIR$/src/geom/Vector3.h" />
+          <root url="file://$MODULE_DIR$/src/geom/Ray.h" />
+          <root url="file://$MODULE_DIR$/src/geom/Vector4.h" />
+          <root url="file://$MODULE_DIR$/src/geom/Transformation.h" />
+          <root url="file://$MODULE_DIR$/src/geom/Matrix44.h" />
+          <root url="file://$MODULE_DIR$/src/geom/utils.h" />
+          <root url="file://$MODULE_DIR$/src/geom/Magnitude.h" />
+          <root url="file://$MODULE_DIR$/src/geom/MatrixOps.h" />
+          <root url="file://$MODULE_DIR$/src/geom/Space.h" />
+          <root url="file://$MODULE_DIR$/src/geom/Matrix33.h" />
+          <root url="file://$MODULE_DIR$/src/geom/Intersection.h" />
+          <root url="file://$MODULE_DIR$/src/geom/Quaternion.h" />
+          <root url="file://$MODULE_DIR$/src/form/Shader.h" />
+          <root url="file://$MODULE_DIR$/src/form/Point.h" />
+          <root url="file://$MODULE_DIR$/src/form/CastRay.cpp" />
+          <root url="file://$MODULE_DIR$/src/form/Node.h" />
+          <root url="file://$MODULE_DIR$/src/form/RayCastResult.cpp" />
+          <root url="file://$MODULE_DIR$/src/form/PointBuffer.h" />
+          <root url="file://$MODULE_DIR$/src/form/Scene.h" />
+          <root url="file://$MODULE_DIR$/src/form/Formation.h" />
+          <root url="file://$MODULE_DIR$/src/form/CalculateNodeScoreFunctor.cpp" />
+          <root url="file://$MODULE_DIR$/src/form/GatherExpandableNodesFunctor.h" />
+          <root url="file://$MODULE_DIR$/src/form/Node.cpp" />
+          <root url="file://$MODULE_DIR$/src/form/Mesh.h" />
+          <root url="file://$MODULE_DIR$/src/form/MeshProperties.h" />
+          <root url="file://$MODULE_DIR$/src/form/Formation.cpp" />
+          <root url="file://$MODULE_DIR$/src/form/CalculateNodeScoreFunctor.h" />
+          <root url="file://$MODULE_DIR$/src/form/defs.h" />
+          <root url="file://$MODULE_DIR$/src/form/Quaterna.h" />
+          <root url="file://$MODULE_DIR$/src/form/NodeBuffer.h" />
+          <root url="file://$MODULE_DIR$/src/form/Object.h" />
+          <root url="file://$MODULE_DIR$/src/form/Surrounding.h" />
+          <root url="file://$MODULE_DIR$/src/form/Polyhedron.h" />
+          <root url="file://$MODULE_DIR$/src/form/Mesh.cpp" />
+          <root url="file://$MODULE_DIR$/src/form/QuaternaBuffer.cpp" />
+          <root url="file://$MODULE_DIR$/src/form/RayCastResult.h" />
+          <root url="file://$MODULE_DIR$/src/form/ForEachNodeFace.h" />
+          <root url="file://$MODULE_DIR$/src/form/ForEachChildNode.h" />
+          <root url="file://$MODULE_DIR$/src/form/Scene.cpp" />
+          <root url="file://$MODULE_DIR$/src/form/NodeBuffer.cpp" />
+          <root url="file://$MODULE_DIR$/src/form/QuaternaBuffer.h" />
+          <root url="file://$MODULE_DIR$/src/form/ForEachFaceInSphere.h" />
+          <root url="file://$MODULE_DIR$/src/form/CastRay.h" />
+          <root url="file://$MODULE_DIR$/src/form/PointBuffer.cpp" />
+          <root url="file://$MODULE_DIR$/src/form/Surrounding.cpp" />
+          <root url="file://$MODULE_DIR$/src/form/Point.cpp" />
+          <root url="file://$MODULE_DIR$/src/form/Object.cpp" />
+          <root url="file://$MODULE_DIR$/src/form/Engine.cpp" />
+          <root url="file://$MODULE_DIR$/src/form/Polyhedron.cpp" />
+          <root url="file://$MODULE_DIR$/src/form/Engine.h" />
+          <root url="file://$MODULE_DIR$/src/core/intrusive_list.h" />
+          <root url="file://$MODULE_DIR$/src/core/ResourceManager.cpp" />
+          <root url="file://$MODULE_DIR$/src/core/memory.cpp" />
+          <root url="file://$MODULE_DIR$/src/core/ConfigEntry.h" />
+          <root url="file://$MODULE_DIR$/src/core/profile.h" />
+          <root url="file://$MODULE_DIR$/src/core/debug.h" />
+          <root url="file://$MODULE_DIR$/src/core/RosterObjectDeclare.h" />
+          <root url="file://$MODULE_DIR$/src/core/profile.cpp" />
+          <root url="file://$MODULE_DIR$/src/core/ring_buffer.h" />
+          <root url="file://$MODULE_DIR$/src/core/Random.h" />
+          <root url="file://$MODULE_DIR$/src/core/HashString.h" />
+          <root url="file://$MODULE_DIR$/src/core/config.h" />
+          <root url="file://$MODULE_DIR$/src/core/ResourceHandle.h" />
+          <root url="file://$MODULE_DIR$/src/core/EventWatcher.h" />
+          <root url="file://$MODULE_DIR$/src/core/app.h" />
+          <root url="file://$MODULE_DIR$/src/core/pointer_union.h" />
+          <root url="file://$MODULE_DIR$/src/core/app.cpp" />
+          <root url="file://$MODULE_DIR$/src/core/object_pool.h" />
+          <root url="file://$MODULE_DIR$/src/core/TypeId.h" />
+          <root url="file://$MODULE_DIR$/src/core/counted_object.h" />
+          <root url="file://$MODULE_DIR$/src/core/Random.cpp" />
+          <root url="file://$MODULE_DIR$/src/core/Statistics.h" />
+          <root url="file://$MODULE_DIR$/src/core/memory.h" />
+          <root url="file://$MODULE_DIR$/src/core/TypeId.cpp" />
+          <root url="file://$MODULE_DIR$/src/core/EventWatcher.cpp" />
+          <root url="file://$MODULE_DIR$/src/core/ConfigEntry.cpp" />
+          <root url="file://$MODULE_DIR$/src/core/intOps.h" />
+          <root url="file://$MODULE_DIR$/src/core/Resource.h" />
+          <root url="file://$MODULE_DIR$/src/core/Resource.cpp" />
+          <root url="file://$MODULE_DIR$/src/core/floatOps.h" />
+          <root url="file://$MODULE_DIR$/src/core/windows.h" />
+          <root url="file://$MODULE_DIR$/src/core/RosterObjectDefine.h" />
+          <root url="file://$MODULE_DIR$/src/core/GlobalResourceManager.h" />
+          <root url="file://$MODULE_DIR$/src/core/function_ref.h" />
+          <root url="file://$MODULE_DIR$/src/core/Roster.h" />
+          <root url="file://$MODULE_DIR$/src/core/Statistics.cpp" />
+          <root url="file://$MODULE_DIR$/src/core/GlobalResourceManager.cpp" />
+          <root url="file://$MODULE_DIR$/src/core/core.h" />
+          <root url="file://$MODULE_DIR$/src/core/ResourceManager.h" />
+          <root url="file://$MODULE_DIR$/src/core/fixed_point.h" />
+          <root url="file://$MODULE_DIR$/src/core/debug.cpp" />
+          <root url="file://$MODULE_DIR$/src/core/verify.h" />
+          <root url="file://$MODULE_DIR$/src/core/Sigmoid.h" />
+          <root url="file://$MODULE_DIR$/src/core/ConfigInit.cpp" />
+          <root url="file://$MODULE_DIR$/src/core/Roster.cpp" />
+          <root url="file://$MODULE_DIR$/src/core/Enumeration.h" />
+          <root url="file://$MODULE_DIR$/src/smp/SimpleMutex.h" />
+          <root url="file://$MODULE_DIR$/src/smp/ReadersWriterMutex.h" />
+          <root url="file://$MODULE_DIR$/src/smp/Semaphore.cpp" />
+          <root url="file://$MODULE_DIR$/src/smp/smp.h" />
+          <root url="file://$MODULE_DIR$/src/smp/Semaphore.h" />
+          <root url="file://$MODULE_DIR$/src/smp/smp.cpp" />
+          <root url="file://$MODULE_DIR$/src/smp/Thread.h" />
+          <root url="file://$MODULE_DIR$/src/smp/ReadersWriterMutex.cpp" />
+          <root url="file://$MODULE_DIR$/src/smp/Thread.cpp" />
+          <root url="file://$MODULE_DIR$/src/sim/Controller.cpp" />
+          <root url="file://$MODULE_DIR$/src/sim/Model.h" />
+          <root url="file://$MODULE_DIR$/src/sim/Model.cpp" />
+          <root url="file://$MODULE_DIR$/src/sim/Entity.h" />
+          <root url="file://$MODULE_DIR$/src/sim/gravity.cpp" />
+          <root url="file://$MODULE_DIR$/src/sim/gravity.h" />
+          <root url="file://$MODULE_DIR$/src/sim/defs.h" />
+          <root url="file://$MODULE_DIR$/src/sim/Controller.h" />
+          <root url="file://$MODULE_DIR$/src/sim/EntityFunctions.h" />
+          <root url="file://$MODULE_DIR$/src/sim/EntityFunctions.cpp" />
+          <root url="file://$MODULE_DIR$/src/sim/Entity.cpp" />
+          <root url="file://$MODULE_DIR$/src/sim/Engine.cpp" />
+          <root url="file://$MODULE_DIR$/src/sim/Engine.h" />
+          <root url="file://$MODULE_DIR$/src/ipc/ListenerInterface.cpp" />
+          <root url="file://$MODULE_DIR$/src/ipc/Listener.h" />
+          <root url="file://$MODULE_DIR$/src/ipc/Future.h" />
+          <root url="file://$MODULE_DIR$/src/ipc/Handle_Impl.h" />
+          <root url="file://$MODULE_DIR$/src/ipc/Handle.h" />
+          <root url="file://$MODULE_DIR$/src/ipc/FiberWin.h" />
+          <root url="file://$MODULE_DIR$/src/ipc/FiberAndroid.cpp" />
+          <root url="file://$MODULE_DIR$/src/ipc/FiberPosix.h" />
+          <root url="file://$MODULE_DIR$/src/ipc/FiberWin.cpp" />
+          <root url="file://$MODULE_DIR$/src/ipc/Uid.h" />
+          <root url="file://$MODULE_DIR$/src/ipc/Fiber.h" />
+          <root url="file://$MODULE_DIR$/src/ipc/MessageQueue_Impl.h" />
+          <root url="file://$MODULE_DIR$/src/ipc/Uid.cpp" />
+          <root url="file://$MODULE_DIR$/src/ipc/ObjectBase.h" />
+          <root url="file://$MODULE_DIR$/src/ipc/FiberPosix.cpp" />
+          <root url="file://$MODULE_DIR$/src/ipc/MessageQueue.h" />
+          <root url="file://$MODULE_DIR$/src/ipc/Fiber.cpp" />
+          <root url="file://$MODULE_DIR$/src/ipc/ListenerInterface.h" />
+          <root url="file://$MODULE_DIR$/src/ipc/EngineBase.h" />
+          <root url="file://$MODULE_DIR$/src/ipc/Daemon.h" />
+          <root url="file://$MODULE_DIR$/src/ipc/FiberAndroid.h" />
+          <root url="file://$MODULE_DIR$/src/gfx/object/MeshObject.h" />
+          <root url="file://$MODULE_DIR$/src/gfx/object/MeshObject.cpp" />
+          <root url="file://$MODULE_DIR$/src/gfx/object/Light.cpp" />
+          <root url="file://$MODULE_DIR$/src/gfx/object/Light.h" />
+          <root url="file://$MODULE_DIR$/src/gfx/object/Ball.h" />
+          <root url="file://$MODULE_DIR$/src/gfx/object/Skybox.h" />
+          <root url="file://$MODULE_DIR$/src/gfx/object/SearchLight.h" />
+          <root url="file://$MODULE_DIR$/src/gfx/object/Skybox.cpp" />
+          <root url="file://$MODULE_DIR$/src/gfx/object/Ball.cpp" />
+          <root url="file://$MODULE_DIR$/src/gfx/object/SearchLight.cpp" />
+          <root url="file://$MODULE_DIR$/src/gfx/object/Surrounding.cpp" />
+          <root url="file://$MODULE_DIR$/src/gfx/object/Object.h" />
+          <root url="file://$MODULE_DIR$/src/gfx/object/Surrounding.h" />
+          <root url="file://$MODULE_DIR$/src/gfx/object/Object.cpp" />
+          <root url="file://$MODULE_DIR$/src/gfx/Shader.h" />
+          <root url="file://$MODULE_DIR$/src/gfx/Texture.h" />
+          <root url="file://$MODULE_DIR$/src/gfx/Image.cpp" />
+          <root url="file://$MODULE_DIR$/src/gfx/Quad.h" />
+          <root url="file://$MODULE_DIR$/src/gfx/Debug.h" />
+          <root url="file://$MODULE_DIR$/src/gfx/Uniform.cpp" />
+          <root url="file://$MODULE_DIR$/src/gfx/Texture2d.h" />
+          <root url="file://$MODULE_DIR$/src/gfx/Messages.h" />
+          <root url="file://$MODULE_DIR$/src/gfx/Program.h" />
+          <root url="file://$MODULE_DIR$/src/gfx/Mesh.h" />
+          <root url="file://$MODULE_DIR$/src/gfx/RenderBuffer.h" />
+          <root url="file://$MODULE_DIR$/src/gfx/defs.h" />
+          <root url="file://$MODULE_DIR$/src/gfx/Pov.h" />
+          <root url="file://$MODULE_DIR$/src/gfx/Font.h" />
+          <root url="file://$MODULE_DIR$/src/gfx/SetSpaceEvent.h" />
+          <root url="file://$MODULE_DIR$/src/gfx/Debug.cpp" />
+          <root url="file://$MODULE_DIR$/src/gfx/IndexedVboResource.h" />
+          <root url="file://$MODULE_DIR$/src/gfx/GenerateShadowVolumeMesh.h" />
+          <root url="file://$MODULE_DIR$/src/gfx/Image.h" />
+          <root url="file://$MODULE_DIR$/src/gfx/RenderBuffer.cpp" />
+          <root url="file://$MODULE_DIR$/src/gfx/ShadowMap.h" />
+          <root url="file://$MODULE_DIR$/src/gfx/TextureCubeMap.cpp" />
+          <root url="file://$MODULE_DIR$/src/gfx/Scene.cpp" />
+          <root url="file://$MODULE_DIR$/src/gfx/BufferObject.h" />
+          <root url="file://$MODULE_DIR$/src/gfx/PlainVertex.h" />
+          <root url="file://$MODULE_DIR$/src/gfx/Frustum.cpp" />
+          <root url="file://$MODULE_DIR$/src/gfx/SetCameraEvent.h" />
+          <root url="file://$MODULE_DIR$/src/gfx/Uniform.h" />
+          <root url="file://$MODULE_DIR$/src/gfx/LightType.h" />
+          <root url="file://$MODULE_DIR$/src/gfx/VboResource.h" />
+          <root url="file://$MODULE_DIR$/src/gfx/glHelpers.h" />
+          <root url="file://$MODULE_DIR$/src/gfx/Texture2d.cpp" />
+          <root url="file://$MODULE_DIR$/src/gfx/RegisterResources.h" />
+          <root url="file://$MODULE_DIR$/src/gfx/glHelpers.cpp" />
+          <root url="file://$MODULE_DIR$/src/gfx/Scene.h" />
+          <root url="file://$MODULE_DIR$/src/gfx/Font.cpp" />
+          <root url="file://$MODULE_DIR$/src/gfx/Frustum.h" />
+          <root url="file://$MODULE_DIR$/src/gfx/Shader.cpp" />
+          <root url="file://$MODULE_DIR$/src/gfx/ShadowVolume.h" />
+          <root url="file://$MODULE_DIR$/src/gfx/Color.h" />
+          <root url="file://$MODULE_DIR$/src/gfx/LitVertex.h" />
+          <root url="file://$MODULE_DIR$/src/gfx/VertexBufferObject.h" />
+          <root url="file://$MODULE_DIR$/src/gfx/RegisterResources.cpp" />
+          <root url="file://$MODULE_DIR$/src/gfx/Pov.cpp" />
+          <root url="file://$MODULE_DIR$/src/gfx/PlainVertex.cpp" />
+          <root url="file://$MODULE_DIR$/src/gfx/SetLodParametersEvent.h" />
+          <root url="file://$MODULE_DIR$/src/gfx/TextureCubeMap.h" />
+          <root url="file://$MODULE_DIR$/src/gfx/LodParameters.h" />
+          <root url="file://$MODULE_DIR$/src/gfx/axes.h" />
+          <root url="file://$MODULE_DIR$/src/gfx/Program.cpp" />
+          <root url="file://$MODULE_DIR$/src/gfx/NonIndexedVboResource.h" />
+          <root url="file://$MODULE_DIR$/src/gfx/Quad.cpp" />
+          <root url="file://$MODULE_DIR$/src/gfx/IndexBufferObject.h" />
+          <root url="file://$MODULE_DIR$/src/gfx/LitVertex.cpp" />
+          <root url="file://$MODULE_DIR$/src/gfx/Engine.cpp" />
+          <root url="file://$MODULE_DIR$/src/gfx/Engine.h" />
+          <root url="file://$MODULE_DIR$/src/pch.h" />
+          <root url="file://$MODULE_DIR$/src/pch.cpp" />
+          <root url="file://$MODULE_DIR$/src/main.cpp" />
+        </excluded>
+      </library>
+    </orderEntry>
+  </component>
+</module>
