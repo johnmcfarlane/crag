@@ -19,7 +19,7 @@ namespace sim
 namespace ssga
 {
 	// top-level functions of a steady-state genetic algorithm
-	void Init(sim::Engine & engine, geom::abs::Vector3 const & spawn_pos) noexcept;
+	void Init(sim::Engine & engine, geom::uni::Vector3 const & spawn_pos) noexcept;
 	void Deinit(sim::Engine & engine) noexcept;
 	void Tick(sim::Engine & engine) noexcept;
 }

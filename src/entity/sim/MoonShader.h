@@ -24,16 +24,16 @@ namespace sim
 	class MoonShader : public form::Shader
 	{
 	public:
-		MoonShader(int seed, int num_craters, geom::abs::Scalar radius);
+		MoonShader(int seed, int num_craters, geom::uni::Scalar radius);
 		
 	private:
 		void InitRootPoints(form::Polyhedron & polyhedron, form::Point * points[]) const override;
 		bool InitMidPoint(form::Polyhedron & polyhedron, form::Node const & a, form::Node const & b, int index, form::Point & mid_point) const override;
 		
-		void ApplyCraters(Random rnd, geom::abs::Vector3 & position) const;
-		void GenerateCreater(Random & rnd, geom::abs::Sphere3 & crater, geom::abs::Scalar moon_radius) const;
+		void ApplyCraters(Random rnd, geom::uni::Vector3 & position) const;
+		void GenerateCreater(Random & rnd, geom::uni::Sphere3 & crater, geom::uni::Scalar moon_radius) const;
 		
-		typedef std::vector<geom::abs::Sphere3> CraterVector;
+		typedef std::vector<geom::uni::Sphere3> CraterVector;
 		CraterVector craters;
 	};
 }

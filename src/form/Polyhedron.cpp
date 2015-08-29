@@ -147,7 +147,7 @@ void Polyhedron::Deinit(PointBuffer & point_buffer)
 	DeinitRootNode(_root_node, point_buffer);
 }
 
-geom::abs::Sphere3 const & Polyhedron::GetShape() const
+geom::uni::Sphere3 const & Polyhedron::GetShape() const
 {
 	return _shape;
 }
@@ -169,7 +169,7 @@ Node const & Polyhedron::GetRootNode() const
 
 void Polyhedron::SetSpace(geom::Space const & space)
 {
-	geom::abs::Sphere3 const & shape = _formation.GetShape();
+	geom::uni::Sphere3 const & shape = _formation.GetShape();
 	_shape.center = space.AbsToRel<double>(shape.center);
 	_shape.radius = shape.radius;
 	

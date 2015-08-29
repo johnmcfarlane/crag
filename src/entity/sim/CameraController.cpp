@@ -60,11 +60,11 @@ namespace
 
 		gfx::SetCameraEvent event = {
 			// calculate sensible camera up
-			geom::Transformation<geom::abs::Scalar>(
+			geom::Transformation<geom::uni::Scalar>(
 				space.RelToAbs(camera_transformation.GetTranslation()),
 				geom::Rotation(
-					geom::Cast<geom::abs::Scalar>(forward),
-					geom::Cast<geom::abs::Scalar>(up))),
+					geom::Cast<geom::uni::Scalar>(forward),
+					geom::Cast<geom::uni::Scalar>(up))),
 			frustum_default_fov
 		};
 
