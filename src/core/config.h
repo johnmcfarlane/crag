@@ -33,14 +33,19 @@
 
 #if defined(__clang__)
 #define CRAG_COMPILER_CLANG
-#if __clang_major__ > 3 || (__clang_major__ == 3 && __clang_minor__ > 4)
+#if defined(__EXCEPTIONS)
+#define CRAG_USE_EXCEPTIONS
 #endif
 #elif defined(__GNUG__)
 #define CRAG_COMPILER_GCC
-#if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ > 8)
+#if defined(__EXCEPTIONS)
+#define CRAG_USE_EXCEPTIONS
 #endif
 #elif defined(_MSC_VER)
 #define CRAG_COMPILER_MSVC
+#if defined(_CPPUNWIND)
+#define CRAG_USE_EXCEPTIONS
+#endif
 #else
 #error unrecognized compiler
 #endif
