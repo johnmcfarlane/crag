@@ -54,6 +54,8 @@
       <sourceFolder url="file://$MODULE_DIR$/src/core/profile.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/core/profile.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/core/ring_buffer.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/core/unit_interval.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/core/unit_interval.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/core/verify.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/core/windows.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/entity/SpawnEntityFunctions.cpp" isTestSource="false" />

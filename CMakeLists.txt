@@ -65,6 +65,8 @@ set(SOURCE_FILES
     ${CRAG_SOURCE_DIRECTORY}/core/Statistics.h
     ${CRAG_SOURCE_DIRECTORY}/core/TypeId.cpp
     ${CRAG_SOURCE_DIRECTORY}/core/TypeId.h
+    ${CRAG_SOURCE_DIRECTORY}/core/unit_interval.h
+    ${CRAG_SOURCE_DIRECTORY}/core/unit_interval.cpp
     ${CRAG_SOURCE_DIRECTORY}/core/verify.h
     ${CRAG_SOURCE_DIRECTORY}/core/windows.h
     ${CRAG_SOURCE_DIRECTORY}/entity/gfx/Planet.cpp
