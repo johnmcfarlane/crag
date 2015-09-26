@@ -26,7 +26,7 @@ namespace geom
 		typedef Sphere<Scalar, 3> Sphere3;
 		typedef Matrix<Scalar, 3, 3> Matrix33;
 		typedef Matrix<Scalar, 4, 4> Matrix44;
-		typedef Transformation<Scalar> Transformation;
+		typedef geom::Transformation<Scalar> Transformation;
 	};
 
 	using rel = Precision<float>;
