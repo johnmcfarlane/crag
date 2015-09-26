@@ -21,10 +21,10 @@ namespace
 		if (r.GetBool(mutation_rate))
 		{
 			auto mutation_weight = r.GetFloat<double>();
-			auto mutation_weight_fixed = crag::core::closed_unit<Gene::unit_repr_type>(mutation_weight);
+			auto mutation_weight_fixed = Gene::unit_type(mutation_weight);
 
 			auto random_value = unit_type(r.GetFloat<double>());
-			auto mutated_value = lerp(splicing, random_value, mutation_weight_fixed);
+			auto mutated_value = crag::lerp(splicing, random_value, mutation_weight_fixed);
 			return mutated_value;
 		}
 
@@ -32,7 +32,7 @@ namespace
 	};
 
 	template <typename VALUE_TYPE, typename REPR_TYPE>
-	VALUE_TYPE make_open(crag::core::closed_unit<REPR_TYPE> _value) noexcept
+	VALUE_TYPE make_open(crag::core::unit_interval<REPR_TYPE> _value) noexcept
 	{
 		using repr_type = REPR_TYPE;
 		using next_repr_type = crag::core::_impl::next_size_t<repr_type>;
