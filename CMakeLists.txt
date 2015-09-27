@@ -343,13 +343,13 @@ find_library(ODE_LIBRARY ode /usr/lib)
 if (CRAG_RPI)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DCRAG_RPI")
 
-	include_directories("${CRAG_SOURCE_DIRECTORY}" "SG14" "include/SDL2" "/opt/vc/include")
+	include_directories("${CRAG_SOURCE_DIRECTORY}" "fixed_point/include" "include/SDL2" "/opt/vc/include")
 
 	find_library(BCM_HOST bcm_host /opt/vc/lib)
 	find_library(GLES2_LIBRARY GLESv2 /opt/vc/lib)
 	target_link_libraries(crag ${SDL2_LIBRARY} ${SDL2_IMAGE_LIBRARY} ${ODE_LIBRARY} ${GLES2_LIBRARY} ${BCM_HOST} "dl" "pthread" "stdc++" "m" "rt")
 else (CRAG_RPI)
-	include_directories("${CRAG_SOURCE_DIRECTORY}" "SG14" "/usr/include/SDL2" "include/SDL2")
+	include_directories("${CRAG_SOURCE_DIRECTORY}" "fixed_point/include" "/usr/include/SDL2" "include/SDL2")
 
 	find_package(OpenGL REQUIRED)
 	target_link_libraries(crag ${SDL2_LIBRARY} ${SDL2_IMAGE_LIBRARY} ${ODE_LIBRARY} ${OPENGL_LIBRARIES} "dl" "pthread" "stdc++" "m")
