@@ -52,7 +52,7 @@ namespace crag
 			template <class Output, typename std::enable_if<_impl::is_integral<Output>::value, int>::type _Dummy = 0>
 			constexpr Output integral() const noexcept
 			{
-				using intermediate_type = sg14::_impl::next_size_t<typename std::common_type<Output, ReprType>::type>;
+				using intermediate_type = sg14::_impl::next_size<typename std::common_type<Output, ReprType>::type>;
 				return intermediate_type{_repr} * std::numeric_limits<Output>::max() / _max;
 			}
 
