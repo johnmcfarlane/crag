@@ -44,7 +44,7 @@ The Crag project expects them to be locate in specific folders under the `vc` fo
 The [Simple Direct-media Layer](http://www.libsdl.org/) provides everything a game needs to run on a variety of systems and hardware.
 
   * Download `SDL2-devel-2.0.X-VC.zip` from [here](http://www.libsdl.org/download-2.0.php).
-  * Open the zip file and copy the contents of the `SDL-2.0.X-XXXX' folder to `crag\vc\SDL2'.
+  * Open the zip file and copy the contents of the `SDL-2.0.X-XXXX' folder to `crag\vs\SDL2'.
 
 ### 3.2 SDL_image
 
