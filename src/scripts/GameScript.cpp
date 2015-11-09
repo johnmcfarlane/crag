@@ -54,7 +54,7 @@ namespace
 
 	CONFIG_DEFINE(profile_max_ticks, std::uint64_t(10000));
 
-	geom::abs::Vector3 player_start_pos(5, 9998320, 0);
+	geom::uni::Vector3 player_start_pos(5, 9998320, 0);
 	size_t max_shapes = 250;
 	bool cleanup_shapes = true;
 	
@@ -202,7 +202,7 @@ void GameScript(AppletInterface & applet_interface)
 	auto rel_player_start_pos = space.AbsToRel(player_start_pos);
 	
 	// Create sun. 
-	geom::abs::Sphere3 star_volume(geom::abs::Vector3(65062512., 75939904., 0.), 1000000.);
+	geom::uni::Sphere3 star_volume(geom::uni::Vector3(65062512., 75939904., 0.), 1000000.);
 	gfx::Color4f star_color(gfx::Color4f(.6f,.8f,1.f) * 8000000000000000.f);
 	sim::EntityHandle sun = SpawnStar(star_volume, star_color);
 	

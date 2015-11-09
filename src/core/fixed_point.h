@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include <SG14/fixed_point.h>
+#include <fixed_point_utils.h>
 
 namespace crag
 {
@@ -17,4 +17,20 @@ namespace crag
 	{
 		using namespace sg14;
 	}
+}
+
+namespace std
+{
+	// somewhat prematurely promoted to std in order to match signature of existing std::* overloads
+	using sg14::sqrt;
+	using sg14::abs;
+}
+
+namespace core
+{
+	template <typename To, typename Fp_Repr_Type, int Exponent>
+	To StaticCast(crag::core::fixed_point<Fp_Repr_Type, Exponent> const & object) noexcept
+	{
+		return static_cast<To>(object);
+	};
 }

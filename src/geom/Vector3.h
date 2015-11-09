@@ -15,7 +15,7 @@
 namespace geom
 {
 	//////////////////////////////////////////////////////////////////
-	// 3-dimensional partical specialization of Vector
+	// 3-dimensional partial specialization of Vector
 
 	template<typename S> class Vector<S, 3>
 	{
@@ -68,7 +68,7 @@ namespace geom
 
 		static Vector const & Zero()
 		{
-			static constexpr auto zero_vector = Vector(0, 0, 0);
+			static constexpr auto zero_vector = Vector(S(0), S(0), S(0));
 			return zero_vector;
 		}
 		
@@ -94,9 +94,9 @@ namespace geom
 	typename ::std::enable_if<! ::std::is_same<LHS_S, RHS_S>::value, Vector<LHS_S, 3>>::type Cast(Vector<RHS_S, 3> const & rhs)
 	{
 		return Vector<LHS_S, 3>(
-			static_cast<LHS_S>(rhs.x),
-			static_cast<LHS_S>(rhs.y),
-			static_cast<LHS_S>(rhs.z));
+			core::StaticCast<LHS_S>(rhs.x),
+			core::StaticCast<LHS_S>(rhs.y),
+			core::StaticCast<LHS_S>(rhs.z));
 	}
 
 	template <typename S>
@@ -201,7 +201,7 @@ namespace geom
 		return out << v.x << ',' << v.y << ',' << v.z;
 	}
 
-	template<typename S> ::std::istream & operator >> (::std::istream & in, Vector<S, 3> const & v)
+	template<typename S> ::std::istream & operator >> (::std::istream & in, Vector<S, 3> & v)
 	{
 		return in >> v.x >> ',' >> v.y >> ',' >> v.z;
 	}

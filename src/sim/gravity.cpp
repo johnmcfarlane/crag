@@ -37,7 +37,7 @@ namespace
 	void ApplyGravity(Engine & engine, core::Time delta, physics::Location & location) 
 	{
 		Vector3 const & position = location.GetTranslation();
-		auto & body = core::StaticCast<physics::Body &>(location);
+		auto & body = core::StaticCast<physics::Body>(location);
 		Scalar mass = body.GetMass();
 		if (mass <= 0)
 		{

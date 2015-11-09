@@ -16,30 +16,21 @@
 namespace geom
 {
 	// relative space types
-	namespace rel
+	template <typename SCALAR>
+	struct Precision
 	{
-		typedef float Scalar;
+		typedef SCALAR Scalar;
 		typedef Vector<Scalar, 2> Vector2;
 		typedef Vector<Scalar, 3> Vector3;
 		typedef Ray<Scalar, 3> Ray3;
 		typedef Sphere<Scalar, 3> Sphere3;
 		typedef Matrix<Scalar, 3, 3> Matrix33;
 		typedef Matrix<Scalar, 4, 4> Matrix44;
-		typedef Transformation<Scalar> Transformation;
-	}
+		typedef geom::Transformation<Scalar> Transformation;
+	};
 
-	// absolute space types
-	namespace abs
-	{
-		typedef double Scalar;
-		typedef Vector<Scalar, 2> Vector2;
-		typedef Vector<Scalar, 3> Vector3;
-		typedef Ray<Scalar, 3> Ray3;
-		typedef Sphere<Scalar, 3> Sphere3;
-		typedef Matrix<Scalar, 3, 3> Matrix33;
-		typedef Matrix<Scalar, 4, 4> Matrix44;
-		typedef Transformation<Scalar> Transformation;
-	}
+	using rel = Precision<float>;
+	using uni = Precision<double>;
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Space class definition
@@ -59,7 +50,7 @@ namespace geom
 		template <typename REL_T>
 		friend REL_T Convert(REL_T const & rel, Space const & source, Space const & destination);
 
-		using OriginType = abs::Vector3;
+		using OriginType = uni::Vector3;
 
 	public:
 		////////////////////////////////////////////////////////////////////////////////
@@ -91,37 +82,37 @@ namespace geom
 
 		// AbsToRel
 		template <typename REL_S = rel::Scalar>
-		Vector<REL_S, 3> AbsToRel(abs::Vector3 const & abs) const
+		Vector<REL_S, 3> AbsToRel(uni::Vector3 const & uni) const
 		{
-			return Cast<REL_S>(abs - _origin);
+			return Cast<REL_S>(uni - _origin);
 		}
 	
 		template <typename REL_S = rel::Scalar>
-		Ray<REL_S, 3> AbsToRel(abs::Ray3 const & abs) const
+		Ray<REL_S, 3> AbsToRel(uni::Ray3 const & uni) const
 		{
-			return Ray<REL_S, 3>(AbsToRel<REL_S>(abs.position), Cast<REL_S>(abs.direction));
+			return Ray<REL_S, 3>(AbsToRel<REL_S>(uni.position), Cast<REL_S>(uni.direction));
 		}
 	
 		template <typename REL_S = rel::Scalar>
-		Sphere<REL_S, 3> AbsToRel(abs::Sphere3 const & abs) const
+		Sphere<REL_S, 3> AbsToRel(uni::Sphere3 const & uni) const
 		{
-			return Sphere<REL_S, 3>(AbsToRel<REL_S>(abs.center), static_cast<REL_S>(abs.radius));
+			return Sphere<REL_S, 3>(AbsToRel<REL_S>(uni.center), static_cast<REL_S>(uni.radius));
 		}
 	
 		template <typename REL_S = rel::Scalar>
-		Transformation<REL_S> AbsToRel(abs::Transformation const & abs) const
+		Transformation<REL_S> AbsToRel(uni::Transformation const & uni) const
 		{
-			return Transformation<REL_S>(AbsToRel<REL_S>(abs.GetTranslation()), Cast<REL_S>(abs.GetRotation()));
+			return Transformation<REL_S>(AbsToRel<REL_S>(uni.GetTranslation()), Cast<REL_S>(uni.GetRotation()));
 		}
 	
 		// RelToAbs
-		template <typename ABS_S = abs::Scalar, typename REL_S = rel::Scalar>
+		template <typename ABS_S = uni::Scalar, typename REL_S = rel::Scalar>
 		Vector<ABS_S, 3> RelToAbs(Vector<REL_S, 3> const & rel) const
 		{
 			return Cast<ABS_S>(rel) + Cast<ABS_S>(_origin);
 		}
 	
-		template <typename ABS_S = abs::Scalar, typename REL_S = rel::Scalar>
+		template <typename ABS_S = uni::Scalar, typename REL_S = rel::Scalar>
 		Ray<ABS_S, 3> RelToAbs(Ray<REL_S, 3> const & rel) const
 		{
 			return Ray<ABS_S, 3>(
@@ -129,7 +120,7 @@ namespace geom
 				Cast<ABS_S>(rel.direction));
 		}
 	
-		template <typename ABS_S = abs::Scalar, typename REL_S = rel::Scalar>
+		template <typename ABS_S = uni::Scalar, typename REL_S = rel::Scalar>
 		Sphere<ABS_S, 3> RelToAbs(Sphere<REL_S, 3> const & rel) const
 		{
 			return Sphere<ABS_S, 3>(
@@ -137,7 +128,7 @@ namespace geom
 				static_cast<ABS_S>(rel.radius));
 		}
 	
-		template <typename ABS_S = abs::Scalar, typename REL_S = rel::Scalar>
+		template <typename ABS_S = uni::Scalar, typename REL_S = rel::Scalar>
 		Transformation<ABS_S> RelToAbs(Transformation<REL_S> const & rel) const
 		{
 			return Transformation<ABS_S>(
@@ -159,7 +150,7 @@ namespace geom
 	////////////////////////////////////////////////////////////////////////////////
 	// geom::Space and helper definitions
 	
-	inline abs::Vector3 operator-(Space const & lhs, Space const & rhs)
+	inline uni::Vector3 operator-(Space const & lhs, Space const & rhs)
 	{
 		return lhs.GetOrigin() - rhs.GetOrigin();
 	}
@@ -174,7 +165,7 @@ namespace geom
 	REL_T Convert(REL_T const & rel, Space const & source, Space const & destination)
 	{
 		typedef typename REL_T::Scalar Scalar;
-		auto abs = source.RelToAbs(rel);
-		return destination.AbsToRel<Scalar>(abs);
+		auto uni = source.RelToAbs(rel);
+		return destination.AbsToRel<Scalar>(uni);
 	}
 }

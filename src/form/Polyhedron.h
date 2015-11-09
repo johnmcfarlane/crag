@@ -39,7 +39,7 @@ namespace form
 		void Init(geom::Space const & space, PointBuffer & point_buffer);
 		void Deinit(PointBuffer & point_buffer);
 
-		geom::abs::Sphere3 const & GetShape() const;
+		geom::uni::Sphere3 const & GetShape() const;
 		Formation & GetFormation();
 		Formation const & GetFormation() const;
 		Node const & GetRootNode() const;
@@ -54,7 +54,7 @@ namespace form
 		};
 		
 	public:
-		geom::abs::Sphere3 _shape;
+		geom::uni::Sphere3 _shape;
 		Node _root_node;	// Exists purely so that all 'real' nodes have a parent.
 		Formation & _formation;
 	};

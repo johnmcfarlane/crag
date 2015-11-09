@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include <core/fixed_point.h>
+#include <core/unit_interval.h>
 
 class Random;
 
@@ -25,7 +25,7 @@ namespace sim
 			// types
 		public:
 			using unit_repr_type = std::uint32_t;
-			using unit_type = crag::core::closed_unit<unit_repr_type>;
+			using unit_type = crag::core::unit_interval<unit_repr_type>;
 			using value_type = float;
 
 			// functions
@@ -45,7 +45,7 @@ namespace sim
 			unit_repr_type to_repr() const noexcept;
 
 		private:
-			unit_type _value;
+			unit_type _value = unit_type(0.);
 		};
 	}
 }

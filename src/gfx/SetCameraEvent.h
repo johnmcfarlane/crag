@@ -17,7 +17,7 @@ namespace gfx
 {
 	struct SetCameraEvent
 	{
-		geom::abs::Transformation transformation;
+		geom::uni::Transformation transformation;
 		Scalar fov;
 	};
 }

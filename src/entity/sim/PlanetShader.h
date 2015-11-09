@@ -28,18 +28,18 @@ namespace sim
 		void InitRootPoints(form::Polyhedron & polyhedron, form::Point * points[]) const override;
 		bool InitMidPoint(form::Polyhedron & polyhedron, form::Node const & a, form::Node const & b, int index, form::Point & mid_point) const override;
 		
-		void CalcRootPointPos(Random & rnd, geom::abs::Vector3 & position) const;
-		geom::abs::Scalar GetRandomHeightCoefficient(Random & rnd) const;
+		void CalcRootPointPos(Random & rnd, geom::uni::Vector3 & position) const;
+		geom::uni::Scalar GetRandomHeightCoefficient(Random & rnd) const;
 
 		// Mid-Point Calculation 
 		struct Params;
-		bool CalcMidPointPos_Random(form::Polyhedron & polyhedron, geom::abs::Vector3 & result, Params & params) const;
-		bool CalcMidPointPos_SimpleInterp(form::Polyhedron & polyhedron, geom::abs::Vector3 & result, Params & params) const;
+		bool CalcMidPointPos_Random(form::Polyhedron & polyhedron, geom::uni::Vector3 & result, Params & params) const;
+		bool CalcMidPointPos_SimpleInterp(form::Polyhedron & polyhedron, geom::uni::Vector3 & result, Params & params) const;
 
-		geom::abs::Vector3 GetLocalPosition(form::Point const & point, geom::abs::Vector3 const & center) const;
-		geom::abs::Vector3 GetLocalPosition(form::Vector3 const & point_pos, geom::abs::Vector3 const & center) const;
-		geom::abs::Scalar GetAltitude(form::Point const & point, geom::abs::Vector3 const & center) const;
-		geom::abs::Scalar GetAltitude(form::Vector3 const & point_pos, geom::abs::Vector3 const & center) const;
-		geom::abs::Scalar GetAltitude(geom::abs::Vector3 const & local_pos) const;
+		geom::uni::Vector3 GetLocalPosition(form::Point const & point, geom::uni::Vector3 const & center) const;
+		geom::uni::Vector3 GetLocalPosition(form::Vector3 const & point_pos, geom::uni::Vector3 const & center) const;
+		geom::uni::Scalar GetAltitude(form::Point const & point, geom::uni::Vector3 const & center) const;
+		geom::uni::Scalar GetAltitude(form::Vector3 const & point_pos, geom::uni::Vector3 const & center) const;
+		geom::uni::Scalar GetAltitude(geom::uni::Vector3 const & local_pos) const;
 	};
 }

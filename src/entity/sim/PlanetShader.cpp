@@ -33,15 +33,15 @@ namespace
 	CONFIG_DEFINE(planet_shader_random_range, 0.002);
 	CONFIG_DEFINE(planet_shader_medium_coefficient, .35);
 	
-	geom::abs::Scalar root_three = sqrt(3.);
+	geom::uni::Scalar root_three = sqrt(3.);
 	
 	// RootNode initialization data. A tetrahedron.
-	geom::abs::Vector3 root_corners[4] = 
+	geom::uni::Vector3 root_corners[4] =
 	{
-		geom::abs::Vector3(-1,  1,  1),
-		geom::abs::Vector3( 1, -1,  1),
-		geom::abs::Vector3( 1,  1, -1),
-		geom::abs::Vector3(-1, -1, -1)
+		geom::uni::Vector3(-1,  1,  1),
+		geom::uni::Vector3( 1, -1,  1),
+		geom::uni::Vector3( 1,  1, -1),
+		geom::uni::Vector3(-1, -1, -1)
 	};
 	
 	// InitMidPoint helper
@@ -172,11 +172,11 @@ void PlanetShader::InitRootPoints(form::Polyhedron & polyhedron, form::Point * p
 	// This one is the same each time.
 	//Random crater_randomizer(seed + 2);
 
-	geom::abs::Sphere3 shape = geom::Cast<geom::abs::Scalar>(polyhedron.GetShape());
-	geom::abs::Scalar inverse_root_corner_length = 1. / root_three;
+	geom::uni::Sphere3 shape = geom::Cast<geom::uni::Scalar>(polyhedron.GetShape());
+	geom::uni::Scalar inverse_root_corner_length = 1. / root_three;
 	for (int i = 0; i < 4; ++ i)
 	{
-		geom::abs::Vector3 position = root_corners[i] * inverse_root_corner_length;
+		geom::uni::Vector3 position = root_corners[i] * inverse_root_corner_length;
 		CalcRootPointPos(point_randomizer, position);
 		position *= shape.radius;
 		position += shape.center;
@@ -200,7 +200,7 @@ bool PlanetShader::InitMidPoint(form::Polyhedron & polyhedron, form::Node const 
 
 	Params params { a, b, index, depth, Random(combined_seed) };
 	
-	geom::abs::Vector3 result;
+	geom::uni::Vector3 result;
 	if (depth >= planet_shader_depth_medium)
 	{
 		CalcMidPointPos_SimpleInterp(polyhedron, result, params);
@@ -221,60 +221,60 @@ bool PlanetShader::InitMidPoint(form::Polyhedron & polyhedron, form::Node const 
 }
 
 // Comes in normalized. Is then given the correct length.
-void PlanetShader::CalcRootPointPos(Random & rnd, geom::abs::Vector3 & position) const
+void PlanetShader::CalcRootPointPos(Random & rnd, geom::uni::Vector3 & position) const
 {
-	geom::abs::Scalar radius = GetRandomHeightCoefficient(rnd);
+	geom::uni::Scalar radius = GetRandomHeightCoefficient(rnd);
 	position *= radius;
 }
 
-geom::abs::Scalar PlanetShader::GetRandomHeightCoefficient(Random & rnd) const
+geom::uni::Scalar PlanetShader::GetRandomHeightCoefficient(Random & rnd) const
 {
-	geom::abs::Scalar random_exponent = (.5 - rnd.GetFloatInclusive<geom::abs::Scalar>()) * planet_shader_random_range;
-	geom::abs::Scalar coefficient = std::exp(random_exponent);
+	geom::uni::Scalar random_exponent = (.5 - rnd.GetFloatInclusive<geom::uni::Scalar>()) * planet_shader_random_range;
+	geom::uni::Scalar coefficient = std::exp(random_exponent);
 	return coefficient;
 }
 
 // At shallow depth, heigh is highly random.
-bool PlanetShader::CalcMidPointPos_Random(form::Polyhedron & polyhedron, geom::abs::Vector3 & result, Params & params) const
+bool PlanetShader::CalcMidPointPos_Random(form::Polyhedron & polyhedron, geom::uni::Vector3 & result, Params & params) const
 {
-	geom::abs::Sphere3 const & shape = geom::Cast<geom::abs::Scalar>(polyhedron.GetShape());
+	geom::uni::Sphere3 const & shape = geom::Cast<geom::uni::Scalar>(polyhedron.GetShape());
 	
-	geom::abs::Scalar radius = shape.radius * GetRandomHeightCoefficient(params.rnd);
+	geom::uni::Scalar radius = shape.radius * GetRandomHeightCoefficient(params.rnd);
 	polyhedron.GetFormation().SampleRadius(radius);
 
-	geom::abs::Vector3 near_a = GetLocalPosition(params.a.GetCorner(TriMod(params.index + 1))->pos, shape.center);
-	geom::abs::Vector3 near_b = GetLocalPosition(params.b.GetCorner(TriMod(params.index + 1))->pos, shape.center);
+	geom::uni::Vector3 near_a = GetLocalPosition(params.a.GetCorner(TriMod(params.index + 1))->pos, shape.center);
+	geom::uni::Vector3 near_b = GetLocalPosition(params.b.GetCorner(TriMod(params.index + 1))->pos, shape.center);
 	result = near_a + near_b;
-	geom::abs::Scalar length = Magnitude(result);
+	geom::uni::Scalar length = Magnitude(result);
 	result *= (radius / length);
 	result += shape.center;
 	
 	return true;
 }
 
-bool PlanetShader::CalcMidPointPos_SimpleInterp(form::Polyhedron & polyhedron, geom::abs::Vector3 & result, Params & params) const 
+bool PlanetShader::CalcMidPointPos_SimpleInterp(form::Polyhedron & polyhedron, geom::uni::Vector3 & result, Params & params) const
 {
-	geom::abs::Sphere3 const & shape = geom::Cast<geom::abs::Scalar>(polyhedron.GetShape());
+	geom::uni::Sphere3 const & shape = geom::Cast<geom::uni::Scalar>(polyhedron.GetShape());
 	
-	geom::abs::Vector3 near_a = GetLocalPosition(params.a.GetCorner(TriMod(params.index + 1))->pos, shape.center);
-	geom::abs::Vector3 near_b = GetLocalPosition(params.b.GetCorner(TriMod(params.index + 1))->pos, shape.center);
+	geom::uni::Vector3 near_a = GetLocalPosition(params.a.GetCorner(TriMod(params.index + 1))->pos, shape.center);
+	geom::uni::Vector3 near_b = GetLocalPosition(params.b.GetCorner(TriMod(params.index + 1))->pos, shape.center);
 	result = near_a + near_b;
-	geom::abs::Scalar result_length = Magnitude(result);
+	geom::uni::Scalar result_length = Magnitude(result);
 	
-	geom::abs::Scalar near_a_altitude = GetAltitude(near_a);
-	geom::abs::Scalar near_b_altitude = GetAltitude(near_b);
-	geom::abs::Scalar altitude = (near_a_altitude + near_b_altitude) * .5;
+	geom::uni::Scalar near_a_altitude = GetAltitude(near_a);
+	geom::uni::Scalar near_b_altitude = GetAltitude(near_b);
+	geom::uni::Scalar altitude = (near_a_altitude + near_b_altitude) * .5;
 
-	geom::abs::Scalar rnd_x = params.rnd.GetFloatInclusive<geom::abs::Scalar>() * 2. - 1.;
+	geom::uni::Scalar rnd_x = params.rnd.GetFloatInclusive<geom::uni::Scalar>() * 2. - 1.;
 	rnd_x *= Squared(rnd_x);
 	
 	// Figure out how much the altitude may be varied in either direction,
 	// and clip that variance based on the hard limits of the planet.
 	// Actually, clip it to half of that to make it look less like a hard limit.
 	// And do the clipping based on how far the variance /might/ go.
-	geom::abs::Scalar altitude_variance_coefficient = planet_shader_medium_coefficient / geom::abs::Scalar(1 << params.depth);
+	geom::uni::Scalar altitude_variance_coefficient = planet_shader_medium_coefficient / geom::uni::Scalar(1 << params.depth);
 	
-	geom::abs::Scalar lod_variation_cycler = sin(0.1 * std::max(0, params.depth - planet_shader_depth_medium));
+	geom::uni::Scalar lod_variation_cycler = sin(0.1 * std::max(0, params.depth - planet_shader_depth_medium));
 	altitude_variance_coefficient *= lod_variation_cycler;
 	
 	altitude_variance_coefficient *= shape.radius;
@@ -288,27 +288,27 @@ bool PlanetShader::CalcMidPointPos_SimpleInterp(form::Polyhedron & polyhedron, g
 	return true;
 }
 
-geom::abs::Vector3 PlanetShader::GetLocalPosition(form::Point const & point, geom::abs::Vector3 const & center) const
+geom::uni::Vector3 PlanetShader::GetLocalPosition(form::Point const & point, geom::uni::Vector3 const & center) const
 {
 	return GetLocalPosition(point.pos, center);
 }
 
-geom::abs::Vector3 PlanetShader::GetLocalPosition(form::Vector3 const & point_pos, geom::abs::Vector3 const & center) const
+geom::uni::Vector3 PlanetShader::GetLocalPosition(form::Vector3 const & point_pos, geom::uni::Vector3 const & center) const
 {
 	return geom::Cast<double>(point_pos) - center;
 }
 
-geom::abs::Scalar PlanetShader::GetAltitude(form::Point const & point, geom::abs::Vector3 const & center) const
+geom::uni::Scalar PlanetShader::GetAltitude(form::Point const & point, geom::uni::Vector3 const & center) const
 {
 	return GetAltitude(point.pos, center);
 }
 
-geom::abs::Scalar PlanetShader::GetAltitude(form::Vector3 const & point_pos, geom::abs::Vector3 const & center) const
+geom::uni::Scalar PlanetShader::GetAltitude(form::Vector3 const & point_pos, geom::uni::Vector3 const & center) const
 {
 	return GetAltitude(GetLocalPosition(point_pos, center));
 }
 
-geom::abs::Scalar PlanetShader::GetAltitude(geom::abs::Vector3 const & local_pos) const
+geom::uni::Scalar PlanetShader::GetAltitude(geom::uni::Vector3 const & local_pos) const
 {
 	return Magnitude(local_pos);
 }

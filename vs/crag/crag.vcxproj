@@ -44,13 +44,13 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>..\..\src;..\..\SG14;..\SDL2\include;..\SDL2_image\include;..\glew\include;..\ode\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\SDL2\VisualC\Win32\Debug;..\SDL2_image\lib\x86;..\glew\lib;..\ode\lib\DebugSingleLib;$(VC_LibraryPath_x86);$(UniversalCRT_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir)Lib\um\x86</LibraryPath>
+    <IncludePath>..\..\src;..\..\fixed_point\include;..\SDL2\include;..\SDL2_image\include;..\glew\include;..\ode\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\SDL2\lib\win32;..\SDL2_image\lib\x86;..\glew\lib\Release\Win32;..\ode\lib\DebugSingleLib;$(VC_LibraryPath_x86);$(UniversalCRT_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir)Lib\um\x86</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>..\..\src;..\..\SG14;..\SDL2\include;..\SDL2_image\include;..\glew\include;..\ode\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\SDL2\VisualC\Win32\Release;..\SDL2_image\lib\x86;..\glew\lib;..\ode\lib\ReleaseSingleLib;$(VC_LibraryPath_x86);$(UniversalCRT_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir)Lib\um\x86</LibraryPath>
+    <IncludePath>..\..\src;..\..\fixed_point\include;..\SDL2\include;..\SDL2_image\include;..\glew\include;..\ode\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\SDL2\lib\win32;..\SDL2_image\lib\x86;..\glew\lib\Release\Win32;..\ode\lib\ReleaseSingleLib;$(VC_LibraryPath_x86);$(UniversalCRT_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir)Lib\um\x86</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

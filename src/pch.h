@@ -131,6 +131,7 @@
 
 #include "core/core.h"
 #include "core/debug.h"
+#include "core/fixed_point.h"
 #include "core/floatOps.h"
 #include "core/intOps.h"
 #include "core/verify.h"

@@ -1009,7 +1009,7 @@ std::array<sim::EntityHandle, 2> SpawnPlayer(sim::Vector3 const & position, sim:
 	AddUfoResources();
 	
 	auto player = EntityHandle::Create();
-	auto up = geom::Normalized(position - space.AbsToRel(geom::abs::Vector3::Zero()));
+	auto up = geom::Normalized(position - space.AbsToRel(geom::uni::Vector3::Zero()));
 
 	auto _player_type = PlayerType(player_type);
 	player.Call([=] (Entity & entity) {

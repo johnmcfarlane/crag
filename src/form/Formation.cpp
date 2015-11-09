@@ -16,7 +16,7 @@
 using namespace form;
 
 
-Formation::Formation(int seed, ShaderPtr const & shader, geom::abs::Sphere3 const & shape)
+Formation::Formation(int seed, ShaderPtr const & shader, geom::uni::Sphere3 const & shape)
 : _seed(seed)
 , _shader(shader)
 , _shape(shape)
@@ -29,7 +29,7 @@ Shader const & Formation::GetShader() const
 	return * _shader;
 }
 
-geom::abs::Sphere3 const & Formation::GetShape() const
+geom::uni::Sphere3 const & Formation::GetShape() const
 {
 	return _shape;
 }
@@ -39,7 +39,7 @@ int Formation::GetSeed() const
 	return _seed;
 }
 
-void Formation::SampleRadius(geom::abs::Scalar sample_radius)
+void Formation::SampleRadius(geom::uni::Scalar sample_radius)
 {
 	if (sample_radius > _max_radius)
 	{
@@ -47,7 +47,7 @@ void Formation::SampleRadius(geom::abs::Scalar sample_radius)
 	}
 }
 
-geom::abs::Scalar Formation::GetMaxRadius() const
+geom::uni::Scalar Formation::GetMaxRadius() const
 {
 	return _max_radius;
 }

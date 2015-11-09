@@ -61,7 +61,7 @@ PlanetController::PlanetController(Entity & entity, Sphere3 const & sphere, int 
 	// formation
 	auto & engine = entity.GetEngine();
 	int random_seed_formation = random.GetInt();
-	geom::abs::Sphere3 formation_sphere = geom::Cast<geom::abs::Scalar>(sphere);
+	geom::uni::Sphere3 formation_sphere = geom::Cast<geom::uni::Scalar>(sphere);
 	
 	_formation = FormationPtr(new form::Formation(random_seed_formation, shader, formation_sphere));
 	_handle.CreateObject(* _formation);
@@ -100,7 +100,7 @@ void PlanetController::Tick()
 	// update planet params
 	auto model_handle = entity.GetModel()->GetHandle();
 	model_handle.Call([max_radius] (gfx::Object & object) {
-		auto & planet = core::StaticCast<gfx::Planet &>(object);
+		auto & planet = core::StaticCast<gfx::Planet>(object);
 		planet.SetMaxRadius(static_cast<Scalar>(max_radius));
 	});
 }

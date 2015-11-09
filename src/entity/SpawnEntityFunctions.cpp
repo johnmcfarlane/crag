@@ -194,7 +194,7 @@ EntityHandle SpawnPlanet(const Sphere3 & sphere, int random_seed, int num_crater
 }
 
 // assumes origin is zero
-EntityHandle SpawnStar(geom::abs::Sphere3 const & volume, gfx::Color4f const & color, bool casts_shadow)
+EntityHandle SpawnStar(geom::uni::Sphere3 const & volume, gfx::Color4f const & color, bool casts_shadow)
 {
 	auto sun = EntityHandle::Create();
 

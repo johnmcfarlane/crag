@@ -38,7 +38,7 @@ namespace
 	CONFIG_DEFINE(apply_gravity, true);
 	CONFIG_DEFINE(purge_distance, 1000000000000.);
 
-	STAT_DEFAULT(sim_space, geom::abs::Vector3, 0.3f, geom::abs::Vector3::Zero());
+	STAT_DEFAULT(sim_space, geom::uni::Vector3, 0.3f, geom::uni::Vector3::Zero());
 #if defined(CRAG_SIM_FORMATION_PHYSICS)
 	STAT(form_changed_sim, bool, 0);
 #endif

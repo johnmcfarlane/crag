@@ -21,10 +21,10 @@ namespace
 		if (r.GetBool(mutation_rate))
 		{
 			auto mutation_weight = r.GetFloat<double>();
-			auto mutation_weight_fixed = crag::core::closed_unit<Gene::unit_repr_type>(mutation_weight);
+			auto mutation_weight_fixed = Gene::unit_type(mutation_weight);
 
 			auto random_value = unit_type(r.GetFloat<double>());
-			auto mutated_value = lerp(splicing, random_value, mutation_weight_fixed);
+			auto mutated_value = crag::lerp(splicing, random_value, mutation_weight_fixed);
 			return mutated_value;
 		}
 
@@ -32,10 +32,10 @@ namespace
 	};
 
 	template <typename VALUE_TYPE, typename REPR_TYPE>
-	VALUE_TYPE make_open(crag::core::closed_unit<REPR_TYPE> _value) noexcept
+	VALUE_TYPE make_open(crag::core::unit_interval<REPR_TYPE> _value) noexcept
 	{
 		using repr_type = REPR_TYPE;
-		using next_repr_type = crag::core::_impl::next_size_t<repr_type>;
+		using next_repr_type = crag::core::_impl::next_size<repr_type>;
 
 		// unit_type is higher precision than float;
 		// add/subtract these margins from 0/1 to ensure (0.f, 1.f) range
@@ -60,8 +60,8 @@ namespace
 // sim::ga::Gene member definitions
 
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(Gene, self)
-	CRAG_VERIFY_OP(self._value.get<float>(), >=, 0.f);
-	CRAG_VERIFY_OP(self._value.get<float>(), <=, 1.f);
+	CRAG_VERIFY_OP(static_cast<float>(self._value), >=, 0.f);
+	CRAG_VERIFY_OP(static_cast<float>(self._value), <=, 1.f);
 CRAG_VERIFY_INVARIANTS_DEFINE_END
 
 Gene::Gene(Random & r) noexcept
@@ -79,7 +79,7 @@ Gene::Gene(Gene parent1, Gene parent2, Random & r, float mutation_rate) noexcept
 Gene::value_type Gene::closed() const noexcept
 {
 	CRAG_VERIFY(* this);
-	return _value.get<value_type>();
+	return static_cast<float>(_value);
 }
 
 Gene::value_type Gene::open() const noexcept

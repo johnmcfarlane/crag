@@ -1,17 +1,18 @@
 cmake_minimum_required(VERSION 2.8.4)
+#cmake_policy(SET CMP0059 NEW)
 project(crag)
 
 set(WARNING_FLAGS "-Wall -Wextra -Wfatal-errors -Werror")
 set(MACRO_FLAGS "-DdSINGLE -D__STRICT_ANSI__")
 set(OPT_FLAGS "-fno-exceptions -fno-unwind-tables")
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${WARNING_FLAGS} ${MACRO_FLAGS} ${OPT_FLAGS} -std=c++11 -pthread")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${WARNING_FLAGS} ${MACRO_FLAGS} ${OPT_FLAGS} -std=c++14 -pthread")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DPROFILE -O0 -g")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DNDEBUG -fno-rtti -Ofast")
 set(CMAKE_CXX_FLAGS_PROFILE "${CMAKE_CXX_FLAGS_RELEASE} -g")
 set(CMAKE_EXE_LINKER_FLAGS "-g")
 
-set(CRAG_SOURCE_DIRECTORY "../src")
+set(CRAG_SOURCE_DIRECTORY "src")
 
 set(SOURCE_FILES
     ${CRAG_SOURCE_DIRECTORY}/applet/Applet.cpp
@@ -64,6 +65,8 @@ set(SOURCE_FILES
     ${CRAG_SOURCE_DIRECTORY}/core/Statistics.h
     ${CRAG_SOURCE_DIRECTORY}/core/TypeId.cpp
     ${CRAG_SOURCE_DIRECTORY}/core/TypeId.h
+    ${CRAG_SOURCE_DIRECTORY}/core/unit_interval.h
+    ${CRAG_SOURCE_DIRECTORY}/core/unit_interval.cpp
     ${CRAG_SOURCE_DIRECTORY}/core/verify.h
     ${CRAG_SOURCE_DIRECTORY}/core/windows.h
     ${CRAG_SOURCE_DIRECTORY}/entity/gfx/Planet.cpp
@@ -340,17 +343,17 @@ find_library(ODE_LIBRARY ode /usr/lib)
 if (CRAG_RPI)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DCRAG_RPI")
 
-	include_directories("${CRAG_SOURCE_DIRECTORY}" "../SG14" "include/SDL2" "/opt/vc/include")
+	include_directories("${CRAG_SOURCE_DIRECTORY}" "fixed_point/include" "include/SDL2" "/opt/vc/include")
 
 	find_library(BCM_HOST bcm_host /opt/vc/lib)
 	find_library(GLES2_LIBRARY GLESv2 /opt/vc/lib)
 	target_link_libraries(crag ${SDL2_LIBRARY} ${SDL2_IMAGE_LIBRARY} ${ODE_LIBRARY} ${GLES2_LIBRARY} ${BCM_HOST} "dl" "pthread" "stdc++" "m" "rt")
 else (CRAG_RPI)
-	include_directories("${CRAG_SOURCE_DIRECTORY}" "../SG14" "/usr/include/SDL2" "include/SDL2")
+	include_directories("${CRAG_SOURCE_DIRECTORY}" "fixed_point/include" "/usr/include/SDL2" "include/SDL2")
 
 	find_package(OpenGL REQUIRED)
 	target_link_libraries(crag ${SDL2_LIBRARY} ${SDL2_IMAGE_LIBRARY} ${ODE_LIBRARY} ${OPENGL_LIBRARIES} "dl" "pthread" "stdc++" "m")
 endif (CRAG_RPI)
 
-include (PrecompiledHeader.cmake)
+include (${CRAG_SOURCE_DIRECTORY}/PrecompiledHeader.cmake)
 add_precompiled_header(crag ${CRAG_SOURCE_DIRECTORY}/pch.h)

@@ -65,7 +65,7 @@ void InitSpace(applet::AppletInterface & applet_interface, geom::Space const & s
 	// Set camera position
 	{
 		gfx::SetCameraEvent event = { 
-			{ geom::abs::Vector3::Zero() },
+			{ geom::uni::Vector3::Zero() },
 			frustum_default_fov
 		};
 		gfx::Daemon::Broadcast(event);

@@ -24,15 +24,15 @@ using namespace sim;
 
 namespace
 {
-	geom::abs::Scalar root_three = sqrt(3.);
+	geom::uni::Scalar root_three = sqrt(3.);
 
 	// RootNode initialization data, i.e. a tetrahedron.
-	geom::abs::Vector3 root_corners[4] = 
+	geom::uni::Vector3 root_corners[4] =
 	{
-		geom::abs::Vector3(-1,  1,  1),
-		geom::abs::Vector3( 1, -1,  1),
-		geom::abs::Vector3( 1,  1, -1),
-		geom::abs::Vector3(-1, -1, -1)
+		geom::uni::Vector3(-1,  1,  1),
+		geom::uni::Vector3( 1, -1,  1),
+		geom::uni::Vector3( 1,  1, -1),
+		geom::uni::Vector3(-1, -1, -1)
 	};
 }
 
@@ -40,7 +40,7 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // MoonShader
 
-MoonShader::MoonShader(int seed, int num_craters, geom::abs::Scalar radius)
+MoonShader::MoonShader(int seed, int num_craters, geom::uni::Scalar radius)
 {
 	// This one is the same each time.
 	Random crater_randomizer(seed + 2);
@@ -48,7 +48,7 @@ MoonShader::MoonShader(int seed, int num_craters, geom::abs::Scalar radius)
 	craters.resize(num_craters);
 	for (CraterVector::iterator i = craters.begin(); i != craters.end(); ++ i)
 	{
-		geom::abs::Sphere3 & crater = * i;
+		geom::uni::Sphere3 & crater = * i;
 
 		for (int timeout = 10; timeout > 0; -- timeout)
 		{
@@ -81,12 +81,12 @@ MoonShader::MoonShader(int seed, int num_craters, geom::abs::Scalar radius)
 
 void MoonShader::InitRootPoints(form::Polyhedron & polyhedron, form::Point * points[]) const
 {
-	geom::abs::Scalar radius = polyhedron.GetShape().radius;
+	geom::uni::Scalar radius = polyhedron.GetShape().radius;
 	
-	geom::abs::Scalar root_corner_length = root_three;
+	geom::uni::Scalar root_corner_length = root_three;
 	for (int i = 0; i < 4; ++ i)
 	{
-		geom::abs::Vector3 position = root_corners[i] / root_corner_length;
+		geom::uni::Vector3 position = root_corners[i] / root_corner_length;
 		position *= radius;
 		position += polyhedron.GetShape().center;
 		points[i]->pos = geom::Cast<float>(position);
@@ -97,11 +97,11 @@ bool MoonShader::InitMidPoint(form::Polyhedron & polyhedron, form::Node const & 
 {
 	form::Formation const & formation = polyhedron.GetFormation();
 	
-	geom::abs::Sphere3 const & shape = polyhedron.GetShape();
-	geom::abs::Vector3 center = shape.center;
-	geom::abs::Vector3 near_a = geom::Cast<geom::abs::Scalar>(a.GetCorner(TriMod(index + 1))->pos) - center;
-	geom::abs::Vector3 near_b = geom::Cast<geom::abs::Scalar>(b.GetCorner(TriMod(index + 1))->pos) - center;
-	geom::abs::Vector3 near_mid = near_a + near_b;
+	geom::uni::Sphere3 const & shape = polyhedron.GetShape();
+	geom::uni::Vector3 center = shape.center;
+	geom::uni::Vector3 near_a = geom::Cast<geom::uni::Scalar>(a.GetCorner(TriMod(index + 1))->pos) - center;
+	geom::uni::Vector3 near_b = geom::Cast<geom::uni::Scalar>(b.GetCorner(TriMod(index + 1))->pos) - center;
+	geom::uni::Vector3 near_mid = near_a + near_b;
 	near_mid *= shape.radius / Magnitude(near_mid);
 	
 	Random crater_randomizer(formation.GetSeed() + 2);
@@ -113,18 +113,18 @@ bool MoonShader::InitMidPoint(form::Polyhedron & polyhedron, form::Node const & 
 	return true;
 }
 
-void MoonShader::ApplyCraters(Random, geom::abs::Vector3 & position) const
+void MoonShader::ApplyCraters(Random, geom::uni::Vector3 & position) const
 {
-	geom::abs::Scalar t1, t2;
-	geom::abs::Ray3 ray(geom::abs::Vector3::Zero(), position);
+	geom::uni::Scalar t1, t2;
+	geom::uni::Ray3 ray(geom::uni::Vector3::Zero(), position);
 	
-	geom::abs::Scalar t = 1;
+	geom::uni::Scalar t = 1;
 	
 	for (CraterVector::const_iterator i = craters.begin(); i != craters.end(); ++ i)
 	{
-		geom::abs::Sphere3 const & crater = * i;
+		geom::uni::Sphere3 const & crater = * i;
 		
-		geom::abs::Scalar crater_to_pos_distance_squared = DistanceSq(position, crater.center);
+		geom::uni::Scalar crater_to_pos_distance_squared = DistanceSq(position, crater.center);
 		
 		if (crater_to_pos_distance_squared < Squared(crater.radius))
 		{
@@ -148,27 +148,27 @@ void MoonShader::ApplyCraters(Random, geom::abs::Vector3 & position) const
 	position *= t;
 }
 
-void MoonShader::GenerateCreater(Random & rnd, geom::abs::Sphere3 & crater, geom::abs::Scalar moon_radius) const
+void MoonShader::GenerateCreater(Random & rnd, geom::uni::Sphere3 & crater, geom::uni::Scalar moon_radius) const
 {
-	//geom::abs::Scalar min_crater_distance = radius * 1.05f;	// center to center
-	geom::abs::Scalar max_crater_radius = moon_radius * .25;
+	//geom::uni::Scalar min_crater_distance = radius * 1.05f;	// center to center
+	geom::uni::Scalar max_crater_radius = moon_radius * .25;
 	
 	// First off, decide radius.
-	geom::abs::Scalar crater_radius_coefficient = pow(rnd.GetFloatInclusive<float>(), 1.75f);
+	geom::uni::Scalar crater_radius_coefficient = pow(rnd.GetFloatInclusive<float>(), 1.75f);
 	crater.radius = max_crater_radius * crater_radius_coefficient;
 	
 	// Get a position which is within a radius=.5 sphere with even distribution.
-	geom::abs::Scalar crater_center_squared;	// distance from moon center
+	geom::uni::Scalar crater_center_squared;	// distance from moon center
 	do
 	{
 		auto r = [& rnd] () { return rnd.GetFloatInclusive<float>() - .5f; };
-		crater.center = geom::abs::Vector3(r(), r(), r());
+		crater.center = geom::uni::Vector3(r(), r(), r());
 		crater_center_squared = MagnitudeSq(crater.center);
 	}
 	while (crater_center_squared > Squared(.5f));
 	
 	// Push it to moon max radius and then out a [non]random amount up until crater.radius in distance.
-	geom::abs::Scalar crater_elevation_coefficient = .85;
-	geom::abs::Scalar desired_crater_center = moon_radius + crater_elevation_coefficient * crater.radius;
+	geom::uni::Scalar crater_elevation_coefficient = .85;
+	geom::uni::Scalar desired_crater_center = moon_radius + crater_elevation_coefficient * crater.radius;
 	crater.center *= desired_crater_center / std::sqrt(crater_center_squared);
 }

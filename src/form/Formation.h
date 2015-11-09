@@ -34,22 +34,22 @@ namespace form
 		// functions
 		
 		Formation(Formation const &) = default;
-		Formation(int seed, ShaderPtr const & shader, geom::abs::Sphere3 const & shape);
+		Formation(int seed, ShaderPtr const & shader, geom::uni::Sphere3 const & shape);
 
 		Formation & operator=(Formation const & rhs) = default;
 
 		Shader const & GetShader() const;
-		geom::abs::Sphere3 const & GetShape() const;	// global coordinate
+		geom::uni::Sphere3 const & GetShape() const;	// global coordinate
 		int GetSeed() const;
 		
-		void SampleRadius(geom::abs::Scalar sample_radius);
-		geom::abs::Scalar GetMaxRadius() const;
+		void SampleRadius(geom::uni::Scalar sample_radius);
+		geom::uni::Scalar GetMaxRadius() const;
 
 	private:
 		int _seed;
 		ShaderPtr _shader;
-		geom::abs::Sphere3 _shape;
-		geom::abs::Scalar _max_radius;
+		geom::uni::Sphere3 _shape;
+		geom::uni::Scalar _max_radius;
 	};
 
 }

@@ -44,7 +44,9 @@ The Crag project expects them to be locate in specific folders under the `vc` fo
 The [Simple Direct-media Layer](http://www.libsdl.org/) provides everything a game needs to run on a variety of systems and hardware.
 
   * Download `SDL2-devel-2.0.X-VC.zip` from [here](http://www.libsdl.org/download-2.0.php).
-  * Open the zip file and copy the contents of the `SDL-2.0.X-XXXX' folder to `crag\vc\SDL2'.
+  * Open the zip file and copy the contents of the `SDL-2.0.X-XXXX' folder to `crag\vs\SDL2'.
+
+Note: The current build of SDL2 does not get on well with VS2015. You may need to follow [this advice](http://stackoverflow.com/questions/28247992/how-to-fix-unresolved-externals-of-sdl-2-0-3-on-visual-studio-2015-preview#comment50936657_28247992).
 
 ### 3.2 SDL_image
 
@@ -56,14 +58,14 @@ The [Simple Direct-media Layer](http://www.libsdl.org/) provides everything a ga
 The [Open Dynamic Engine](http://www.ode.org/) is an open-source library which simulates rigid-body physics.
 The ODE project is included in the crag solution but that project needs some preparation:
 
-  * Follow the download link from the [ODE download page](https://bitbucket.org/odedevs/ode/downloads) and download the latest version (currently ode-0.13.1.tar.gz) into the crag/vs folder.
+  * Follow the download link from the [ODE download page](https://bitbucket.org/odedevs/ode/downloads) and download the latest version (currently ode-0.13.tar.bz2) into the crag/vs folder.
   * Open a Git Bash console and go to the crag/vs folder:
   
     ```
 	cd crag/vs
-	gunzip.exe ode-0.13.1.tar.gz
-	tar -xf ode-0.13.1.tar
-	mv ode-0.13.1 ode
+	bunzip2.exe ode-0.13.tar.bz2
+	tar -xf ode-0.13.tar
+	mv ode-0.13 ode
 	```
 
   * The ODE project files need to be built by running `crag\vs\crag\premake_ode.bat`. (More details of this step can be found [here](http://opende.sourceforge.net/wiki/index.php/Manual_(Install_and_Use)).

@@ -120,7 +120,7 @@ Object::PreRenderResult Surrounding::PreRender()
 	CRAG_VERIFY(* this);
 	
 #if defined(CRAG_DEBUG)
-	Debug::AddBasis(_properties._space.AbsToRel(geom::abs::Vector3::Zero()), 1.);
+	Debug::AddBasis(_properties._space.AbsToRel(geom::uni::Vector3::Zero()), 1.);
 #endif
 
 	auto vbo_resource_handle = GetVboResource();

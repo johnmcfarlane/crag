@@ -48,7 +48,7 @@ namespace
 	CONFIG_DEFINE(animat_elevation_test_length, 10000.f);
 	CONFIG_DEFINE(animat_start_distribution, 35.f);
 
-	geom::abs::Vector3 animat_start_pos;
+	geom::uni::Vector3 animat_start_pos;
 	constexpr auto ga_filename = "ga.csv";
 
 	////////////////////////////////////////////////////////////////////////////////
@@ -302,7 +302,7 @@ namespace
 
 namespace ssga
 {
-	void Init(Engine & engine, geom::abs::Vector3 const & spawn_pos) noexcept
+	void Init(Engine & engine, geom::uni::Vector3 const & spawn_pos) noexcept
 	{
 		animat_start_pos = spawn_pos;
 		if (! LoadPopulation(engine, ga_filename))
