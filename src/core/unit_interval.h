@@ -95,9 +95,7 @@ namespace crag
 				// then some inputs will fail, e.g. 1
 				static_assert(! std::is_floating_point<Input>::value || sizeof(Input) > sizeof(ReprType), "unreliable input type");
 
-				return /*(input < Input(0) || input > Input(1))
-					   ? throw std::out_of_range("unit_interval can only be assigned a value in the range [0, 1]")
-					   : */input * _max;
+				return static_cast<repr_type>(input * _max);
 			}
 
 			////////////////////////////////////////////////////////////////////////////////
