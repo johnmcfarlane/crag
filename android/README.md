@@ -35,7 +35,7 @@ The Crag project comes with an Android `setup` script which will attempt to prep
      * Tools:
        * Android SDK Platform-tools
        * Android SDK Build-tools
-     * Android 4.0 (API 14)
+     * Android 4.0.3 (API 15)
        * SDK Platform
      * Extras
        * Android Support Library
