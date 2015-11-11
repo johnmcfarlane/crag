@@ -8,10 +8,12 @@ SDL_PATH := ../SDL
 SDL_IMAGE_PATH := ../SDL_image
 ODE_PATH := /../../ode
 CRAG_PATH := ../../../src
+FIXED_POINT_PATH := ../../../fixed_point
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/$(SDL_PATH)/include \
 	$(LOCAL_PATH)/$(SDL_IMAGE_PATH) \
 	$(LOCAL_PATH)/$(ODE_PATH)/include \
+	$(LOCAL_PATH)/$(FIXED_POINT_PATH)/include \
 	$(LOCAL_PATH)/$(CRAG_PATH)
 
 # Add your application source files here...
