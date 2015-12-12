@@ -25,12 +25,3 @@ namespace std
 	using sg14::sqrt;
 	using sg14::abs;
 }
-
-namespace core
-{
-	template <typename To, typename Fp_Repr_Type, int Exponent>
-	To StaticCast(crag::core::fixed_point<Fp_Repr_Type, Exponent> const & object) noexcept
-	{
-		return static_cast<To>(object);
-	};
-}

@@ -712,10 +712,10 @@ namespace
 		auto controller = new VehicleController(entity);
 		entity.SetController(std::unique_ptr<VehicleController>(controller));
 
-		AddRoverThruster(* controller, Ray3(Vector3(.5, -.8f, .5), Vector3(0, thrust, 0)), SDL_SCANCODE_H, true);
-		AddRoverThruster(* controller, Ray3(Vector3(.5, -.8f, -.5), Vector3(0, thrust, 0)), SDL_SCANCODE_H, true);
-		AddRoverThruster(* controller, Ray3(Vector3(-.5, -.8f, .5), Vector3(0, thrust, 0)), SDL_SCANCODE_H, true);
-		AddRoverThruster(* controller, Ray3(Vector3(-.5, -.8f, -.5), Vector3(0, thrust, 0)), SDL_SCANCODE_H, true);
+		AddRoverThruster(* controller, Ray3(Vector3(.5f, -.8f, .5f), Vector3(0.f, thrust, 0.f)), SDL_SCANCODE_H, true);
+		AddRoverThruster(* controller, Ray3(Vector3(.5f, -.8f, -.5f), Vector3(0.f, thrust, 0.f)), SDL_SCANCODE_H, true);
+		AddRoverThruster(* controller, Ray3(Vector3(-.5f, -.8f, .5f), Vector3(0.f, thrust, 0.f)), SDL_SCANCODE_H, true);
+		AddRoverThruster(* controller, Ray3(Vector3(-.5f, -.8f, -.5f), Vector3(0.f, thrust, 0.f)), SDL_SCANCODE_H, true);
 	}
 
 	void ConstructShip(Entity & entity, Vector3 const & position)
@@ -742,7 +742,7 @@ namespace
 		auto controller = std::unique_ptr<VehicleController>(new VehicleController(entity));
 
 		// add two complimentary thrusters
-		auto forward = Vector3(0, 0, ship_forward_thrust);
+		auto forward = Vector3(0.f, 0.f, ship_forward_thrust);
 		AddRoverThruster(* controller, Ray3(Vector3( .25f, 0.f, -.525f), forward * .5f), SDL_SCANCODE_RIGHT, false, true);
 		AddRoverThruster(* controller, Ray3(Vector3(-.25f, 0.f, -.525f), forward * .5f), SDL_SCANCODE_LEFT, false, true);
 
@@ -994,7 +994,7 @@ EntityHandle SpawnRover(Vector3 const & position, Scalar thrust)
 	auto vehicle = EntityHandle::Create();
 
 	Sphere3 sphere;
-	sphere.center = geom::Cast<float>(position);
+	sphere.center = static_cast<Vector3>(position);
 	sphere.radius = 1.;
 
 	vehicle.Call([sphere, thrust] (Entity & entity) {

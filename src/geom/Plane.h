@@ -65,20 +65,6 @@ namespace geom
 		Vector const normal;	// normal to surface
 	};
 
-	// catches pointless casts and bypasses them
-	template <typename S, int N>
-	Plane<S, N> const & Cast(Plane<S, N> const & rhs)
-	{
-		return rhs;
-	}
-
-	// casts between planes of different scalar types
-	template <typename LHS_S, typename RHS_S, int N>
-	Plane<LHS_S, N> Cast(Plane<RHS_S, N> const & rhs)
-	{
-		return Plane<LHS_S, N>(Cast<LHS_S>(rhs.position), Cast<LHS_S>(rhs.normal));
-	}
-	
 	template <typename S, int N>
 	Plane<S, N> MakePlane(Triangle<S, N> const & t)
 	{

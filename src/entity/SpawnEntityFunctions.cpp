@@ -200,7 +200,7 @@ EntityHandle SpawnStar(geom::uni::Sphere3 const & volume, gfx::Color4f const & c
 
 	sun.Call([volume, color, casts_shadow] (Entity & entity) {
 		// physics
-		Transformation transformation(geom::Cast<Scalar>(volume.center));
+		Transformation transformation(static_cast<Vector3>(volume.center));
 		auto location = std::unique_ptr<physics::PassiveLocation>(new physics::PassiveLocation(transformation));
 		entity.SetLocation(std::move(location));
 

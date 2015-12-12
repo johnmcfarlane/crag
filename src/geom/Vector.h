@@ -15,13 +15,6 @@ namespace geom
 	// This is the un-specialized version of the Vector class.
 	template<typename S, int N> class Vector;
 
-	// catches pointless casts and bypasses them
-	template <typename S, int N>
-	Vector<S, N> const & Cast(Vector<S, N> const & rhs)
-	{
-		return rhs;
-	}
-
 	// common operations
 	template <typename S, int N> 
 	bool operator != (Vector<S, N> const & lhs, Vector<S, N> const & rhs)

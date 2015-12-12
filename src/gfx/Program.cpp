@@ -544,7 +544,7 @@ SpriteProgram::SpriteProgram(std::initializer_list<char const *> vert_sources, s
 
 void SpriteProgram::SetUniforms(geom::Vector2i const & resolution) const
 {
-	auto resolution_f = geom::Cast<float>(resolution);
+	auto resolution_f = static_cast<Vector2>(resolution);
 	_position_scale.Set(Vector2(1.f / resolution_f.x, - 1.f / resolution_f.y));
 	_position_offset.Set(Vector2(-.5f, .5f));
 }

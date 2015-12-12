@@ -89,7 +89,7 @@ void MoonShader::InitRootPoints(form::Polyhedron & polyhedron, form::Point * poi
 		geom::uni::Vector3 position = root_corners[i] / root_corner_length;
 		position *= radius;
 		position += polyhedron.GetShape().center;
-		points[i]->pos = geom::Cast<float>(position);
+		points[i]->pos = static_cast<form::Point::Vector3>(position);
 	}
 }
 
@@ -99,8 +99,8 @@ bool MoonShader::InitMidPoint(form::Polyhedron & polyhedron, form::Node const & 
 	
 	geom::uni::Sphere3 const & shape = polyhedron.GetShape();
 	geom::uni::Vector3 center = shape.center;
-	geom::uni::Vector3 near_a = geom::Cast<geom::uni::Scalar>(a.GetCorner(TriMod(index + 1))->pos) - center;
-	geom::uni::Vector3 near_b = geom::Cast<geom::uni::Scalar>(b.GetCorner(TriMod(index + 1))->pos) - center;
+	geom::uni::Vector3 near_a = static_cast<geom::uni::Vector3>(a.GetCorner(TriMod(index + 1))->pos) - center;
+	geom::uni::Vector3 near_b = static_cast<geom::uni::Vector3>(b.GetCorner(TriMod(index + 1))->pos) - center;
 	geom::uni::Vector3 near_mid = near_a + near_b;
 	near_mid *= shape.radius / Magnitude(near_mid);
 	
@@ -108,7 +108,7 @@ bool MoonShader::InitMidPoint(form::Polyhedron & polyhedron, form::Node const & 
 	ApplyCraters(crater_randomizer, near_mid);
 	
 	near_mid += center;
-	mid_point.pos = geom::Cast<float>(near_mid);
+	mid_point.pos = static_cast<form::Point::Vector3>(near_mid);
 	
 	return true;
 }

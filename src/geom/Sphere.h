@@ -75,28 +75,23 @@ namespace geom
 		// functions
 		
 		// c'tors
-		Sphere() 
+		Sphere() noexcept
 #if defined(CRAG_DEBUG)
-		: radius(std::numeric_limits<S>::signaling_NaN())
+			: radius(std::numeric_limits<S>::signaling_NaN())
 #endif
-		{ 
-		}
-		
-		Sphere(Vector const & c, Scalar r) 
-		: center(c)
-		, radius(r)
-		{ 
-		}
-		
-		Sphere(Sphere const & rhs) 
-		: center(rhs.center)
-		, radius(rhs.radius)
-		{ 
+		{
 		}
 
-		static Sphere Zero() 
-		{
-			return Sphere(Vector::Zero(), 0); 
+		template <typename RHS_S>
+		constexpr Sphere(::geom::Vector<RHS_S, N> const & c, RHS_S r) noexcept
+			: center(c)
+			, radius(r) {
+		}
+
+		template <typename RHS_S>
+		constexpr Sphere(Sphere<RHS_S, N> const & rhs) noexcept
+			: center(rhs.center)
+			, radius(rhs.radius) {
 		}
 
 #if defined(CRAG_VERIFY_ENABLED)
@@ -112,21 +107,6 @@ namespace geom
 		Vector center;
 		Scalar radius;
 	};
-
-	// catches pointless casts and bypasses them
-	template <typename S, int N>
-	Sphere<S, N> const & Cast(Sphere<S, N> const & rhs)
-	{
-		return rhs;
-	}
-
-	// casts between spheres of different scalar types
-	template <typename LHS_S, typename RHS_S, int N>
-	typename std::enable_if<! std::is_same<LHS_S, RHS_S>::value, Sphere<LHS_S, N>>::type
-	Cast(Sphere<RHS_S, N> const & rhs)
-	{
-		return Sphere<LHS_S, N>(Cast<LHS_S>(rhs.center), static_cast<LHS_S>(rhs.radius));
-	}
 
 	// equality operator
 	template <typename S, int N>

@@ -51,7 +51,7 @@ namespace geom
 				  0, 0, 0, 1)
 		{
 		}
-		
+
 		Transformation(Vector3 const & translation, Matrix33 const & rotation)
 		: _matrix(rotation[0][0], rotation[0][1], rotation[0][2], translation[0],
 				  rotation[1][0], rotation[1][1], rotation[1][2], translation[1],
@@ -180,12 +180,6 @@ namespace geom
 		// variables
 		Matrix44 _matrix;
 	};
-
-	template <typename LHS_S, typename RHS_S>
-	Transformation<LHS_S> Cast(Transformation<RHS_S> const & rhs)
-	{
-		return Transformation<LHS_S>(Cast<LHS_S>(rhs.GetMatrix()));
-	}
 
 	template <typename S>
 	Transformation<S> Inverse(Transformation<S> const & transformation)

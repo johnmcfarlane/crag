@@ -31,14 +31,27 @@ namespace geom
 		{ 
 		}
 
-		constexpr Vector(S rhs_x, S rhs_y, S rhs_z) 
-		: x(rhs_x)
-		, y(rhs_y)
-		, z(rhs_z) 
-		{ 
+		template <typename RHS_S>
+		constexpr explicit Vector(Vector<RHS_S, 3> const & rhs)
+				: Vector(rhs.x, rhs.y, rhs.z)
+		{
 		}
-		
-		static constexpr std::size_t Size()
+
+		template <typename RHS_S>
+		constexpr explicit Vector(RHS_S rhs_x, RHS_S rhs_y, RHS_S rhs_z)
+			: x(static_cast<S>(rhs_x))
+			, y(static_cast<S>(rhs_y))
+			, z(static_cast<S>(rhs_z))
+		{
+		}
+
+		template <typename LHS_S>
+		constexpr explicit operator Vector<LHS_S, 3>() const
+		{
+			return Vector<LHS_S, 3>(x, y, z);
+		}
+
+		static constexpr std::size_t size()
 		{
 			return 3;
 		}
@@ -88,16 +101,6 @@ namespace geom
 
 		S x, y, z;
 	};
-
-	// casts between 3d vector of different scalar types
-	template <typename LHS_S, typename RHS_S>
-	typename ::std::enable_if<! ::std::is_same<LHS_S, RHS_S>::value, Vector<LHS_S, 3>>::type Cast(Vector<RHS_S, 3> const & rhs)
-	{
-		return Vector<LHS_S, 3>(
-			core::StaticCast<LHS_S>(rhs.x),
-			core::StaticCast<LHS_S>(rhs.y),
-			core::StaticCast<LHS_S>(rhs.z));
-	}
 
 	template <typename S>
 	Vector<S, 3> constexpr MakeVector(S x, S y, S z)

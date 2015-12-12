@@ -207,7 +207,7 @@ void GameScript(AppletInterface & applet_interface)
 	
 	// Create planets
 	sim::EntityHandle planet;
-	planet = SpawnPlanet(sim::Sphere3(sim::Vector3::Zero(), 10000000), 3634, 0);
+	planet = SpawnPlanet(sim::Sphere3(sim::Vector3::Zero(), 10000000.f), 3634, 0);
 	
 	InitSpace(applet_interface, space);
 

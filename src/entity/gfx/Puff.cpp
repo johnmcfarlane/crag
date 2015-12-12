@@ -67,9 +67,12 @@ void Puff::UpdateModelViewTransformation(Transformation const & model_view)
 {
 	core::Time time = GetEngine().GetScene().GetTime();
 	core::Time age = CalculateAge(time);
-	
-	Transformation scale = model_view * Transformation(Vector3(geom::rel::Scalar(age * puff_displacement), 0., 0.), Matrix33::Identity(), Scalar(_radius));
-	
+
+	Transformation scale = model_view * Transformation(
+			Vector3(geom::rel::Scalar(age * puff_displacement), 0.f, 0.f),
+			Matrix33::Identity(),
+			Scalar(_radius));
+
 	Quad const & disk_quad = static_cast<Quad const &>(* GetVboResource());
 	SetModelViewTransformation(disk_quad.CalculateModelViewTransformation(scale, _radius));
 }

@@ -154,7 +154,7 @@ namespace form
 	{
 		typedef ForEachFaceInSphereFunctor<POLY_FUNCTOR> ForEachFaceInSphereFunctor;
 
-		Vector3 const & polyhedron_center = geom::Cast<Scalar>(polyhedron.GetShape().center);
+		Vector3 const & polyhedron_center = static_cast<Vector3>(polyhedron.GetShape().center);
 		ForEachFaceInSphereFunctor node_functor(sphere, polyhedron_center, poly_functor);
 
 		Node const & root_node = polyhedron.GetRootNode();

@@ -163,7 +163,7 @@ namespace
 		{
 			Attributes attributes;
 			attributes.node = node;
-			attributes.surface = Triangle3(geom::Cast<Scalar>(a.pos), geom::Cast<Scalar>(b.pos), geom::Cast<Scalar>(c.pos));
+			attributes.surface = Triangle3(static_cast<Vector3>(a.pos), static_cast<Vector3>(b.pos), static_cast<Vector3>(c.pos));
 
 			for (int side_index0 = 0; side_index0 != 3; ++ side_index0)
 			{
@@ -260,7 +260,7 @@ namespace
 			&& side_attributes.intersection <= uniforms.length	// within the overall range
 			&& side_attributes.intersection >= 0)
 			{
-				result = RayCastResult(geom::Cast<form::Scalar>(plane.normal), side_attributes.intersection, leaf_attributes.node);
+				result = RayCastResult(static_cast<form::Vector3>(plane.normal), side_attributes.intersection, leaf_attributes.node);
 			}
 
 #if defined(DEBUG_SHOW_LINE)
@@ -341,11 +341,11 @@ RayCastResult form::CastRay(Polyhedron const & polyhedron, Ray3 const & ray, Sca
 	CRAG_VERIFY_OP(length, >=, 0.f);
 	
 	// generate uniforms
-	auto polyhedron_center = geom::Cast<Scalar>(polyhedron.GetShape().center);
+	auto polyhedron_center = static_cast<Vector3>(polyhedron.GetShape().center);
 	impl::Uniforms uniforms = 
 	{
-		geom::Cast<impl::Scalar>(polyhedron_center),
-		impl::Ray3(geom::Cast<impl::Scalar>(ray)),
+		static_cast<impl::Vector3>(polyhedron_center),
+		static_cast<impl::Ray3>(ray),
 		length
 	};
 
