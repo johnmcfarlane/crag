@@ -29,7 +29,7 @@ namespace form
 		CRAG_VERIFY_INVARIANTS_DECLARE(Point);
 		
 		// attributes
-		Vertex::Vector3 pos;
+		Vector3 pos;
 		Vertex * vert;
 	};
 }
