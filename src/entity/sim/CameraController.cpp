@@ -63,8 +63,8 @@ namespace
 			geom::Transformation<geom::uni::Scalar>(
 				space.RelToAbs(camera_transformation.GetTranslation()),
 				geom::Rotation(
-					geom::Cast<geom::uni::Scalar>(forward),
-					geom::Cast<geom::uni::Scalar>(up))),
+					static_cast<geom::uni::Vector3>(forward),
+					static_cast<geom::uni::Vector3>(up))),
 			frustum_default_fov
 		};
 

@@ -190,7 +190,7 @@ namespace
 	Matrix44 CalcBackgroundProjectionMatrix(Scene const & scene)
 	{
 		// Set projection matrix within relatively tight bounds.
-		RenderRange depth_range = { .1f, 10.f };
+		auto depth_range = RenderRange { .1f, 10.f };
 		return CalcProjectionMatrix(scene, depth_range);
 	}
 

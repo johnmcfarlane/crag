@@ -20,7 +20,7 @@ namespace geom
 	template<typename S> class Vector<S, 4>
 	{
 	public:
-		Vector() 
+		Vector() noexcept
 #if defined(CRAG_DEBUG)
 		: Vector(
 			std::numeric_limits<S>::signaling_NaN(),
@@ -30,23 +30,26 @@ namespace geom
 #endif
 		{
 		}
-		
-		Vector(Vector const & rhs) 
+
+		template <typename RHS_S>
+		constexpr explicit Vector(Vector const & rhs) noexcept
 		: Vector(rhs.x, rhs.y, rhs.z, rhs.w)
-		{ 
+		{
 		}
-		
-		Vector(S const rhs[4]) 
+
+		template <typename RHS_S>
+		constexpr explicit Vector(RHS_S const rhs[4]) noexcept
 			: Vector(rhs[0], rhs[1], rhs[2], rhs[3])
 		{
 		}
-		
-		Vector(S rhs_x, S rhs_y, S rhs_z, S rhs_w) 
-		: x(static_cast<S>(rhs_x))
-		, y(static_cast<S>(rhs_y))
-		, z(static_cast<S>(rhs_z))
-		, w(static_cast<S>(rhs_w)) 
-		{ 
+
+		template <typename RHS_S>
+		constexpr explicit Vector(RHS_S rhs_x, RHS_S rhs_y, RHS_S rhs_z, RHS_S rhs_w) noexcept
+		: x(rhs_x)
+		, y(rhs_y)
+		, z(rhs_z)
+		, w(rhs_w)
+		{
 		}
 		
 		// Returns vector as a C-style array. Very unsafe. 
@@ -91,16 +94,6 @@ namespace geom
 		S x, y, z, w;
 	};
 
-	// casts between 4d matrices of different scalar types
-	template <typename LHS_S, typename RHS_S>
-	Vector<LHS_S, 4> Cast(Vector<RHS_S, 4> const & rhs)
-	{
-		return Vector<LHS_S, 4>(
-			static_cast<LHS_S>(rhs.x),
-			static_cast<LHS_S>(rhs.y),
-			static_cast<LHS_S>(rhs.z),
-			static_cast<LHS_S>(rhs.w));
-	}
 
 	template<typename S> bool operator == (Vector<S, 4> const & lhs, Vector<S, 4> const & rhs)
 	{

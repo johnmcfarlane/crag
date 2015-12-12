@@ -51,7 +51,7 @@ namespace
 
 	constexpr auto star_volume_radius = geom::uni::Scalar(1000000.);
 	constexpr auto star_volume_distance = geom::uni::Scalar(100000000.);
-	auto star_volume_center = geom::Resized(geom::uni::Vector3 (.34e6, 137480, .54e6), star_volume_distance);
+	auto star_volume_center = geom::Resized(geom::uni::Vector3 (.34e6f, 137480.f, .54e6f), star_volume_distance);
 	constexpr auto star_color = gfx::Color4f(1.f,.975f,.95f);
 	constexpr auto star_brightness = 7500000000000000.f;
 	constexpr auto star_illumination = star_color * star_brightness;
@@ -112,7 +112,7 @@ void MainScript(AppletInterface & applet_interface)
 	InitSpace(applet_interface, space);
 	
 	// Create observer.
-	auto observer_forward = geom::Normalized(geom::Cast<sim::Scalar>(animat_start_pos - observer_start_pos));
+	auto observer_forward = geom::Normalized(static_cast<sim::Vector3>(animat_start_pos - observer_start_pos));
 	auto player_and_camera = SpawnPlayer(space.AbsToRel(observer_start_pos), observer_forward, space);
 	
 	gfx::ObjectHandle skybox = SpawnStarfieldSkybox();

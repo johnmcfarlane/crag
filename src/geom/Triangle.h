@@ -46,20 +46,6 @@ namespace geom
 		Array points;
 	};
 
-	// catches pointless casts and bypasses them
-	template <typename S, int N>
-	Triangle<S, N> const & Cast(Triangle<S, N> const & rhs)
-	{
-		return rhs;
-	}
-
-	// casts between triangles of different scalar types
-	template <typename LHS_S, typename RHS_S, int N>
-	typename std::enable_if<! std::is_same<LHS_S, RHS_S>::value, Triangle<LHS_S, N>>::type Cast(Triangle<RHS_S, N> const & rhs)
-	{
-		return Triangle<LHS_S, N>(Cast<LHS_S>(rhs.points[0]), Cast<LHS_S>(rhs.points[1]), Cast<LHS_S>(rhs.points[2]));
-	}
-	
 	template <typename S, int N>
 	Vector<S, N> Centroid(Triangle<S, N> const & t)
 	{

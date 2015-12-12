@@ -129,7 +129,7 @@ namespace
 		typedef geom::Vector<Scalar, 3> Vector3;
 		typedef geom::Matrix<Scalar, 3, 3> Matrix33;
 		
-		const auto camera_rotation = geom::Cast<Scalar>(camera_transformation.GetRotation());
+		const auto camera_rotation = static_cast<Matrix33>(camera_transformation.GetRotation());
 		const auto camera_forward = geom::GetAxis(camera_rotation, geom::Direction::forward);
 		
 		/*//////////////////////////////////////////////////////////////////////////////
@@ -161,7 +161,8 @@ namespace
 		// screen
 
 		// vector from world_position #1 to world_position #2, AB
-		const auto screen_position_diff = geom::Cast<Scalar>(contact2.screen_position) - geom::Cast<Scalar>(contact1.screen_position);
+		const auto screen_position_diff =
+			static_cast<Vector3>(contact2.screen_position) - static_cast<Vector3>(contact1.screen_position);
 		
 		// distance between screen positions, PQ
 		const auto screen_span = geom::Magnitude(screen_position_diff);
@@ -172,17 +173,17 @@ namespace
 		}
 		const auto screen_position_direction = screen_position_diff / screen_span;
 		
-		const auto camera_to_screen_distance1 = geom::Magnitude(geom::Cast<Scalar>(contact1.screen_position));
-		const auto camera_to_screen_distance2 = geom::Magnitude(geom::Cast<Scalar>(contact2.screen_position));
+		const auto camera_to_screen_distance1 = geom::Magnitude(static_cast<Vector3>(contact1.screen_position));
+		const auto camera_to_screen_distance2 = geom::Magnitude(static_cast<Vector3>(contact2.screen_position));
 		
-		const auto camera_to_screen_direction1 = geom::Cast<Scalar>(contact1.screen_position) * Scalar(1) / camera_to_screen_distance1;
-		const auto camera_to_screen_direction2 = geom::Cast<Scalar>(contact2.screen_position) * Scalar(1) / camera_to_screen_distance2;
+		const auto camera_to_screen_direction1 = static_cast<Vector3>(contact1.screen_position) * Scalar(1) / camera_to_screen_distance1;
+		const auto camera_to_screen_direction2 = static_cast<Vector3>(contact2.screen_position) * Scalar(1) / camera_to_screen_distance2;
 		
 		////////////////////////////////////////////////////////////////////////////////
 		// world
 
 		// vector from world_position #1 to world_position #2, AB
-		const auto world_position_diff = geom::Cast<Scalar>(contact2.world_position) - geom::Cast<Scalar>(contact1.world_position);
+		const auto world_position_diff = static_cast<Vector3>(contact2.world_position) - static_cast<Vector3>(contact1.world_position);
 
 		// how far forwards of world position #1 is #2, d
 		const auto world_position_diff_forward = geom::DotProduct(world_position_diff, camera_forward);
@@ -247,9 +248,9 @@ namespace
 		auto ws_camera_to_screen_direction2 = ((camera_to_screen_direction2 * camera_rotation) * geom::Rotation(geom::Direction::forward, rotation_angle) * geom::Inverse(camera_rotation));
 		
 		// put it all together and book in to local clinic
-		const auto output_translation = geom::Cast<Scalar>(contact2.world_position) - ws_camera_to_screen_direction2 * camera_to_world_distance2;
+		const auto output_translation = static_cast<Vector3>(contact2.world_position) - ws_camera_to_screen_direction2 * camera_to_world_distance2;
 
-		return sim::Transformation(geom::Cast<sim::Scalar>(output_translation), geom::Cast<sim::Scalar>(output_rotation));
+		return sim::Transformation(static_cast<Vector3>(output_translation), static_cast<Matrix33>(output_rotation));
 	}
 }
 
@@ -657,14 +658,16 @@ void TouchObserverController::ClampTransformation()
 		auto & engine = entity.GetEngine();
 		auto & physics_engine = engine.GetPhysicsEngine();
 	
-		physics_engine.Collide(geom::Cast<physics::Scalar>(collision_sphere), contact_function);
+		physics_engine.Collide(
+			static_cast<physics::Sphere3>(collision_sphere),
+			contact_function);
 	
 		if (max_push_distance <= 0)
 		{
 			break;
 		}
 		
-		_current_transformation.SetTranslation(center + geom::Cast<Scalar>(push * max_push_distance));
+		_current_transformation.SetTranslation(center + static_cast<Vector3>(push * max_push_distance));
 	}
 }
 
@@ -725,14 +728,14 @@ Vector2 TouchObserverController::GetScreenPosition(SDL_TouchFingerEvent const & 
 Vector2 TouchObserverController::GetScreenPosition(SDL_MouseButtonEvent const & mouse_button_event) const
 {
 	auto pixel_position = geom::MakeVector(mouse_button_event.x, mouse_button_event.y);
-	auto screen_position = _frustum.PixelToScreen(geom::Cast<float>(pixel_position));
+	auto screen_position = _frustum.PixelToScreen(static_cast<Vector2>(pixel_position));
 	return screen_position;
 }
 
 Vector2 TouchObserverController::GetScreenPosition(SDL_MouseMotionEvent const & mouse_motion_event) const
 {
 	auto pixel_position = geom::MakeVector(mouse_motion_event.x, mouse_motion_event.y);
-	auto screen_position = _frustum.PixelToScreen(geom::Cast<float>(pixel_position));
+	auto screen_position = _frustum.PixelToScreen(static_cast<Vector2>(pixel_position));
 	return screen_position;
 }
 

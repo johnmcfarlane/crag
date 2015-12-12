@@ -82,42 +82,47 @@ namespace geom
 
 		// AbsToRel
 		template <typename REL_S = rel::Scalar>
-		Vector<REL_S, 3> AbsToRel(uni::Vector3 const & uni) const
-		{
-			return Cast<REL_S>(uni - _origin);
+		auto constexpr AbsToRel(uni::Vector3 const & uni) const noexcept {
+			return static_cast<Vector<REL_S, 3>>(uni - _origin);
 		}
 	
 		template <typename REL_S = rel::Scalar>
 		Ray<REL_S, 3> AbsToRel(uni::Ray3 const & uni) const
 		{
-			return Ray<REL_S, 3>(AbsToRel<REL_S>(uni.position), Cast<REL_S>(uni.direction));
+			return Ray<REL_S, 3>(
+				AbsToRel<REL_S>(uni.position),
+				static_cast<Vector<REL_S, 3>>(uni.direction));
 		}
 	
 		template <typename REL_S = rel::Scalar>
 		Sphere<REL_S, 3> AbsToRel(uni::Sphere3 const & uni) const
 		{
-			return Sphere<REL_S, 3>(AbsToRel<REL_S>(uni.center), static_cast<REL_S>(uni.radius));
+			return Sphere<REL_S, 3>(
+				AbsToRel<REL_S>(uni.center),
+				static_cast<REL_S>(uni.radius));
 		}
 	
 		template <typename REL_S = rel::Scalar>
 		Transformation<REL_S> AbsToRel(uni::Transformation const & uni) const
 		{
-			return Transformation<REL_S>(AbsToRel<REL_S>(uni.GetTranslation()), Cast<REL_S>(uni.GetRotation()));
+			return Transformation<REL_S>(
+				AbsToRel<REL_S>(uni.GetTranslation()),
+				static_cast<Matrix<REL_S, 3, 3>>(uni.GetRotation()));
 		}
 	
 		// RelToAbs
 		template <typename ABS_S = uni::Scalar, typename REL_S = rel::Scalar>
-		Vector<ABS_S, 3> RelToAbs(Vector<REL_S, 3> const & rel) const
-		{
-			return Cast<ABS_S>(rel) + Cast<ABS_S>(_origin);
+		auto constexpr RelToAbs(Vector<REL_S, 3> const & rel) const noexcept {
+			using Result = Vector<ABS_S, 3>;
+			return static_cast<Result>(rel) + static_cast<Result>(_origin);
 		}
 	
 		template <typename ABS_S = uni::Scalar, typename REL_S = rel::Scalar>
 		Ray<ABS_S, 3> RelToAbs(Ray<REL_S, 3> const & rel) const
 		{
 			return Ray<ABS_S, 3>(
-				RelToAbs<ABS_S, REL_S>(rel.position), 
-				Cast<ABS_S>(rel.direction));
+				RelToAbs<ABS_S, REL_S>(rel.position),
+				static_cast<Vector<ABS_S, 3>>(rel.direction));
 		}
 	
 		template <typename ABS_S = uni::Scalar, typename REL_S = rel::Scalar>
@@ -131,9 +136,11 @@ namespace geom
 		template <typename ABS_S = uni::Scalar, typename REL_S = rel::Scalar>
 		Transformation<ABS_S> RelToAbs(Transformation<REL_S> const & rel) const
 		{
-			return Transformation<ABS_S>(
-				RelToAbs<ABS_S, REL_S>(rel.GetTranslation()), 
-				Cast<ABS_S>(rel.GetRotation()));
+			using Transformation = Transformation<ABS_S>;
+			using Matrix33 = typename Transformation::Matrix33;
+			return Transformation(
+				RelToAbs<ABS_S, REL_S>(rel.GetTranslation()),
+				static_cast<Matrix33>(rel.GetRotation()));
 		}
 
 		// verification

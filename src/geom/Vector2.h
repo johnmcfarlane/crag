@@ -23,27 +23,26 @@ namespace geom
 	public:
 		typedef S Scalar;
 		
-		Vector() 
+		Vector() noexcept
 #if defined(CRAG_DEBUG)
 		: x(std::numeric_limits<S>::signaling_NaN())
 		, y(std::numeric_limits<S>::signaling_NaN())
 #endif
 		{ 
 		}
-		
-		Vector(Vector const & rhs) 
-		: Vector(rhs.x, rhs.y)
-		{ 
-		}
-		
-		Vector(S rhs_x, S rhs_y) 
-		: x(rhs_x)
-		, y(rhs_y)
-		{ 
+
+		template <typename RHS_S>
+		constexpr explicit Vector(Vector<RHS_S, 2> const & rhs) noexcept
+		: Vector(rhs.x, rhs.y) {
 		}
 
-		static constexpr std::size_t Size()
-		{
+		template <typename RHS_S>
+		constexpr explicit Vector(RHS_S const & rhs_x, RHS_S const & rhs_y) noexcept
+		: x(rhs_x)
+		, y(rhs_y) {
+		}
+
+		static constexpr std::size_t size() noexcept {
 			return 3;
 		}
 		
@@ -80,15 +79,6 @@ namespace geom
 
 		S x, y;
 	};
-
-	// casts between 2d matrices of different scalar types
-	template <typename LHS_S, typename RHS_S>
-	Vector<LHS_S, 2> Cast(Vector<RHS_S, 2> const & rhs)
-	{
-		return Vector<LHS_S, 2>(
-			static_cast<LHS_S>(rhs.x),
-			static_cast<LHS_S>(rhs.y));
-	}
 
 	template <typename S>
 	Vector<S, 2> MakeVector(S x, S y)

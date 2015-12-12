@@ -172,7 +172,7 @@ void PlanetShader::InitRootPoints(form::Polyhedron & polyhedron, form::Point * p
 	// This one is the same each time.
 	//Random crater_randomizer(seed + 2);
 
-	geom::uni::Sphere3 shape = geom::Cast<geom::uni::Scalar>(polyhedron.GetShape());
+	auto shape = static_cast<geom::uni::Sphere3>(polyhedron.GetShape());
 	geom::uni::Scalar inverse_root_corner_length = 1. / root_three;
 	for (int i = 0; i < 4; ++ i)
 	{
@@ -180,7 +180,7 @@ void PlanetShader::InitRootPoints(form::Polyhedron & polyhedron, form::Point * p
 		CalcRootPointPos(point_randomizer, position);
 		position *= shape.radius;
 		position += shape.center;
-		points[i]->pos = geom::Cast<float>(position);
+		points[i]->pos = static_cast<form::Point::Vector3>(position);
 	}
 }
 
@@ -210,7 +210,7 @@ bool PlanetShader::InitMidPoint(form::Polyhedron & polyhedron, form::Node const 
 		CalcMidPointPos_Random(polyhedron, result, params);
 	}
 	
-	mid_point.pos = geom::Cast<float>(result);
+	mid_point.pos = static_cast<form::Point::Vector3>(result);
 //	mid_point.col = gfx::Color4b::White();
 
 	debug::MarkNodePoint(a, mid_point, 0, 0);
@@ -237,7 +237,7 @@ geom::uni::Scalar PlanetShader::GetRandomHeightCoefficient(Random & rnd) const
 // At shallow depth, heigh is highly random.
 bool PlanetShader::CalcMidPointPos_Random(form::Polyhedron & polyhedron, geom::uni::Vector3 & result, Params & params) const
 {
-	geom::uni::Sphere3 const & shape = geom::Cast<geom::uni::Scalar>(polyhedron.GetShape());
+	auto const & shape = static_cast<geom::uni::Sphere3>(polyhedron.GetShape());
 	
 	geom::uni::Scalar radius = shape.radius * GetRandomHeightCoefficient(params.rnd);
 	polyhedron.GetFormation().SampleRadius(radius);
@@ -254,7 +254,7 @@ bool PlanetShader::CalcMidPointPos_Random(form::Polyhedron & polyhedron, geom::u
 
 bool PlanetShader::CalcMidPointPos_SimpleInterp(form::Polyhedron & polyhedron, geom::uni::Vector3 & result, Params & params) const
 {
-	geom::uni::Sphere3 const & shape = geom::Cast<geom::uni::Scalar>(polyhedron.GetShape());
+	auto const & shape = static_cast<geom::uni::Sphere3>(polyhedron.GetShape());
 	
 	geom::uni::Vector3 near_a = GetLocalPosition(params.a.GetCorner(TriMod(params.index + 1))->pos, shape.center);
 	geom::uni::Vector3 near_b = GetLocalPosition(params.b.GetCorner(TriMod(params.index + 1))->pos, shape.center);
@@ -295,7 +295,7 @@ geom::uni::Vector3 PlanetShader::GetLocalPosition(form::Point const & point, geo
 
 geom::uni::Vector3 PlanetShader::GetLocalPosition(form::Vector3 const & point_pos, geom::uni::Vector3 const & center) const
 {
-	return geom::Cast<double>(point_pos) - center;
+	return static_cast<geom::uni::Vector3>(point_pos) - center;
 }
 
 geom::uni::Scalar PlanetShader::GetAltitude(form::Point const & point, geom::uni::Vector3 const & center) const

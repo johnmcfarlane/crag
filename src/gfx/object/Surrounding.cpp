@@ -91,7 +91,7 @@ void Surrounding::UpdateModelViewTransformation(Transformation const & model_vie
 	auto & gfx_space = GetEngine().GetSpace();
 	auto offset = _properties._space - gfx_space;
 
-	SetModelViewTransformation(model_view * Transformation(geom::Cast<float>(offset)));
+	SetModelViewTransformation(model_view * Transformation(static_cast<Vector3>(offset)));
 }
 
 void Surrounding::SetMesh(std::shared_ptr<form::Mesh> const & mesh)
