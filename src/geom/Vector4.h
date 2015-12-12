@@ -54,22 +54,22 @@ namespace geom
 		{
 			ASSERT(index >= 0);
 			ASSERT(index < 4);
-			return GetAxes() [index];
+			return data() [index];
 		} 
 		
 		S & operator[](int index) 
 		{
 			ASSERT(index >= 0);
 			ASSERT(index < 4);
-			return GetAxes() [index];
+			return data() [index];
 		} 
 		
-		S * GetAxes()
+		S * data()
 		{
 			return reinterpret_cast<S *>(this);
 		}
 		
-		S const * GetAxes() const
+		S const * data() const
 		{
 			return reinterpret_cast<S const *>(this);
 		}

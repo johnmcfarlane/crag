@@ -48,24 +48,22 @@ namespace geom
 		}
 		
 		// Returns vector as a C-style array. Very unsafe. 
-		S const * GetAxes() const
-		{
+		constexpr S const * data() const noexcept {
 			return reinterpret_cast<S const *>(this);
 		}	
-		S * GetAxes()
-		{
+		S * data() noexcept {
 			return reinterpret_cast<S *>(this);
 		}
 		
 		S const & operator [] (int index) const
 		{
 			ASSERT(index >= 0 && index < 2);
-			return GetAxes() [index];
+			return data() [index];
 		}
 		S & operator [] (int index)
 		{
 			ASSERT(index >= 0 && index < 2);
-			return GetAxes() [index];
+			return data() [index];
 		}
 		
 		static Vector Zero() 
