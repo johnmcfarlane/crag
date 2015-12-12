@@ -57,7 +57,7 @@ namespace
 					{
 						auto & vert = side_verts[u][v];
 						
-						float * axes = vert.pos.GetAxes();
+						auto axes = vert.pos.data();
 						axes[x_axis] = (static_cast<float>(pole ^ u) - .5f) * 2;
 						axes[y_axis] = (static_cast<float>(v) - .5f) * 2;
 						axes[z_axis] = (static_cast<float>(pole) - .5f) * 2;

@@ -33,7 +33,7 @@ void BoxBody::SetDimensions(Vector3 const & dimensions) const
 Vector3 BoxBody::GetDimensions() const
 {
 	Vector3 dimensions;
-	dGeomBoxGetLengths(GetCollisionHandle(), dimensions.GetAxes());
+	dGeomBoxGetLengths(GetCollisionHandle(), dimensions.data());
 	return dimensions;
 }
 
