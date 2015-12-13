@@ -38,8 +38,8 @@ namespace geom
 
 		template <typename RHS_S>
 		constexpr explicit Vector(RHS_S const & rhs_x, RHS_S const & rhs_y) noexcept
-		: x(rhs_x)
-		, y(rhs_y) {
+		: x(static_cast<Scalar>(rhs_x))
+		, y(static_cast<Scalar>(rhs_y)) {
 		}
 
 		static constexpr std::size_t size() noexcept {

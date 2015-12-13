@@ -39,12 +39,14 @@ namespace geom
 
 		template <typename RHS_S>
 		constexpr explicit Vector(RHS_S rhs_x, RHS_S rhs_y, RHS_S rhs_z)
-			: x(rhs_x), y(rhs_y), z(rhs_z)
+			: x(static_cast<Scalar>(rhs_x))
+			, y(static_cast<Scalar>(rhs_y))
+			, z(static_cast<Scalar>(rhs_z))
 		{
 		}
 
 		template <typename LHS_S>
-		constexpr explicit operator Vector<LHS_S, 3>()
+		constexpr explicit operator Vector<LHS_S, 3>() const
 		{
 			return Vector<LHS_S, 3>(x, y, z);
 		}

@@ -268,7 +268,7 @@ TouchObserverController::TouchObserverController(Entity & entity, Transformation
 , _current_transformation(transformation)
 {
 	_frustum.resolution = app::GetResolution();
-	_frustum.depth_range = Vector2(1, 2);
+	_frustum.depth_range = Vector2(1.f, 2.f);
 }
 
 TouchObserverController::~TouchObserverController()

@@ -20,6 +20,8 @@ namespace geom
 	template<typename S> class Vector<S, 4>
 	{
 	public:
+		using Scalar = S;
+
 		Vector() noexcept
 #if defined(CRAG_DEBUG)
 		: Vector(
@@ -32,7 +34,7 @@ namespace geom
 		}
 
 		template <typename RHS_S>
-		constexpr explicit Vector(Vector const & rhs) noexcept
+		constexpr explicit Vector(Vector<RHS_S, 4> const & rhs) noexcept
 		: Vector(rhs.x, rhs.y, rhs.z, rhs.w)
 		{
 		}
@@ -45,10 +47,10 @@ namespace geom
 
 		template <typename RHS_S>
 		constexpr explicit Vector(RHS_S rhs_x, RHS_S rhs_y, RHS_S rhs_z, RHS_S rhs_w) noexcept
-		: x(rhs_x)
-		, y(rhs_y)
-		, z(rhs_z)
-		, w(rhs_w)
+		: x(static_cast<Scalar>(rhs_x))
+		, y(static_cast<Scalar>(rhs_y))
+		, z(static_cast<Scalar>(rhs_z))
+		, w(static_cast<Scalar>(rhs_w))
 		{
 		}
 		

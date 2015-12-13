@@ -137,10 +137,10 @@ namespace geom
 		Transformation<ABS_S> RelToAbs(Transformation<REL_S> const & rel) const
 		{
 			using Transformation = Transformation<ABS_S>;
-			using Matrix33 = typename Transformation::Matrix33;
+			using Matrix = typename Transformation::Matrix33;
 			return Transformation(
 				RelToAbs<ABS_S, REL_S>(rel.GetTranslation()),
-				static_cast<Matrix33>(rel.GetRotation()));
+				static_cast<Matrix>(rel.GetRotation()));
 		}
 
 		// verification
