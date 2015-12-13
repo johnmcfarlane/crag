@@ -20,6 +20,7 @@ namespace geom
 	{
 	public:
 		// types
+		using Scalar = S;
 		typedef Vector<S, 3> Row;
 		typedef Vector<S, 3> Column;
 		class _Row : public Vector<S, 3>
