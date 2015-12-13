@@ -153,9 +153,10 @@ namespace geom
 		
 		static Matrix Identity() 
 		{
-			return Matrix(Row(1, 0, 0),
-						  Row(0, 1, 0),
-						  Row(0, 0, 1)); 
+			return Matrix(
+				Row(Scalar(1), Scalar(0), Scalar(0)),
+				Row(Scalar(0), Scalar(1), Scalar(0)),
+				Row(Scalar(0), Scalar(0), Scalar(1)));
 		}
 		
 		static Matrix Zero() 
