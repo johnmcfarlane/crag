@@ -17,7 +17,7 @@ See [README-rpi.md] for instructions targeted at Raspberry Pi.
 
    Crag is regularly tested against G++ 4.9 and Clang 3.5.
 
-2. Clone the project using the instructions in [the main README.md](../README.md).
+2. Clone the project using the instructions in [the main README.md](README.md).
 
 ## Run
 

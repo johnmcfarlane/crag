@@ -4,7 +4,7 @@
 
 ## Introduction
 
-Crag is a personal programming project developed with the aim of exploring and demonstrating a number of programming techniques. 
+Crag is a personal programming project developed with the aim of exploring and demonstrating a number of programming techniques.
 It takes the form of an interactive 3D simulation featuring a real-time fractal landscape generator and ray-cast sphere renderer.
 It is written mostly in C++ and is designed to be as portable as possible, using free libraries and tools including:
 
@@ -18,15 +18,15 @@ Infrequently built binaries are available for:
 
 ### Android
 
-Download [[here](https://drive.google.com/file/d/0BzcKPEavdc2NdUlfNTdmeTUwLTQ/edit?usp=sharing)]. 
+Download [[here](https://drive.google.com/file/d/0BzcKPEavdc2NdUlfNTdmeTUwLTQ/edit?usp=sharing)].
 
 This package in known to work on a number of popular modern devices. It is primarily developed on HTC One (M7).
 
 ### Windows
 
-Download [[here](https://drive.google.com/file/d/0BzcKPEavdc2NQVVyMy1qSW9nTWs/edit?usp=sharing)]. 
+Download [[here](https://drive.google.com/file/d/0BzcKPEavdc2NQVVyMy1qSW9nTWs/edit?usp=sharing)].
 
-This archive contains a copy of the demo and its necessary assets developed against Windows 7. All files must be expanded and the appropriate C run-time libraries installed. Your best bet is to install [this Microsoft package](https://www.microsoft.com/en-us/download/details.aspx?id=40784) first. 
+This archive contains a copy of the demo and its necessary assets developed against Windows 7. All files must be expanded and the appropriate C run-time libraries installed. Your best bet is to install [this Microsoft package](https://www.microsoft.com/en-us/download/details.aspx?id=40784) first.
 
 ## Clone
 
@@ -43,8 +43,8 @@ git submodule update
 
 Instructions are available for the following platforms:
 
-- [Ubuntu GNU/Linux](linux/README.md) on PC
-- [Raspberry Pi](linux/README-rpi.md)
+- [Ubuntu GNU/Linux](README-debian.md) on PC
+- [Raspberry Pi](README-rpi.md)
 - [Windows](vs/README.md) using MSVC++
 - [Android](android/README.md)
 
@@ -53,4 +53,3 @@ Instructions are available for the following platforms:
 Copyright 2009 - 2015 [John McFarlane](http://john.mcfarlane.name/). All rights reserved.
 
 This software is distributed under the terms of the GNU General Public License.
-
