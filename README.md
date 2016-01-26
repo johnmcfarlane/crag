@@ -33,10 +33,7 @@ This archive contains a copy of the demo and its necessary assets developed agai
 The project is currently hosted on [GitHub](https://github.com/johnmcfarlane/crag).
 
 ```
-git clone https://github.com/johnmcfarlane/crag.git
-cd crag
-git submodule init
-git submodule update
+git clone https://github.com/johnmcfarlane/crag.git --recursive
 ```
 
 ## Build/Run
