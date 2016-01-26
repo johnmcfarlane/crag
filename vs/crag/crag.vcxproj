@@ -45,18 +45,18 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>..\..\src;..\..\fixed_point\include;..\SDL2\include;..\SDL2_image\include;..\glew\include;..\ode\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\SDL2\lib\win32;..\SDL2_image\lib\x86;..\glew\lib\Release\Win32;..\ode\lib\DebugSingleLib;$(VC_LibraryPath_x86);$(UniversalCRT_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir)Lib\um\x86</LibraryPath>
+    <LibraryPath>..\SDL2\lib\x86;..\SDL2_image\lib\x86;..\glew\lib\Release\Win32;..\ode\lib\DebugSingleLib;$(VC_LibraryPath_x86);$(UniversalCRT_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir)Lib\um\x86</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>..\..\src;..\..\fixed_point\include;..\SDL2\include;..\SDL2_image\include;..\glew\include;..\ode\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\SDL2\lib\win32;..\SDL2_image\lib\x86;..\glew\lib\Release\Win32;..\ode\lib\ReleaseSingleLib;$(VC_LibraryPath_x86);$(UniversalCRT_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir)Lib\um\x86</LibraryPath>
+    <LibraryPath>..\SDL2\lib\x86;..\SDL2_image\lib\x86;..\glew\lib\Release\Win32;..\ode\lib\ReleaseSingleLib;$(VC_LibraryPath_x86);$(UniversalCRT_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir)Lib\um\x86</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>dSINGLE;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;dSINGLE;_MBCS;%(PreprocessorDefinitions);</PreprocessorDefinitions>
       <TreatWarningAsError>true</TreatWarningAsError>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -82,7 +82,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>false</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>dSINGLE;_MBCS;%(PreprocessorDefinitions);NDEBUG</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;dSINGLE;_MBCS;%(PreprocessorDefinitions);NDEBUG</PreprocessorDefinitions>
       <FloatingPointModel>Fast</FloatingPointModel>
       <TreatWarningAsError>true</TreatWarningAsError>
       <PrecompiledHeader>Use</PrecompiledHeader>
