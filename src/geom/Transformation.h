@@ -34,49 +34,41 @@ namespace geom
 		////////////////////////////////////////////////////////////////////////////////
 		// functions 
 		
-		Transformation()
+		Transformation() noexcept
 		: Transformation(Matrix44::Identity())
 		{
 		}
 		
-		Transformation(Transformation const & rhs)
-		: _matrix(rhs.GetMatrix())
+		template <typename ScalarRhs = Scalar>
+		constexpr explicit Transformation(Transformation<ScalarRhs> const & rhs) noexcept
+			: _matrix(rhs.GetMatrix())
 		{
 		}
 
-		Transformation(Vector3 const & translation)
-		: _matrix(1, 0, 0, translation.x,
-				  0, 1, 0, translation.y, 
-				  0, 0, 1, translation.z,
-				  0, 0, 0, 1)
-		{
+		template <typename ScalarRhs>
+		constexpr Transformation(
+			Vector<ScalarRhs, 3> const & translation,
+			Matrix<ScalarRhs, 3, 3> const & rotation = Matrix<ScalarRhs, 3, 3>::Identity(),
+			ScalarRhs scale = ScalarRhs(1)) noexcept
+		: Transformation(
+			translation,
+			rotation,
+			Vector<ScalarRhs, 3>(scale, scale, scale)) {
 		}
-		
-		Transformation(Vector3 const & translation, Matrix33 const & rotation)
-		: _matrix(rotation[0][0], rotation[0][1], rotation[0][2], translation[0],
-				  rotation[1][0], rotation[1][1], rotation[1][2], translation[1],
-				  rotation[2][0], rotation[2][1], rotation[2][2], translation[2],
-				  0, 0, 0, 1)
-		{
-		}
-		
-		Transformation(Vector3 const & translation, Matrix33 const & rotation, Scalar scale)
-		: _matrix(rotation[0][0] * scale, rotation[0][1] * scale, rotation[0][2] * scale, translation[0],
-				  rotation[1][0] * scale, rotation[1][1] * scale, rotation[1][2] * scale, translation[1],
-				  rotation[2][0] * scale, rotation[2][1] * scale, rotation[2][2] * scale, translation[2],
-				  0, 0, 0, 1)
-		{
-		}
-		
-		Transformation(Vector3 const & translation, Matrix33 const & rotation, Vector3 const & scale)
+
+		template <typename ScalarRhs>
+		constexpr explicit Transformation(
+			Vector<ScalarRhs, 3> const & translation,
+			Matrix<ScalarRhs, 3, 3> const & rotation,
+			Vector<ScalarRhs, 3> const & scale) noexcept
 		: _matrix(rotation[0][0] * scale[0], rotation[0][1] * scale[1], rotation[0][2] * scale[2], translation[0],
 				  rotation[1][0] * scale[0], rotation[1][1] * scale[1], rotation[1][2] * scale[2], translation[1],
 				  rotation[2][0] * scale[0], rotation[2][1] * scale[1], rotation[2][2] * scale[2], translation[2],
-				  0, 0, 0, 1)
+				  Scalar(0), Scalar(0), Scalar(0), Scalar(1))
 		{
 		}
-		
-		Transformation(Matrix44 const & matrix)
+
+		constexpr explicit Transformation(Matrix44 const & matrix) noexcept
 		: _matrix(matrix)
 		{
 		}
@@ -181,15 +173,9 @@ namespace geom
 		Matrix44 _matrix;
 	};
 
-	template <typename LHS_S, typename RHS_S>
-	Transformation<LHS_S> Cast(Transformation<RHS_S> const & rhs)
-	{
-		return Transformation<LHS_S>(Cast<LHS_S>(rhs.GetMatrix()));
-	}
-
 	template <typename S>
 	Transformation<S> Inverse(Transformation<S> const & transformation)
 	{
-		return ::geom::Inverse(transformation.GetMatrix());
+		return Transformation<S>(geom::Inverse(transformation.GetMatrix()));
 	}
 }

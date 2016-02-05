@@ -174,7 +174,7 @@ bool PlanetBody::HandleCollisionWithSolid(Body & body, Sphere3 const & bounding_
 
 	MeshData mesh_data = dGeomTriMeshDataCreate();
 	dGeomTriMeshDataBuildSingle1(mesh_data,
-		vertices.front().pos.GetAxes(), sizeof(Mesh::value_type), vertices.size(),
+		vertices.front().pos.data(), sizeof(Mesh::value_type), vertices.size(),
 		indices.data(), indices.size(), sizeof(Mesh::index_type),
 		reinterpret_cast<int *>(normals.data()));
 

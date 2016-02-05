@@ -54,7 +54,7 @@ Matrix44 Frustum::CalcProjectionMatrix() const
 
 Vector2 Frustum::PixelToScreen(Vector2 const & pixel_position) const
 {
-	auto _resolution = geom::Cast<float>(resolution);
+	auto _resolution = static_cast<Vector2>(resolution);
 
 	Vector2 screen_position(
 		(2.f * pixel_position.x / _resolution.x) - 1.f,
@@ -65,7 +65,7 @@ Vector2 Frustum::PixelToScreen(Vector2 const & pixel_position) const
 
 Vector2 Frustum::ScreenToPixel(Vector2 const & screen_position) const
 {
-	auto _resolution = geom::Cast<float>(resolution);
+	auto _resolution = static_cast<Vector2>(resolution);
 
 	Vector2 pixel_position(
 		(screen_position.x + 1.f) * .5f * _resolution.x,

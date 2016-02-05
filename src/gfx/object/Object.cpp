@@ -114,7 +114,7 @@ Transformation Object::GetModelTransformation() const
 	if (ancestor == nullptr)
 	{
 		// This is the root node; return the identity.
-		return Matrix44::Identity();
+		return Transformation();
 	}
 
 	Transformation model_transformation = GetLocalTransformation();

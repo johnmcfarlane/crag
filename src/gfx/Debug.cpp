@@ -425,7 +425,7 @@ void gfx::Debug::DrawText(char const * text, geom::Vector2i const & position)
 		return;
 	}
 	
-	font->Print(text, geom::Cast<float>(position));
+	font->Print(text, static_cast<geom::Vector2f>(position));
 }
 
 #endif

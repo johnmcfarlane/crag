@@ -54,7 +54,7 @@ namespace
 // gfx::Surrounding member definitions
 
 Surrounding::Surrounding(Engine & engine)
-: Object(engine, Transformation::Matrix44::Identity(), Layer::opaque, false)
+: Object(engine, Transformation(), Layer::opaque, false)
 {
 	auto & resource_manager = engine.GetResourceManager();
 	auto const poly_program = resource_manager.GetHandle<PolyProgram>("PolyProgram");
@@ -91,7 +91,7 @@ void Surrounding::UpdateModelViewTransformation(Transformation const & model_vie
 	auto & gfx_space = GetEngine().GetSpace();
 	auto offset = _properties._space - gfx_space;
 
-	SetModelViewTransformation(model_view * Transformation(geom::Cast<float>(offset)));
+	SetModelViewTransformation(model_view * Transformation(static_cast<Vector3>(offset)));
 }
 
 void Surrounding::SetMesh(std::shared_ptr<form::Mesh> const & mesh)

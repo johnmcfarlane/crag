@@ -190,7 +190,7 @@ namespace
 	Matrix44 CalcBackgroundProjectionMatrix(Scene const & scene)
 	{
 		// Set projection matrix within relatively tight bounds.
-		RenderRange depth_range = { .1f, 10.f };
+		auto depth_range = RenderRange { .1f, 10.f };
 		return CalcProjectionMatrix(scene, depth_range);
 	}
 
@@ -658,7 +658,7 @@ void Engine::UpdateTransformations(Object & object, Transformation const & paren
 void Engine::UpdateTransformations()
 {
 	Object & root_node = _scene->GetRoot();
-	UpdateTransformations(root_node, Transformation::Matrix44::Identity());
+	UpdateTransformations(root_node, Transformation());
 	
 	_scene->SortRenderList();
 }

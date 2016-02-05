@@ -20,12 +20,13 @@ namespace geom
 	{
 	public:
 		// types
+		using Scalar = S;
 		typedef Vector<S, 3> Row;
 		typedef Vector<S, 3> Column;
 		class _Row : public Vector<S, 3>
 		{
 			// I would assume that __attribute__ ((aligned (sizeof(S) * 4)))
-			// would be enough to ensure the padding in this Matrix class. 
+			// would be enough to ensure the padding in this Matrix class.
 			// Alas that doesn't seem the be the case - at least in clang.
 			S _padding;
 			typedef Vector<S, 3> Row;
@@ -34,7 +35,7 @@ namespace geom
 			_Row(S a, S b, S c) : Row(a, b, c) { }
 			_Row(Row const & rhs) : Row(rhs) { }
 		};
-		
+
 		// functions
 		Matrix()
 		{
@@ -43,27 +44,24 @@ namespace geom
 			Fill(std::numeric_limits<S>::signaling_NaN());
 #endif
 		}
-		
-		Matrix(Matrix const & rhs)
-		{
-			for (int m = 0; m != 3; ++ m)
-			{
-				for (int n = 0; n != 3; ++ n)
-				{
-					rows[m][n] = rhs[m][n];
-				}
-			}
+
+		template <typename RHS_S>
+		constexpr explicit Matrix(Matrix<RHS_S, 3, 3> const & rhs) noexcept :
+			Matrix(rhs[0], rhs[1], rhs[2]) {
 		}
-		
-		Matrix(Row const & row0,
-			   Row const & row1,
-			   Row const & row2)
-		{
-			rows[0] = row0;
-			rows[1] = row1;
-			rows[2] = row2;
+
+		template <typename RHS_S>
+		constexpr explicit Matrix(
+			typename ::geom::Vector<RHS_S, 3> const & row0,
+			typename ::geom::Vector<RHS_S, 3> const & row1,
+			typename ::geom::Vector<RHS_S, 3> const & row2) noexcept :
+			rows {
+				static_cast<Row>(row0),
+				static_cast<Row>(row1),
+				static_cast<Row>(row2)
+			} {
 		}
-		
+
 		template <typename RHS_S>
 		Matrix(RHS_S m00, RHS_S m01, RHS_S m02,
 			   RHS_S m10, RHS_S m11, RHS_S m12,
@@ -156,9 +154,10 @@ namespace geom
 		
 		static Matrix Identity() 
 		{
-			return Matrix(Row(1, 0, 0),
-						  Row(0, 1, 0),
-						  Row(0, 0, 1)); 
+			return Matrix(
+				Row(Scalar(1), Scalar(0), Scalar(0)),
+				Row(Scalar(0), Scalar(1), Scalar(0)),
+				Row(Scalar(0), Scalar(0), Scalar(1)));
 		}
 		
 		static Matrix Zero() 
@@ -180,16 +179,6 @@ namespace geom
 		// variables
 		_Row rows [3];
 	};
-
-	// casts between 4x4 matrices of different scalar types
-	template <typename LHS_S, typename RHS_S>
-	Matrix<LHS_S, 3, 3> Cast(Matrix<RHS_S, 3, 3> const & rhs)
-	{
-		return Matrix<LHS_S, 3, 3>(
-			geom::Cast<LHS_S>(rhs.GetRow(0)),
-			geom::Cast<LHS_S>(rhs.GetRow(1)),
-			geom::Cast<LHS_S>(rhs.GetRow(2)));
-	}
 
 	template <typename S>
 	Matrix<S, 3, 3> Inverse(Matrix<S, 3, 3> const & matrix)
