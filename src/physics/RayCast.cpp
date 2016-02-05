@@ -22,7 +22,7 @@ using namespace physics;
 // physics::RayCast member definitions
 
 RayCast::RayCast(Engine & engine, Scalar length)
-: Body(Matrix44::Identity(), nullptr, engine, engine.CreateRay(length))
+: Body(Transformation(), nullptr, engine, engine.CreateRay(length))
 {
 }
 

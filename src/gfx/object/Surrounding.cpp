@@ -54,7 +54,7 @@ namespace
 // gfx::Surrounding member definitions
 
 Surrounding::Surrounding(Engine & engine)
-: Object(engine, Transformation::Matrix44::Identity(), Layer::opaque, false)
+: Object(engine, Transformation(), Layer::opaque, false)
 {
 	auto & resource_manager = engine.GetResourceManager();
 	auto const poly_program = resource_manager.GetHandle<PolyProgram>("PolyProgram");

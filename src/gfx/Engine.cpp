@@ -658,7 +658,7 @@ void Engine::UpdateTransformations(Object & object, Transformation const & paren
 void Engine::UpdateTransformations()
 {
 	Object & root_node = _scene->GetRoot();
-	UpdateTransformations(root_node, Transformation::Matrix44::Identity());
+	UpdateTransformations(root_node, Transformation());
 	
 	_scene->SortRenderList();
 }
