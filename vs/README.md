@@ -43,60 +43,60 @@ The Crag project expects them to be locate in specific folders under the `vc` fo
 
 The [Simple Direct-media Layer](http://www.libsdl.org/) provides everything a game needs to run on a variety of systems and hardware.
 
-  * Download `SDL2-devel-2.0.X-VC.zip` from [here](http://www.libsdl.org/download-2.0.php).
-  * Open the zip file and copy the contents of the `SDL-2.0.X-XXXX' folder to `crag\vs\SDL2'.
+1. Download `SDL2-devel-2.0.X-VC.zip` from [here](http://www.libsdl.org/download-2.0.php).
+2. Open the zip file and copy the contents of the `SDL-2.0.X-XXXX' folder to `crag\vs\SDL2'.
 
 Note: The current build of SDL2 does not get on well with VS2015. You may need to follow [this advice](http://stackoverflow.com/questions/28247992/how-to-fix-unresolved-externals-of-sdl-2-0-3-on-visual-studio-2015-preview#comment50936657_28247992).
 
 ### 3.2 SDL_image
 
-  * Download `SDL2_image-devel-2.0.X-VC.zip` [here](https://www.libsdl.org/projects/SDL_image/).
-  * Open the zip file and copy the contents of the `SDL2_image-2.0.X' folder to `crag\vs\SDL2_image'.
+1. Download *SDL2_image-devel-2.0.X-VC.zip* from the  [SDL_image website](https://www.libsdl.org/projects/SDL_image/).
+2. Open the zip file and copy the contents of the *SDL2_image-2.0.X* folder to *crag\vs\SDL2_image*.
 
 ### 3.3 ODE
 
 The [Open Dynamic Engine](http://www.ode.org/) is an open-source library which simulates rigid-body physics.
 The ODE project is included in the crag solution but that project needs some preparation:
 
-  * Follow the download link from the [ODE download page](https://bitbucket.org/odedevs/ode/downloads) and download the latest version (currently ode-0.13.tar.bz2) into the crag/vs folder.
-  * Open a Git Bash console and go to the crag/vs folder:
-  
-    ```
-	cd crag/vs
-	bunzip2.exe ode-0.13.tar.bz2
-	tar -xf ode-0.13.tar
-	mv ode-0.13 ode
-	```
+1. Follow the download link from the [ODE download page](https://bitbucket.org/odedevs/ode/downloads) and download the latest version (currently ode-0.13.tar.bz2) into the crag/vs folder.
+2. Open a Git Bash console and go to the crag/vs folder:
 
-  * The ODE project files need to be built by running `crag\vs\crag\premake_ode.bat`. (More details of this step can be found [here](http://opende.sourceforge.net/wiki/index.php/Manual_(Install_and_Use)).
-  * Open `crag\vs\ode\build\vs2008\ode.sln` and click OK to the 'One way upgrade'.
-  * Build DebugSingleLib and/or ReleaseSingleLib configurations
+   ```
+   cd crag/vs
+   gunzip2.exe ode-0.14.tar.bz2
+   tar -xf ode-0.14.tar
+   mv ode-0.14 ode
+   ```
 
-### 3.3 GLEW
+3. The ODE project files need to be built by running *vs\crag\premake_ode.bat*. (More details of this step can be found [here](http://opende.sourceforge.net/wiki/index.php/Manual_(Install_and_Use)).
+4. Open *crag\vs\ode\build\vs2008\ode.sln* and click OK to the 'One way upgrade'.
+5. Build *DebugSingleLib* and/or *ReleaseSingleLib* configurations
+
+### 3.4 GLEW
 
 The [GL Extension Wrangler](http://glew.sourceforge.net/) enables crag to use modern OpenGL extensions. 
 
-  * Download the GLEW binary from [here](http://glew.sourceforge.net/)
-  * unzip it into crag\vs\glew
+1. Download the GLEW binary from [the GLEW website](http://glew.sourceforge.net/).
+2. Unzip it into *crag\vs\glew*.
 
 ## 4 Building Crag
 
 Finally, it's time to build the Crag binary. 
 
-  * Launch Visual C++;
-  * Open solution, `crag\vs\crag\crag.sln`;
-  * From the standard toolbar, select the _Release_ solution configuration (or _Debug_ if you wish to debug crag);
-  * From the Build menu, select _Build Solution_;
-  * Wait for the build process to finish and ensure that there were no failures;
-  * The Crag binary can be located in `crag\vs\crag\Release\crag.exe`.
+1. Launch Visual C++;
+2. Open solution, `crag\vs\crag\crag.sln`;
+3. From the standard toolbar, select the _Release_ solution configuration (or _Debug_ if you wish to debug crag);
+4. From the Build menu, select _Build Solution_;
+5. Wait for the build process to finish and ensure that there were no failures;
+6. The Crag binary can be located in `crag\vs\crag\Release\crag.exe`.
 
 ## 5 Running Crag
 
 You can run Crag from within Visual Studio from the Debug -> Start Debugging menu option.
 The working directory is the repository root and a couple of DLLs must be located there:
 
-  * SDL.dll
-  * SDL_image.dll
+* SDL.dll
+* SDL_image.dll
 
 ## 5 Troubleshooting
 
@@ -107,4 +107,4 @@ Good luck!
 
 ### 5.1 Crash in Release build
 
-You might try deleting crag.cfg from the `crag` root folder.
+There is a known bug when switching from running Debug build to running Release builds. You might try deleting crag.cfg from the `crag` root folder.

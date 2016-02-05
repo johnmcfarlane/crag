@@ -49,7 +49,7 @@ namespace crag
 			}
 
 			// convert to integer type (using full range of the type)
-			template <class Output, typename std::enable_if<_impl::is_integral<Output>::value, int>::type _Dummy = 0>
+			template <class Output, typename std::enable_if<std::is_integral<Output>::value, int>::type _Dummy = 0>
 			constexpr Output integral() const noexcept
 			{
 				using intermediate_type = sg14::_impl::next_size<typename std::common_type<Output, ReprType>::type>;
