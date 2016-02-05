@@ -117,7 +117,7 @@ void Pointer<Vertex>()
 // gfx::Skybox member definitions
 
 Skybox::Skybox(Engine & engine, ResourceKey textures_key)
-: Object(engine, gfx::Transformation::Matrix44::Identity(), Layer::background)
+: Object(engine, gfx::Transformation(), Layer::background)
 {
 	auto & resource_manager = engine.GetResourceManager();
 	

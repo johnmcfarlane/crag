@@ -17,11 +17,6 @@ using namespace gfx;
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::Pov member definitions
 
-Pov::Pov()
-: _transformation(Transformation::Matrix44::Identity())
-{
-}
-
 Pov::Pov(Transformation const & transformation, Frustum const & frustum)
 : _transformation(transformation)
 , _frustum(frustum)

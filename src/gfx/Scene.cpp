@@ -24,7 +24,7 @@ using namespace gfx;
 
 Scene::Scene(Engine & engine)
 : _time(-1)
-, _root(engine, Transformation::Matrix44::Identity(), Layer::background)
+, _root(engine, Transformation(), Layer::background)
 {
 	CRAG_VERIFY(* this);
 }
@@ -232,7 +232,7 @@ ShadowMap const & Scene::GetShadows() const
 void Scene::SetPov(Pov const & pov)
 {
 	_pov = pov;
-	_root.SetLocalTransformation(Inverse(_pov.GetTransformation().GetMatrix()));
+	_root.SetLocalTransformation(Inverse(_pov.GetTransformation()));
 }
 
 Pov & Scene::GetPov()
