@@ -85,23 +85,47 @@
 // CPU
 
 #if defined(CRAG_COMPILER_MSVC)
-# if defined(_M_IX86) || defined(_M_X64)
-#  define CRAG_CPU_X86
-# endif
+#   if defined(_M_AMD64)
+#       define CRAG_CPU_X86
+#       define CRAG_ARCHITECTURE_WIDTH 64
+#   elif defined(_M_IX86)
+#       define CRAG_CPU_X86
+#       define CRAG_ARCHITECTURE_WIDTH 32
+#   elif defined(_M_ARM64)
+#       define CRAG_CPU_ARM
+#       define CRAG_ARCHITECTURE_WIDTH 64
+#   elif defined(_M_ARM)
+#       define CRAG_CPU_ARM
+#       define CRAG_ARCHITECTURE_WIDTH 32
+#   endif
 #elif defined(CRAG_COMPILER_GCC) || defined(CRAG_COMPILER_CLANG)
-# if defined(__i386__) || defined(__amd64__)
-#  define CRAG_CPU_X86
-# elif defined(__arm__) || defined(__aarch64__)
-#  define CRAG_CPU_ARM
-# elif defined(__mips__)
-#  define CRAG_CPU_MIPS
-# elif defined(__ppc__)
-#  define CRAG_CPU_PPC
-# endif
+#   if defined(__i386__)
+#       define CRAG_CPU_X86
+#       define CRAG_ARCHITECTURE_WIDTH 32
+#   elif defined(__amd64__)
+#       define CRAG_CPU_X86
+#       define CRAG_ARCHITECTURE_WIDTH 64
+#   elif defined(__arm__)
+#       define CRAG_CPU_ARM
+#       define CRAG_ARCHITECTURE_WIDTH 32
+#   elif defined(__aarch64__)
+#       define CRAG_CPU_ARM
+#       define CRAG_ARCHITECTURE_WIDTH 64
+#   elif defined(__ppc__)
+#       define CRAG_CPU_PPC
+#       define CRAG_ARCHITECTURE_WIDTH 32
+#   elif defined(__ppc64__)
+#       define CRAG_CPU_PPC
+#       define CRAG_ARCHITECTURE_WIDTH 64
+#   endif
 #endif
 
 #if ! (defined(CRAG_CPU_X86) || defined(CRAG_CPU_ARM) || defined(CRAG_CPU_PPC) || defined(CRAG_CPU_MIPS))
 #error unrecognized CPU architecture
+#endif
+
+#if ! defined(CRAG_ARCHITECTURE_WIDTH)
+#error unrecognized CPU architecture width
 #endif
 
 //////////////////////////////////////////////////////////////////////
@@ -118,10 +142,9 @@
 //////////////////////////////////////////////////////////////////////
 // graphics API
 
-#if defined(CRAG_PC) && ! defined(CRAG_RPI)
-#define CRAG_GL
-#else
-#define CRAG_GLES
+#if ! defined(CRAG_GL) && ! defined(CRAG_GLES)
+// CRAG_GL or CRAG_GLES must be defined
+#error unrecognized graphics API
 #endif
 
 //////////////////////////////////////////////////////////////////////
