@@ -160,10 +160,10 @@ void AnimatController::CreateNetwork(ga::GenomeReader & genome_reader)
 		return static_cast<Receiver *>(motor.get());
 	});
 
-	_network = std::move(nnet::Network(genome_reader, std::vector<int>{
+	_network = nnet::Network(genome_reader, std::vector<int>{
 		int(transmitters.size()),
 		10,
-		int(receivers.size())}));
+		int(receivers.size())});
 	_network.ConnectInputs(transmitters);
 	_network.ConnectOutputs(receivers);
 }
