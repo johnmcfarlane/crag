@@ -443,7 +443,7 @@ endif (BCM_HOST)
 
 # Windows or Linux
 if (${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4 /errorReport:prompt /nologo")  # /WX
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4 /WX /errorReport:prompt /nologo")
 	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")                                 # /GL /LTCG
 
 	add_dependencies(crag glew)
