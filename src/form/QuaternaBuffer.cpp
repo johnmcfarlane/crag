@@ -39,7 +39,7 @@ QuaternaBuffer::~QuaternaBuffer()
 	}
 #endif
 
-	delete _quaterne;
+	delete [] _quaterne;
 }
 
 CRAG_VERIFY_INVARIANTS_DEFINE_BEGIN(QuaternaBuffer, self)

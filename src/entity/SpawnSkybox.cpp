@@ -207,11 +207,11 @@ ObjectHandle SpawnStarfieldSkybox()
 			ForEachSide([& images] (int axis, int pole) {
 				if (skybox_starfield_fast)
 				{
-					images[axis][pole] = std::move(CreateStarsFast(axis, pole, 512, 20000));
+					images[axis][pole] = CreateStarsFast(axis, pole, 512, 20000);
 				}
 				else
 				{
-					images[axis][pole] = std::move(CreateStarsSlow(axis, pole, 512, 100));
+					images[axis][pole] = CreateStarsSlow(axis, pole, 512, 100);
 				}
 			});
 			return TextureCubeMap(images);

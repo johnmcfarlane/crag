@@ -619,7 +619,7 @@ namespace
 		// graphics
 		gfx::Transformation local_transformation(sphere.center, gfx::Transformation::Matrix33::Identity());
 		gfx::ObjectHandle model_handle = gfx::BallHandle::Create(local_transformation, sphere.radius, color);
-		ball.SetModel(std::move(Entity::ModelPtr(new Model(model_handle, * ball.GetLocation()))));
+		ball.SetModel(Entity::ModelPtr(new Model(model_handle, * ball.GetLocation())));
 	}
 
 	void ConstructObserver(Entity & observer, Transformation const & transformation)
@@ -736,7 +736,7 @@ namespace
 		gfx::Transformation local_transformation(position, gfx::Transformation::Matrix33::Identity());
 		gfx::Vector3 scale(1.f, 1.f, 1.f);
 		gfx::ObjectHandle model_handle = gfx::MeshObjectHandle::Create(local_transformation, gfx::Color4f::White(), scale, "ShipVbo", "ShipShadowMesh");
-		entity.SetModel(std::move(Entity::ModelPtr(new Model(model_handle, * entity.GetLocation()))));
+		entity.SetModel(Entity::ModelPtr(new Model(model_handle, * entity.GetLocation())));
 
 		// create controller
 		auto controller = std::unique_ptr<VehicleController>(new VehicleController(entity));
@@ -772,7 +772,7 @@ namespace
 		// graphics
 		gfx::Vector3 scale(1.f, 1.f, 1.f);
 		gfx::ObjectHandle saucer_model_handle = gfx::MeshObjectHandle::Create(transformation, gfx::Color4f::White(), scale, vbo_name, shadow_mesh_name);
-		ufo_entity.SetModel(std::move(Entity::ModelPtr(new Model(saucer_model_handle, * body))));
+		ufo_entity.SetModel(Entity::ModelPtr(new Model(saucer_model_handle, * body)));
 
 		////////////////////////////////////////////////////////////////////////////////
 		// ball
@@ -797,7 +797,7 @@ namespace
 			{
 				// graphics
 				gfx::ObjectHandle ball_model_handle = gfx::BallHandle::Create(transformation, saucer_ball_radius, ufo_color3);
-				ball_entity->SetModel(std::move(Entity::ModelPtr(new Model(ball_model_handle, * ball_body))));
+				ball_entity->SetModel(Entity::ModelPtr(new Model(ball_model_handle, * ball_body)));
 				
 				exception_object = ball_model_handle;
 			}

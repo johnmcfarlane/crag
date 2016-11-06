@@ -62,7 +62,6 @@ namespace
 	// variables
 
 	Random random_sequence;
-	sim::EntityHandle _player;
 	EntityVector _shapes;
 	
 	////////////////////////////////////////////////////////////////////////////////
