@@ -1,5 +1,8 @@
 # [Crag](https://github.com/johnmcfarlane/crag)
 
+[![Build Status](https://travis-ci.org/johnmcfarlane/crag.svg?branch=develop)](https://travis-ci.org/johnmcfarlane/crag)
+[![Build status](https://ci.appveyor.com/api/projects/status/b1x763k4ydpiwyuu/branch/develop?svg=true)](https://ci.appveyor.com/project/johnmcfarlane/crag/branch/develop)
+
 ![Screenshot](http://john.mcfarlane.name/projects/crag.png)
 
 ## Introduction

@@ -1,5 +1,7 @@
 # Building Crag for GNU/Linux
 
+[![Build Status](https://travis-ci.org/johnmcfarlane/crag.svg?branch=develop)](https://travis-ci.org/johnmcfarlane/crag)
+
 ## Introduction
 
 ### Distributions
