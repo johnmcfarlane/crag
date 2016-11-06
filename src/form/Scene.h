@@ -45,7 +45,7 @@ namespace form
 		///////////////////////////////////////////////////////
 		// public interface
 		
-		Scene(size_t min_num_quaterne, size_t max_num_quaterne);
+		Scene(int min_num_quaterne, int max_num_quaterne);
 		~Scene();
 		
 		CRAG_VERIFY_INVARIANTS_DECLARE(Scene);

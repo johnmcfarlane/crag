@@ -90,8 +90,8 @@ namespace gfx
 	typedef GLushort ElementIndex;
 #define CRAG_GFX_ELEMENT_INDEX_TYPE GL_UNSIGNED_SHORT
 #else
-	typedef GLuint ElementIndex;
-#define CRAG_GFX_ELEMENT_INDEX_TYPE GL_UNSIGNED_INT
+	typedef GLint ElementIndex;
+#define CRAG_GFX_ELEMENT_INDEX_TYPE GL_INT
 #endif
 
 	// resource handle types

@@ -151,7 +151,7 @@ bool PlanetBody::HandleCollisionWithSolid(Body & body, Sphere3 const & bounding_
 			return;
 		}
 
-		auto index = vertices.size() + 2;
+		auto index = static_cast<int>(vertices.size()) + 2;
 		for (auto & point : face.points)
 		{
 			indices.push_back(index --);
@@ -174,9 +174,9 @@ bool PlanetBody::HandleCollisionWithSolid(Body & body, Sphere3 const & bounding_
 
 	MeshData mesh_data = dGeomTriMeshDataCreate();
 	dGeomTriMeshDataBuildSingle1(mesh_data,
-		vertices.front().pos.GetAxes(), sizeof(Mesh::value_type), vertices.size(),
-		indices.data(), indices.size(), sizeof(Mesh::index_type),
-		reinterpret_cast<int *>(normals.data()));
+		vertices.front().pos.GetAxes(), static_cast<int>(sizeof(Mesh::value_type)), static_cast<int>(vertices.size()),
+		indices.data(), static_cast<int>(indices.size()), static_cast<int>(sizeof(Mesh::index_type)),
+		reinterpret_cast<void const *>(normals.data()));
 
 	CollisionHandle mesh_collision_handle = dCreateTriMesh(nullptr, mesh_data, nullptr, nullptr, nullptr);
 	
@@ -187,14 +187,14 @@ bool PlanetBody::HandleCollisionWithSolid(Body & body, Sphere3 const & bounding_
 	constexpr auto spare_contact = 1;
 	typedef std::array<ContactGeom, max_num_contacts> ContactVector;
 	ContactVector contacts;
-	std::size_t num_contacts = 0;
+	auto num_contacts = 0;
 	
-	int flags = contacts.size() - spare_contact;
+	int flags = static_cast<int>(contacts.size()) - spare_contact;
 	ASSERT((flags >> 16) == 0);
 
 	num_contacts = dCollide(body_collision_handle, mesh_collision_handle, flags, contacts.data(), sizeof(ContactVector::value_type));
 
-	ASSERT(num_contacts <= contacts.size());
+	ASSERT(num_contacts <= static_cast<int>(contacts.size()));
 	
 	// If there's a good chance the body is contained by the polyhedron,
 	if (num_contacts == 0 && max_distance < - bounding_sphere.radius * 2.f)
@@ -294,7 +294,7 @@ void PlanetBody::DebugDraw() const
 
 	auto face_functor = [] (form::Triangle3 const & face, form::Vector3 const &)
 	{
-		Random s(std::hash<form::Triangle3>()(face));
+		Random s(static_cast<Random::result_type>(std::hash<form::Triangle3>()(face)));
 
 		auto r = [& s] () { return s.GetFloatInclusive(); };
 		auto color = Color(r(), r(), r());

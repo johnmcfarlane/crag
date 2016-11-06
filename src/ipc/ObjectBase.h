@@ -56,11 +56,11 @@ namespace ipc
 		// default allocation
 		void* operator new(size_t sz) noexcept
 		{
-			return ::Allocate(sz, 16);
+			return ::Allocate(static_cast<int>(sz), 16);
 		}
 		void* operator new [](size_t sz) noexcept
 		{
-			return ::Allocate(sz, 16);
+			return ::Allocate(static_cast<int>(sz), 16);
 		}
 		void operator delete(void* p) noexcept
 		{

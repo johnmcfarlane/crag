@@ -71,8 +71,8 @@ void NodeBuffer::VerifyUnused(Node const & node) const
 }
 #endif
 
-NodeBuffer::NodeBuffer(size_t max_num_nodes)
-: _nodes(reinterpret_cast<Node *>(Allocate(sizeof(Node) * max_num_nodes, 128)))
+NodeBuffer::NodeBuffer(int max_num_nodes)
+: _nodes(reinterpret_cast<Node *>(Allocate(static_cast<int>(sizeof(Node)) * max_num_nodes, 128)))
 , _nodes_used_end(_nodes)
 , _nodes_end(_nodes + max_num_nodes)
 {
@@ -94,7 +94,7 @@ void NodeBuffer::Clear()
 	_nodes_used_end = _nodes;
 }
 
-void NodeBuffer::Push(std::size_t num_nodes)
+void NodeBuffer::Push(int num_nodes)
 {
 	auto new_nodes_used_end = _nodes_used_end + num_nodes;
 	CRAG_VERIFY_ARRAY_POINTER(new_nodes_used_end, _nodes, _nodes_end);
@@ -102,7 +102,7 @@ void NodeBuffer::Push(std::size_t num_nodes)
 	_nodes_used_end = new_nodes_used_end;
 }
 
-void NodeBuffer::Pop(std::size_t num_nodes)
+void NodeBuffer::Pop(int num_nodes)
 {
 	auto new_nodes_used_end = _nodes_used_end - num_nodes;
 	CRAG_VERIFY_ARRAY_POINTER(new_nodes_used_end, _nodes, _nodes_end);
@@ -140,17 +140,17 @@ bool NodeBuffer::IsEmpty() const
 	return _nodes_used_end == _nodes;
 }
 
-std::size_t NodeBuffer::GetSize() const
+int NodeBuffer::GetSize() const
 {
 	return core::get_index(_nodes, * _nodes_used_end);
 }
 
-std::size_t NodeBuffer::GetCapacity() const
+int NodeBuffer::GetCapacity() const
 {
 	return core::get_index(_nodes, * _nodes_end);
 }
 
-Node const & NodeBuffer::operator [] (std::size_t index) const
+Node const & NodeBuffer::operator [] (int index) const
 {
 	CRAG_VERIFY_OP(index, <, GetSize());
 	return _nodes[index];

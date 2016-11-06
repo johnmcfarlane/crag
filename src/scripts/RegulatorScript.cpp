@@ -32,7 +32,7 @@ namespace
 	CONFIG_DEFINE(max_mesh_generation_period_proportion, .75f);
 	CONFIG_DEFINE(max_mesh_generation_reaction_coefficient, 0.9975f);	// Multiply node count by this number when mesh generation is too slow.
 	
-	typedef std::size_t QuaterneCount;
+	typedef int QuaterneCount;
 	const QuaterneCount invalid_num_quaterne = std::numeric_limits<QuaterneCount>::max();
 
 	////////////////////////////////////////////////////////////////////////////////
@@ -250,7 +250,7 @@ void Tick(RegulatorArray const & regulators)
 		}
 	}
 	
-	auto worst_num_quaterne = std::numeric_limits<std::size_t>::max();
+	auto worst_num_quaterne = std::numeric_limits<int>::max();
 
 	for (auto regulator : regulators)
 	{

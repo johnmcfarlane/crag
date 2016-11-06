@@ -164,7 +164,7 @@ namespace geom
 		auto a = rng.GetFloatInclusive<S>(-1, 1);	// [-1, 1]
 		auto o = std::sqrt(h * h - a * a);
 
-		auto theta = rng.GetFloat<S>(PI * 2);	// [0, 2 * PI)
+		auto theta = rng.GetFloat(static_cast<S>(PI * 2));	// [0, 2 * PI)
 		return geom::Vector<S, 3>(o * std::cos(theta), o * std::sin(theta), a);
 	}
 

@@ -167,7 +167,7 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////
 // Surrounding functions
 
-Surrounding::Surrounding(size_t max_num_quaterne)
+Surrounding::Surrounding(int max_num_quaterne)
 : _node_buffer(max_num_quaterne * num_nodes_per_quaterna)
 , _quaterna_buffer(max_num_quaterne)
 , _target_num_quaterne(std::min(profile_mode ? profile_num_quaterne : 0, static_cast<int>(max_num_quaterne)))
@@ -286,7 +286,7 @@ PointBuffer & Surrounding::GetPoints()
 
 int Surrounding::GetNumNodesUsed() const
 {
-	return static_cast<std::size_t>(_node_buffer.GetSize());
+	return _node_buffer.GetSize();
 }
 
 int Surrounding::GetNumQuaternaUsed() const
@@ -863,7 +863,7 @@ void Surrounding::FixUpDecreasedNodes(int old_num_quaterne)
 	::FixUpDecreasedNodes(std::begin(_quaterna_buffer), std::end(_quaterna_buffer), old_num_quaterne, * new_nodes_used_end);
 	
 	// revise down the number of nodes in use
-	_node_buffer.Pop(old_nodes_used_end - new_nodes_used_end);
+	_node_buffer.Pop(static_cast<int>(old_nodes_used_end - new_nodes_used_end));
 	ASSERT(new_nodes_used_end == std::end(_node_buffer));
 	
 	CRAG_VERIFY(* this);

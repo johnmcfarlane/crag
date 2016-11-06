@@ -28,7 +28,7 @@ namespace core
 		static_assert(sizeof(T) >= sizeof(Node), "size of value_type must be greater than that of a pointer");
 
 	public:
-		typedef size_t size_type;
+		typedef int size_type;
 		typedef T value_type;
 
 		////////////////////////////////////////////////////////////////////////
@@ -168,9 +168,9 @@ namespace core
 		}
 
 		// returns the maximum count of objects
-		constexpr size_type capacity() const noexcept
+		constexpr int capacity() const noexcept
 		{
-			return _array_end - _array;
+			return core::get_index(_array, *_array_end);
 		}
 
 		constexpr bool empty() const noexcept
@@ -183,9 +183,9 @@ namespace core
 			return _array[index];
 		}
 
-		constexpr size_type get_index(value_type const & element) const noexcept
+		constexpr int get_index(value_type const & element) const noexcept
 		{
-			return & element - _array;
+			return core::get_index(_array, element);
 		}
 
 #if defined(CRAG_VERIFY_ENABLED)
@@ -240,7 +240,7 @@ namespace core
 
 #if defined(CRAG_RELEASE)
 			// round capacity up to nearest page size
-			size_t required_num_bytes = RoundToPageSize(sizeof(value_type) * max_num_elements);
+			size_type required_num_bytes = RoundToPageSize(sizeof(value_type) * max_num_elements);
 			max_num_elements = required_num_bytes / sizeof(value_type);
 #endif
 
@@ -260,13 +260,13 @@ namespace core
 		{
 			if (_num_allocated != 0)
 			{
-				DEBUG_BREAK("object pool destroyed with " SIZE_T_FORMAT_SPEC " object remaining", _num_allocated);
+				DEBUG_BREAK("object pool destroyed with %d object remaining", _num_allocated);
 			}
 
 			FreePage(_array, get_allocation_size(capacity()));
 		}
 
-		size_t get_allocation_size(size_t capacity) const
+		int get_allocation_size(int capacity) const
 		{
 			return RoundToPageSize(sizeof(value_type) * capacity);
 		}

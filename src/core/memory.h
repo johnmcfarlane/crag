@@ -29,12 +29,12 @@ void DebugCheckMemory(int line, char const * filename);
 
 // ZeroMemory
 
-inline void ZeroMemory(char * ptr, size_t num_bytes)
+inline void ZeroMemory(char * ptr, int num_bytes)
 {
 	memset(static_cast<void *>(ptr), 0, num_bytes);
 }
 
-template<typename T> inline void ZeroArray(T * object_ptr, std::size_t count)
+template<typename T> inline void ZeroArray(T * object_ptr, int count)
 {
 	ZeroMemory(reinterpret_cast<char *>(object_ptr), sizeof(T) * count);
 }
@@ -52,7 +52,7 @@ namespace crag
 	namespace core
 	{
 		template <typename T>
-		bool IsAligned(T const * ptr, std::size_t alignment)
+		bool IsAligned(T const * ptr, int alignment)
 		{
 			ASSERT(alignment > 0);
 
@@ -71,7 +71,7 @@ namespace crag
 ////////////////////////////////////////////////////////////////////////////////
 // Aligned Allocation
 
-void * Allocate(size_t num_bytes, size_t alignment = sizeof(void *));
+void * Allocate(int num_bytes, int alignment = sizeof(void *));
 void Free(void * allocation);
 void CheckMemory();
 
@@ -79,8 +79,8 @@ void CheckMemory();
 // Page Allocations
 
 // size of system page size
-size_t RoundToPageSize(size_t num_bytes);
-size_t GetPageSize();
+int RoundToPageSize(int num_bytes);
+int GetPageSize();
 
-void * AllocatePage(size_t num_bytes);
-void FreePage(void * allocation, size_t num_bytes);
+void * AllocatePage(int num_bytes);
+void FreePage(void * allocation, int num_bytes);
