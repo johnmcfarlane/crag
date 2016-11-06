@@ -425,9 +425,3 @@ else ()
 	set(CMAKE_EXE_LINKER_FLAGS "-g")
 	target_link_libraries(crag "dl" "pthread" "stdc++" "m")
 endif ()
-
-######################################################################
-# pull external project, fixed_point
-
-#include (${CRAG_SOURCE_DIRECTORY}/PrecompiledHeader.cmake)
-#add_precompiled_header(crag ${CRAG_SOURCE_DIRECTORY}/pch.h)
