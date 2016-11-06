@@ -426,9 +426,6 @@ else ()
 	target_link_libraries(crag "dl" "pthread" "stdc++" "m")
 endif ()
 
-target_include_directories(crag PRIVATE "${CRAG_SOURCE_DIRECTORY}")
-target_include_directories(crag SYSTEM PRIVATE "${CRAG_INCLUDE_DIRECTORIES}")
-
 ######################################################################
 # pull external project, fixed_point
 
