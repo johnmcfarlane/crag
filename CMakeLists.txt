@@ -383,13 +383,40 @@ if (${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
 	target_include_directories(crag SYSTEM PRIVATE "${GLEW_INCLUDE_DIR}")
 	target_link_libraries(crag "${GLEW_LIB}")
 
-	add_custom_command(TARGET crag POST_BUILD
-			COMMAND ${CMAKE_COMMAND} -E copy_if_different
-			"${SDL2_DLL}" $<TARGET_FILE_DIR:crag>)
+	set(CRAG_TARGET_FILE_DIR $<TARGET_FILE_DIR:crag>)
 
 	add_custom_command(TARGET crag POST_BUILD
 			COMMAND ${CMAKE_COMMAND} -E copy_if_different
-			"${SDL2_IMAGE_DLL}" $<TARGET_FILE_DIR:crag>)
+			"${SDL2_DLL}" "${CRAG_TARGET_FILE_DIR}")
+
+	add_custom_command(TARGET crag POST_BUILD
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different
+			"${SDL2_README}" "${CRAG_TARGET_FILE_DIR}")
+
+	add_custom_command(TARGET crag POST_BUILD
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different
+			"${SDL2_IMAGE_DLL}" "${CRAG_TARGET_FILE_DIR}")
+
+	add_custom_command(TARGET crag POST_BUILD
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different
+			"${CMAKE_CURRENT_SOURCE_DIR}/README.md" "${CRAG_TARGET_FILE_DIR}")
+
+	add_custom_command(TARGET crag POST_BUILD
+			COMMAND ${CMAKE_COMMAND} -E copy_directory
+			${CMAKE_SOURCE_DIR}/assets ${CRAG_TARGET_FILE_DIR}/assets)
+
+	add_custom_target(zip
+			DEPENDS crag
+			COMMAND
+				cd "${CRAG_TARGET_FILE_DIR}"
+			COMMAND
+				${CMAKE_COMMAND} -E tar "cfv" "../crag.zip" --format=zip
+				"${CRAG_TARGET_FILE_DIR}/SDL2.dll"
+				"${CRAG_TARGET_FILE_DIR}/SDL2_image.dll"
+				"${CRAG_TARGET_FILE_DIR}/README-SDL.txt"
+				"${CRAG_TARGET_FILE_DIR}/crag.exe"
+				"${CRAG_TARGET_FILE_DIR}/README.md"
+				"${CRAG_TARGET_FILE_DIR}/assets")
 else ()
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-exceptions -fno-unwind-tables -Wall -Wextra -Wfatal-errors -Werror")
 	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fno-rtti -Ofast")
