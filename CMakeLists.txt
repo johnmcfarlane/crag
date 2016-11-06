@@ -1,16 +1,22 @@
-cmake_minimum_required(VERSION 2.8.4)
-#cmake_policy(SET CMP0059 NEW)
+cmake_minimum_required(VERSION 2.8.12)
+
+if (POLICY CMP0059)
+cmake_policy(SET CMP0059 NEW)
+endif ()
+if (POLICY CMP0046)
+cmake_policy(SET CMP0046 NEW)
+endif ()
+
 project(crag)
 
-set(WARNING_FLAGS "-Wall -Wextra -Wfatal-errors -Werror")
-set(MACRO_FLAGS "-DdSINGLE -D__STRICT_ANSI__")
-set(OPT_FLAGS "-fno-exceptions -fno-unwind-tables")
+include("cmake/fixed_point.cmake")
+include("cmake/GLEW.cmake")
+include("cmake/ODE.cmake")
+include("cmake/SDL2.cmake")
+include("cmake/SDL2_image.cmake")
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${WARNING_FLAGS} ${MACRO_FLAGS} ${OPT_FLAGS} -std=c++14 -pthread")
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DPROFILE -O0 -g")
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DNDEBUG -fno-rtti -Ofast")
-set(CMAKE_CXX_FLAGS_PROFILE "${CMAKE_CXX_FLAGS_RELEASE} -g")
-set(CMAKE_EXE_LINKER_FLAGS "-g")
+######################################################################
+# crag executable
 
 set(CRAG_SOURCE_DIRECTORY "src")
 
@@ -336,24 +342,68 @@ set(SOURCE_FILES
 
 add_executable(crag ${SOURCE_FILES})
 
-find_library(SDL2_LIBRARY SDL2)
-find_library(SDL2_IMAGE_LIBRARY SDL2_image)
-find_library(ODE_LIBRARY ode /usr/lib)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D__STRICT_ANSI__")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DNDEBUG")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DPROFILE")
+set(CMAKE_CXX_FLAGS_PROFILE "${CMAKE_CXX_FLAGS_RELEASE} -DPROFILE")
 
-if (CRAG_RPI)
+target_include_directories(crag PRIVATE ${CRAG_SOURCE_DIRECTORY})
+
+add_dependencies(crag fixed_point opende sdl2 sdl2_image)
+target_include_directories(crag SYSTEM PRIVATE "${FIXED_POINT_INCLUDE_DIR}" "${ODE_INCLUDE_DIR}" "${SDL2_INCLUDE_DIR}" "${SDL2_IMAGE_INCLUDE_DIR}")
+target_link_libraries(crag "${SDL2_LIBRARY}" "${SDL2_IMAGE_LIBRARY}" "${SDL2_MAIN_LIBRARY}")
+target_link_libraries(crag debug "${ODE_LIBRARY_DEBUG}")
+target_link_libraries(crag optimized "${ODE_LIBRARY_OPTIMIZED}")
+
+# Graphics library
+find_package(OpenGL)
+if (OPENGL_FOUND)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DCRAG_GL")
+	target_link_libraries(crag "${OPENGL_LIBRARIES}")
+else ()
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DCRAG_GLES")
+	find_library(GLES2_LIBRARY GLESv2 "/opt/vc/lib")
+	target_link_libraries(crag "${GLES2_LIBRARY}")
+endif ()
+
+# Raspberry Pi
+find_library(BCM_HOST bcm_host /opt/vc/lib)
+if (BCM_HOST)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DCRAG_RPI")
+	target_include_directories(crag SYSTEM PRIVATE "/opt/vc/include")
+	target_link_libraries(crag "${BCM_HOST}" "rt")
+endif (BCM_HOST)
 
-	include_directories("${CRAG_SOURCE_DIRECTORY}" "fixed_point/include" "include/SDL2" "/opt/vc/include")
+# Windows or Linux
+if (${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4 /errorReport:prompt /nologo")  # /WX
+	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")                                 # /GL /LTCG
 
-	find_library(BCM_HOST bcm_host /opt/vc/lib)
-	find_library(GLES2_LIBRARY GLESv2 /opt/vc/lib)
-	target_link_libraries(crag ${SDL2_LIBRARY} ${SDL2_IMAGE_LIBRARY} ${ODE_LIBRARY} ${GLES2_LIBRARY} ${BCM_HOST} "dl" "pthread" "stdc++" "m" "rt")
-else (CRAG_RPI)
-	include_directories("${CRAG_SOURCE_DIRECTORY}" "fixed_point/include" "/usr/include/SDL2" "include/SDL2")
+	add_dependencies(crag glew)
+	target_include_directories(crag SYSTEM PRIVATE "${GLEW_INCLUDE_DIR}")
+	target_link_libraries(crag "${GLEW_LIB}")
 
-	find_package(OpenGL REQUIRED)
-	target_link_libraries(crag ${SDL2_LIBRARY} ${SDL2_IMAGE_LIBRARY} ${ODE_LIBRARY} ${OPENGL_LIBRARIES} "dl" "pthread" "stdc++" "m")
-endif (CRAG_RPI)
+	add_custom_command(TARGET crag POST_BUILD
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different
+			"${SDL2_DLL}" $<TARGET_FILE_DIR:crag>)
 
-include (${CRAG_SOURCE_DIRECTORY}/PrecompiledHeader.cmake)
-add_precompiled_header(crag ${CRAG_SOURCE_DIRECTORY}/pch.h)
+	add_custom_command(TARGET crag POST_BUILD
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different
+			"${SDL2_IMAGE_DLL}" $<TARGET_FILE_DIR:crag>)
+else ()
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-exceptions -fno-unwind-tables -Wall -Wextra -Wfatal-errors -Werror")
+	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fno-rtti -Ofast")
+	set(CMAKE_CXX_FLAGS_PROFILE "${CMAKE_CXX_FLAGS_RELEASE} -g")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -pthread")
+	set(CMAKE_EXE_LINKER_FLAGS "-g")
+	target_link_libraries(crag "dl" "pthread" "stdc++" "m")
+endif ()
+
+target_include_directories(crag PRIVATE "${CRAG_SOURCE_DIRECTORY}")
+target_include_directories(crag SYSTEM PRIVATE "${CRAG_INCLUDE_DIRECTORIES}")
+
+######################################################################
+# pull external project, fixed_point
+
+#include (${CRAG_SOURCE_DIRECTORY}/PrecompiledHeader.cmake)
+#add_precompiled_header(crag ${CRAG_SOURCE_DIRECTORY}/pch.h)
