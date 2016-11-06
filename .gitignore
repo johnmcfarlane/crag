@@ -31,6 +31,8 @@ Makefile
 *.log
 *.obj
 *.pdb
+Release/
+Debug/
 *.sln
 *.suo
 *.tlog
@@ -38,3 +40,4 @@ Makefile
 *.VC.VC.opendb
 *.vcxproj
 *.vcxproj.filters
+*.zip
