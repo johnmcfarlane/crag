@@ -2,28 +2,49 @@
 
 ## Introduction
 
-This file details how to build and run [Crag](https://github.com/johnmcfarlane/crag) on PCs running [Debian](https://www.debian.org/) GNU Linux.
-It is tested against [Debian 8.1](http://releases.ubuntu.com/trusty/) but should be straight-forward to get working on recent [Ubuntu](https://www.debian.org/releases/jessie/) desktop releases.
+### Distributions
 
-See [README-rpi.md] for instructions targeted at Raspberry Pi.
+Crag is known to run on amd64 builds of 
+[Debian Jessie](https://www.debian.org/distrib/), [Fedora 24](https://getfedora.org/en/workstation/),
+[Ubuntu 14.04](http://releases.ubuntu.com/trusty/), [Ubuntu 16.04](http://releases.ubuntu.com/16.04.1/) and on
+[Raspberry Pi](http://www.raspberrypi.org/) builds of [Raspbian Jessie](https://www.raspberrypi.org/downloads/raspbian/).
 
-## Setup and Install
+### Compilers
+
+Crag requires G++ 4.9 or Clang++ 3.5.
+
+## Preparation
 
 1. Install the necessary packages:
 
+   On Debian / Ubuntu:
+
    ```
-   sudo apt-get install git mercurial g++ cmake automake libode-sp-dev libglu1-mesa-dev xorg-dev libsdl2-dev libsdl2-image-dev libode-sp-dev
+   sudo apt-get install automake cmake libglu1-mesa-dev libtool
    ```
 
-   Crag is regularly tested against G++ 4.9 and Clang 3.5.
+   On Raspbian:
+   ```
+   sudo apt-get install automake libtool
+   ```
 
-2. Clone the project using the instructions in [the main README.md](README.md).
+   On Fedora:
+   ```
+   sudo yum install automake gcc-c++ cmake libtool mesa-libGL-devel mesa-libGLU-devel
+   ```
+
+2. Clone the project:
+
+   ```
+   git clone https://github.com/johnmcfarlane/crag.git
+   ```
 
 ## Run
 
 1. Use cmake to generate a release build Makefile:
 
    ```
+   cd crag
    cmake -DCMAKE_BUILD_TYPE=Release
    ```
 
@@ -32,8 +53,6 @@ See [README-rpi.md] for instructions targeted at Raspberry Pi.
    ```
    make
    ```
-
-   (You can speed up compilation on multicore systems using the [jobs](https://www.gnu.org/software/make/manual/html_node/Parallel.html) option.)
 
 3. Run:
 

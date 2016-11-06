@@ -33,16 +33,15 @@ This archive contains a copy of the demo and its necessary assets developed agai
 The project is currently hosted on [GitHub](https://github.com/johnmcfarlane/crag).
 
 ```
-git clone https://github.com/johnmcfarlane/crag.git --recursive
+git clone https://github.com/johnmcfarlane/crag.git
 ```
 
 ## Build/Run
 
 Instructions are available for the following platforms:
 
-- [Ubuntu GNU/Linux](README-debian.md) on PC
-- [Raspberry Pi](README-rpi.md)
-- [Windows](vs/README.md) using MSVC++
+- [GNU/Linux](README-linux.md) on PC and Raspberry Pi
+- [Windows](README-windows.md) using MSVC++
 - [Android](android/README.md)
 
 ## Licencing
