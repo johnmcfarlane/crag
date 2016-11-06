@@ -1,0 +1,24 @@
+dist: trusty
+sudo: required
+
+language: cpp
+
+os:
+- linux
+#- osx
+
+compiler:
+- gcc
+- clang
+
+env:
+- BUILD_TYPE=Release
+- BUILD_TYPE=Debug
+
+before_install:
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then source .travis-setup-linux.sh ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then source .travis-setup-osx.sh ; fi
+
+script:
+    - cmake -DCMAKE_BUILD_TYPE=${BUILD_TYPE} .
+    - make --jobs=4

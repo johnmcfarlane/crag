@@ -1,5 +1,7 @@
 # Instructions on how to build Crag for Windows.
 
+[![Build status](https://ci.appveyor.com/api/projects/status/b1x763k4ydpiwyuu/branch/develop?svg=true)](https://ci.appveyor.com/project/johnmcfarlane/crag/branch/develop)
+
 ## Introduction
 
 This page provides information about building Crag under Windows. 
