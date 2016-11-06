@@ -9,6 +9,10 @@ endif ()
 
 project(crag)
 
+######################################################################
+# dependencies
+
+include("cmake/common.cmake")
 include("cmake/fixed_point.cmake")
 include("cmake/GLEW.cmake")
 include("cmake/ODE.cmake")
@@ -16,7 +20,7 @@ include("cmake/SDL2.cmake")
 include("cmake/SDL2_image.cmake")
 
 ######################################################################
-# crag executable
+# crag source files
 
 set(CRAG_SOURCE_DIRECTORY "src")
 
@@ -340,7 +344,70 @@ set(SOURCE_FILES
     ${CRAG_SOURCE_DIRECTORY}/pch.cpp
     ${CRAG_SOURCE_DIRECTORY}/pch.h)
 
-add_executable(crag ${SOURCE_FILES})
+set(DOC_FILES
+	"COPYING"
+	"README.md" 
+	"README-linux.md" 
+	"README-windows.md"
+)
+
+set(SCRIPT_FILES
+	"CMakeLists.txt"
+	"cmake/fixed_point.cmake" 
+	"cmake/GLEW.cmake" 
+	"cmake/ODE.cmake" 
+	"cmake/SDL2.cmake" 
+	"cmake/SDL2_image.cmake" 
+	".editorconfig" 
+	".gitignore" 
+	".travis-setup-linux.sh" 
+	".travis-setup-osx.sh"
+	".travis.yml"
+)
+
+set(ASSET_FILES
+	assets
+	assets/font_bitmap.bmp
+	assets/glsl
+	assets/glsl/cgtest
+	assets/glsl/cgtestf
+	assets/glsl/cgtestv
+	assets/glsl/common.frag
+	assets/glsl/common.glsl
+	assets/glsl/common.vert
+	assets/glsl/disk.frag
+	assets/glsl/disk.vert
+	assets/glsl/light_bg.glsl
+	assets/glsl/light_common.glsl
+	assets/glsl/light_fg_soft.glsl
+	assets/glsl/light_fg_solid.glsl
+	assets/glsl/poly.frag
+	assets/glsl/poly.vert
+	assets/glsl/screen.frag
+	assets/glsl/screen.vert
+	assets/glsl/shadow.frag
+	assets/glsl/shadow.vert
+	assets/glsl/skybox.frag
+	assets/glsl/skybox.vert
+	assets/glsl/sphere.frag
+	assets/glsl/sphere.vert
+	assets/glsl/sprite.frag
+	assets/glsl/sprite.vert
+	assets/skybox
+	assets/skybox/back.bmp
+	assets/skybox/bottom.bmp
+	assets/skybox/front.bmp
+	assets/skybox/left.bmp
+	assets/skybox/right.bmp
+	assets/skybox/top.bmp
+)
+
+set(PROJECT_FILES ${SOURCE_FILES} ${DOC_FILES} ${SCRIPT_FILES} ${ASSET_FILES})
+
+######################################################################
+# crag executable
+
+add_executable(crag ${PROJECT_FILES})
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D__STRICT_ANSI__")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DNDEBUG")
@@ -383,13 +450,40 @@ if (${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
 	target_include_directories(crag SYSTEM PRIVATE "${GLEW_INCLUDE_DIR}")
 	target_link_libraries(crag "${GLEW_LIB}")
 
-	add_custom_command(TARGET crag POST_BUILD
-			COMMAND ${CMAKE_COMMAND} -E copy_if_different
-			"${SDL2_DLL}" $<TARGET_FILE_DIR:crag>)
+	set(CRAG_TARGET_FILE_DIR $<TARGET_FILE_DIR:crag>)
 
 	add_custom_command(TARGET crag POST_BUILD
 			COMMAND ${CMAKE_COMMAND} -E copy_if_different
-			"${SDL2_IMAGE_DLL}" $<TARGET_FILE_DIR:crag>)
+			"${SDL2_DLL}" "${CRAG_TARGET_FILE_DIR}")
+
+	add_custom_command(TARGET crag POST_BUILD
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different
+			"${SDL2_README}" "${CRAG_TARGET_FILE_DIR}")
+
+	add_custom_command(TARGET crag POST_BUILD
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different
+			"${SDL2_IMAGE_DLL}" "${CRAG_TARGET_FILE_DIR}")
+
+	add_custom_command(TARGET crag POST_BUILD
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different
+			"${CMAKE_CURRENT_SOURCE_DIR}/README.md" "${CRAG_TARGET_FILE_DIR}")
+
+	add_custom_command(TARGET crag POST_BUILD
+			COMMAND ${CMAKE_COMMAND} -E copy_directory
+			${CMAKE_SOURCE_DIR}/assets ${CRAG_TARGET_FILE_DIR}/assets)
+
+	add_custom_target(zip
+			DEPENDS crag
+			COMMAND
+				cd "${CRAG_TARGET_FILE_DIR}"
+			COMMAND
+				${CMAKE_COMMAND} -E tar "cfv" "../crag.zip" --format=zip
+				"${CRAG_TARGET_FILE_DIR}/SDL2.dll"
+				"${CRAG_TARGET_FILE_DIR}/SDL2_image.dll"
+				"${CRAG_TARGET_FILE_DIR}/README-SDL.txt"
+				"${CRAG_TARGET_FILE_DIR}/crag.exe"
+				"${CRAG_TARGET_FILE_DIR}/README.md"
+				"${CRAG_TARGET_FILE_DIR}/assets")
 else ()
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-exceptions -fno-unwind-tables -Wall -Wextra -Wfatal-errors -Werror")
 	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fno-rtti -Ofast")
@@ -399,11 +493,8 @@ else ()
 	target_link_libraries(crag "dl" "pthread" "stdc++" "m")
 endif ()
 
-target_include_directories(crag PRIVATE "${CRAG_SOURCE_DIRECTORY}")
-target_include_directories(crag SYSTEM PRIVATE "${CRAG_INCLUDE_DIRECTORIES}")
+# Organize VS Solution
 
-######################################################################
-# pull external project, fixed_point
-
-#include (${CRAG_SOURCE_DIRECTORY}/PrecompiledHeader.cmake)
-#add_precompiled_header(crag ${CRAG_SOURCE_DIRECTORY}/pch.h)
+source_group_by_folder("${PROJECT_FILES}")
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT crag)
