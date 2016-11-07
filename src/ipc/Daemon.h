@@ -50,7 +50,7 @@ namespace ipc
 		////////////////////////////////////////////////////////////////////////////////
 		// functions
 		
-		Daemon(size_t ring_buffer_size)
+		Daemon(int ring_buffer_size)
 		: _engine(nullptr)
 		, _messages(ring_buffer_size)
 		, _state(State::initialized)

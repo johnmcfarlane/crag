@@ -22,10 +22,10 @@ using namespace form;
 /////////////////////////////////////////////////////////////////
 // Scene
 
-Scene::Scene(size_t min_num_quaterne, size_t max_num_quaterne)
+Scene::Scene(int min_num_quaterne, int max_num_quaterne)
 : _surrounding(new Surrounding(max_num_quaterne))
 {
-	_surrounding->SetTargetNumQuaterna(int(min_num_quaterne));
+	_surrounding->SetTargetNumQuaterna(min_num_quaterne);
 }
 
 Scene::~Scene()

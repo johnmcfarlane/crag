@@ -120,7 +120,7 @@ namespace gfx
 			_vbo.Bind();
 			
 			// calculate number of vertices
-			_num_vertices = std::distance(vertices_begin, vertices_end);
+			_num_vertices = core::get_index(vertices_begin, *vertices_end);
 
 			// expand vertex buffer as necessary
 			if (_num_vertices > _max_num_vertices)

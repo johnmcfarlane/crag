@@ -53,7 +53,7 @@ namespace physics
 	typedef geom::Transformation<Scalar> Transformation;
 	typedef geom::Triangle<Scalar, 3> Triangle3;
 
-	using ElementIndex = dTriIndex;
+	using ElementIndex = int;
 	typedef gfx::Mesh<gfx::PlainVertex, ElementIndex> Mesh;
 	
 	inline void Convert(dVector3 & lhs, Vector3 const & rhs)

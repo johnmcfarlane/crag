@@ -35,7 +35,7 @@ namespace
 	// called when dlmalloc hits an error which doesn't crash it
 	void OnMemoryError()
 	{
-		size_t const check_memory_message_size = 4096;
+		auto const check_memory_message_size = 4096;
 		char check_memory_message[check_memory_message_size];
 		snprintf(check_memory_message, check_memory_message_size, "memory corruption detected by %s:%d", check_file, check_line);
 		puts(check_memory_message);
@@ -92,7 +92,7 @@ void DebugCheckMemory(int, char const *)
 ////////////////////////////////////////////////////////////////////////////////
 // Alignment-friendly allocation
 
-void * Allocate(size_t num_bytes, size_t alignment)
+void * Allocate(int num_bytes, int alignment)
 {
 #if defined(CRAG_USE_DLMALLOC)
 	return dlmemalign(alignment, num_bytes);
@@ -114,7 +114,7 @@ void * Allocate(size_t num_bytes, size_t alignment)
 		return allocation;
 		
 	case EINVAL:
-		DEBUG_BREAK("alignment, " SIZE_T_FORMAT_SPEC ", is not a power of two, or is less than minimum, " SIZE_T_FORMAT_SPEC, alignment, sizeof(void*));
+		DEBUG_BREAK("alignment, %d, is not a power of two, or is less than minimum, %d", alignment, sizeof(void*));
 		break;
 		
 	case ENOMEM:
@@ -142,15 +142,15 @@ void Free(void * allocation)
 ////////////////////////////////////////////////////////////////////////////////
 // Page Alignment - large chunks of memory
 
-size_t RoundToPageSize(size_t required_bytes)
+int RoundToPageSize(int required_bytes)
 {
-	size_t page_mask = GetPageSize() - 1;
+	auto page_mask = GetPageSize() - 1;
 	return (required_bytes + (page_mask - 1)) & ~ page_mask;
 }
 
-size_t GetPageSize()
+int GetPageSize()
 {
-	static size_t page_size = 0;
+	static auto page_size = 0;
 	if (page_size == 0)
 	{
 #if defined(CRAG_OS_WINDOWS)
@@ -168,7 +168,7 @@ size_t GetPageSize()
 	return page_size;
 }
 
-void * AllocatePage(size_t num_bytes)
+void * AllocatePage(int num_bytes)
 {
 	// check allocation size is rounded up correctly
 	ASSERT((num_bytes & (GetPageSize() - 1)) == 0);
@@ -185,11 +185,11 @@ void * AllocatePage(size_t num_bytes)
 	if (p == nullptr)
 	{
 #if defined(CRAG_USE_DLMALLOC)
-		DEBUG_BREAK("dlvalloc(" SIZE_T_FORMAT_SPEC ") failed with error code, %X", num_bytes, errno);
+		DEBUG_BREAK("dlvalloc(%d) failed with error code, %X", num_bytes, errno);
 #elif defined(CRAG_OS_WINDOWS)
-		DEBUG_BREAK("AllocatePage(0, " SIZE_T_FORMAT_SPEC ", ...) failed with error code, %X", num_bytes, GetLastError());
+		DEBUG_BREAK("AllocatePage(0, %d, ...) failed with error code, %X", num_bytes, GetLastError());
 #else
-		DEBUG_BREAK("mmap(..., " SIZE_T_FORMAT_SPEC ", ...) failed with error code, %X", num_bytes, errno);
+		DEBUG_BREAK("mmap(..., %d, ...) failed with error code, %X", num_bytes, errno);
 #endif
 	}
 
@@ -197,7 +197,7 @@ void * AllocatePage(size_t num_bytes)
 }
 
 #if defined(CRAG_USE_DLMALLOC)
-void FreePage(void * allocation, size_t )
+void FreePage(void * allocation, int)
 {
 	ASSERT((reinterpret_cast<uintptr_t>(allocation) & (GetPageSize() - 1)) == 0);
 
@@ -205,7 +205,7 @@ void FreePage(void * allocation, size_t )
 }
 
 #elif defined(CRAG_OS_WINDOWS)
-void FreePage(void * allocation, size_t )
+void FreePage(void * allocation, int)
 {
 	ASSERT((reinterpret_cast<uintptr_t>(allocation) & (GetPageSize() - 1)) == 0);
 
@@ -215,13 +215,13 @@ void FreePage(void * allocation, size_t )
 	}
 }
 #else
-void FreePage(void * allocation, size_t num_bytes)
+void FreePage(void * allocation, int num_bytes)
 {
 	ASSERT((reinterpret_cast<uintptr_t>(allocation) & (GetPageSize() - 1)) == 0);
 
 	if (munmap(allocation, num_bytes) != 0)
 	{
-		DEBUG_BREAK("munmap(%p, " SIZE_T_FORMAT_SPEC ") failed with error code, %d", allocation, num_bytes, errno);
+		DEBUG_BREAK("munmap(%p, %d) failed with error code, %d", allocation, num_bytes, errno);
 	}
 }
 #endif

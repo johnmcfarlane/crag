@@ -162,15 +162,19 @@ namespace core
 	// Given an instance of TYPE which is contained in CLASS as MEMBER,
 	// returns the containing object of CLASS.
 	template <typename ITERATOR, typename ELEMENT>
-	std::size_t get_index(ITERATOR const begin, ELEMENT const & element)
+	int get_index(ITERATOR begin, ELEMENT const & element)
 	{
-		auto element_ptr = & element;
-		assert(element_ptr >= begin);
+        auto const & begin_element = *begin;
+        auto const * begin_ptr = &begin_element;
+        auto const * element_ptr = &element;
+
+        auto index = std::distance(begin_ptr, element_ptr);
+
+        assert(index >= 0);
+        assert(index <= std::numeric_limits<int>::max());
+        assert(begin_ptr + index == element_ptr);
 		
-		auto index = element_ptr - begin;
-		assert(begin + index == element_ptr);
-		
-		return index;
+		return static_cast<int>(index);
 	}
 
 	//////////////////////////////////////////////////////////////////////

@@ -26,9 +26,10 @@ using namespace gfx;
 namespace
 {
 #if defined(DUMP_GLSL_ERRORS)
-	std::size_t GetNumLines(char const * source)
+	int GetNumLines(char const * source)
 	{
-		std::size_t num_lines = 1;
+		assert(source);
+		auto num_lines = 1;
 		for (;;)
 		{
 			switch (* source)
@@ -139,7 +140,7 @@ bool Shader::Init(std::initializer_list<char const *> filenames, GLenum shader_t
 
 	// load individual shader files
 	auto file_buffers = ReadFileBuffers(filenames);
-	int num_strings = file_buffers.size();
+	auto num_strings = static_cast<int>(file_buffers.size());
 
 	// generate array of pointers for GL
 	auto string_array = core::make_transform(file_buffers, [](app::FileResource const & lhs)

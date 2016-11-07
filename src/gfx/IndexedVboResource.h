@@ -201,8 +201,8 @@ namespace gfx
 			Bind();
 			
 			// calculate number of vertices and indices
-			auto num_vertices = std::distance(vertices_begin, vertices_end);
-			_num_indices = std::distance(indices_begin, indices_end);
+			auto num_vertices = core::get_index(vertices_begin, *vertices_end);
+			_num_indices = core::get_index(indices_begin, *indices_end);
 
 			// expand vertex buffer as necessary
 			if (num_vertices > _max_num_vertices)

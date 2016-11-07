@@ -48,7 +48,7 @@ namespace form
 		};
 
 		// Member functions
-		Surrounding(size_t max_num_quaterne);
+		Surrounding(int max_num_quaterne);
 		~Surrounding();
 		
 #if defined(CRAG_VERIFY_ENABLED)

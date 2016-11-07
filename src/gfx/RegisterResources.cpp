@@ -67,7 +67,7 @@ namespace
 					}
 				}
 			
-				ElementIndex index_base = polygon_vertices - vertices[0][0];
+				ElementIndex index_base = static_cast<int>(polygon_vertices - vertices[0][0]);
 				* (index ++) = index_base + 0;
 				* (index ++) = index_base + 1;
 				* (index ++) = index_base + 2;
@@ -129,7 +129,7 @@ namespace
 					poles[index_2] = v;
 					
 					auto & vertex = vertices[poles[2]][poles[1]][poles[0]];
-					return & vertex - * * vertices;
+					return core::get_index(* * vertices, vertex);
 				};
 				
 				* (index ++) = get_index(0, 0);

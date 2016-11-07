@@ -34,7 +34,7 @@ namespace core
 
 	public:
 		typedef BASE_CLASS value_type;
-		typedef size_t size_type;
+		typedef int size_type;
 		
 		// const_iterator
 		class const_iterator
@@ -86,7 +86,7 @@ namespace core
 		
 		size_type capacity() const
 		{
-			return size_type(_buffer_end) - size_type(_buffer_begin);
+			return static_cast<size_type>(reinterpret_cast<char const*>(_buffer_end) - reinterpret_cast<char const*>(_buffer_begin));
 		}
 		
 		// access
@@ -222,7 +222,7 @@ namespace core
 		// allocates memory for the object
 		value_type * allocate_object_memory(size_type source_size)
 		{
-			assert(source_size >= sizeof(value_type));
+			assert(source_size >= static_cast<int>(sizeof(value_type)));
 			size_type block_size = block::header_size + source_size;
 			
 			// Determine the beginning/end of the block where the object will live.
@@ -297,7 +297,7 @@ namespace core
 		
 		static size_type round_up(size_type num_bytes)
 		{
-			size_t mask = (sizeof(size_type) - 1);
+			auto mask = static_cast<size_type>(sizeof(size_type)) - 1;
 			return (num_bytes + mask) & ~ mask;
 		}
 		
@@ -327,7 +327,7 @@ namespace core
 		
 		void deallocate()
 		{
-			auto num_bytes = reinterpret_cast<char *>(_buffer_end) - reinterpret_cast<char *>(_buffer_begin);
+			auto num_bytes = static_cast<size_type>(reinterpret_cast<char const *>(_buffer_end) - reinterpret_cast<char const *>(_buffer_begin));
 			FreePage(_buffer_begin, num_bytes);
 		}
 		

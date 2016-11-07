@@ -131,7 +131,7 @@ void Engine::EnableAdjustNumQuaterna(bool enabled)
 	_enable_adjust_num_quaterna = enabled;
 }
 
-void Engine::OnSetRecommendedNumQuaterne(std::size_t recommented_num_quaterne)
+void Engine::OnSetRecommendedNumQuaterne(int recommented_num_quaterne)
 {
 	_requested_num_quaterne = recommented_num_quaterne;
 }
@@ -237,7 +237,7 @@ void Engine::AdjustNumQuaterna()
 	}
 	
 	// limit the range of quaterne counts
-	Clamp(_requested_num_quaterne, std::size_t(min_num_quaterne), std::size_t(max_num_quaterne));
+	Clamp(_requested_num_quaterne, min_num_quaterne, max_num_quaterne);
 	
 	// apply the recommended number
 	Surrounding & active_buffer = _scene.GetSurrounding();

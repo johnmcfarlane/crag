@@ -29,19 +29,19 @@ namespace form
 #endif
 		
 		// Member functions
-		NodeBuffer(size_t max_num_nodes);
+		NodeBuffer(int max_num_nodes);
 		~NodeBuffer();
 		
 		void Clear();
-		void Push(std::size_t num_nodes);
-		void Pop(std::size_t num_nodes);
+		void Push(int num_nodes);
+		void Pop(int num_nodes);
 		
 		void ResetNodeOrigins(Vector3 const & origin_delta);
 		
 		bool IsEmpty() const;
-		std::size_t GetSize() const;
-		std::size_t GetCapacity() const;
-		Node const & operator[] (std::size_t index) const;
+		int GetSize() const;
+		int GetCapacity() const;
+		Node const & operator[] (int index) const;
 		
 		Node const * begin() const;
 		Node const * end() const;

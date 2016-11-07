@@ -160,7 +160,7 @@ namespace
 		});
 
 		// get its vertex (or one past the end if not found)
-		auto index = std::distance(begin, match);
+		auto index = core::get_index(begin, *match);
 
 		// if no match found,
 		if (match == end)
@@ -194,7 +194,7 @@ namespace
 
 			for (auto source_index : source_indices)
 			{
-				ASSERT(source_index < source_vertices.size());
+				ASSERT(source_index < static_cast<int>(source_vertices.size()));
 				auto const & source_vertex = source_vertices[source_index];
 				auto destination_vertex = function(source_vertex);
 				
@@ -252,7 +252,7 @@ namespace
 			
 			for (int i = 0; i != 3; ++ i)
 			{
-				destination_indices.push_back(destination_vertices.size());
+				destination_indices.push_back(static_cast<int>(destination_vertices.size()));
 				
 				auto const & source_vertex = source_iterator[i];
 				destination_vertices.push_back(gfx::LitVertex

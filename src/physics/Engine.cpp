@@ -285,7 +285,7 @@ void Engine::CreateCollisions()
 	// This basically calls a callback for all the geoms that are quite close.
 	dSpaceCollide(space, reinterpret_cast<void *>(this), OnNearCollisionCallback);
 
-	STAT_SET(num_contacts, _contacts.size());
+	STAT_SET(num_contacts, static_cast<int>(_contacts.size()));
 }
 
 void Engine::CreateJoints()
