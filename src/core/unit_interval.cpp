@@ -46,7 +46,7 @@ template struct UnitIntervalTests<uint16_t>;
 template struct UnitIntervalTests<int16_t>;
 template struct UnitIntervalTests<uint32_t>;
 template struct UnitIntervalTests<int32_t>;
-#if (CRAG_ARCHITECTURE_WIDTH >= 64) && ! defined(CRAG_COMPILER_MSVC)
+#if (SG14_INT128_ENABLED)
 template struct UnitIntervalTests<uint64_t>;
 template struct UnitIntervalTests<int64_t>;
 #endif
