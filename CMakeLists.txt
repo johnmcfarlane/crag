@@ -366,9 +366,7 @@ set(SCRIPT_FILES
 )
 
 set(ASSET_FILES
-	assets
 	assets/font_bitmap.bmp
-	assets/glsl
 	assets/glsl/cgtest
 	assets/glsl/cgtestf
 	assets/glsl/cgtestv
@@ -393,7 +391,6 @@ set(ASSET_FILES
 	assets/glsl/sphere.vert
 	assets/glsl/sprite.frag
 	assets/glsl/sprite.vert
-	assets/skybox
 	assets/skybox/back.bmp
 	assets/skybox/bottom.bmp
 	assets/skybox/front.bmp
