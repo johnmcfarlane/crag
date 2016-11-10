@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include <fixed_point_utils.h>
+#include <sg14/fixed_point>
 
 namespace crag
 {
