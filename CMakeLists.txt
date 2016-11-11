@@ -366,9 +366,7 @@ set(SCRIPT_FILES
 )
 
 set(ASSET_FILES
-	assets
 	assets/font_bitmap.bmp
-	assets/glsl
 	assets/glsl/cgtest
 	assets/glsl/cgtestf
 	assets/glsl/cgtestv
@@ -393,7 +391,6 @@ set(ASSET_FILES
 	assets/glsl/sphere.vert
 	assets/glsl/sprite.frag
 	assets/glsl/sprite.vert
-	assets/skybox
 	assets/skybox/back.bmp
 	assets/skybox/bottom.bmp
 	assets/skybox/front.bmp
@@ -441,6 +438,13 @@ if (BCM_HOST)
 	target_link_libraries(crag "${BCM_HOST}" "rt")
 endif (BCM_HOST)
 
+# List files to accompany the binary
+set(CRAG_ARCHIVE_SOURCES
+	"${SDL2_README}"
+	"${CMAKE_CURRENT_SOURCE_DIR}/README.md")
+
+set(CRAG_TARGET_FILE_DIR $<TARGET_FILE_DIR:crag>)
+
 # Windows or Linux
 if (${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4 /WX /errorReport:prompt /nologo")
@@ -450,40 +454,9 @@ if (${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
 	target_include_directories(crag SYSTEM PRIVATE "${GLEW_INCLUDE_DIR}")
 	target_link_libraries(crag "${GLEW_LIB}")
 
-	set(CRAG_TARGET_FILE_DIR $<TARGET_FILE_DIR:crag>)
-
-	add_custom_command(TARGET crag POST_BUILD
-			COMMAND ${CMAKE_COMMAND} -E copy_if_different
-			"${SDL2_DLL}" "${CRAG_TARGET_FILE_DIR}")
-
-	add_custom_command(TARGET crag POST_BUILD
-			COMMAND ${CMAKE_COMMAND} -E copy_if_different
-			"${SDL2_README}" "${CRAG_TARGET_FILE_DIR}")
-
-	add_custom_command(TARGET crag POST_BUILD
-			COMMAND ${CMAKE_COMMAND} -E copy_if_different
-			"${SDL2_IMAGE_DLL}" "${CRAG_TARGET_FILE_DIR}")
-
-	add_custom_command(TARGET crag POST_BUILD
-			COMMAND ${CMAKE_COMMAND} -E copy_if_different
-			"${CMAKE_CURRENT_SOURCE_DIR}/README.md" "${CRAG_TARGET_FILE_DIR}")
-
-	add_custom_command(TARGET crag POST_BUILD
-			COMMAND ${CMAKE_COMMAND} -E copy_directory
-			${CMAKE_SOURCE_DIR}/assets ${CRAG_TARGET_FILE_DIR}/assets)
-
-	add_custom_target(zip
-			DEPENDS crag
-			COMMAND
-				cd "${CRAG_TARGET_FILE_DIR}"
-			COMMAND
-				${CMAKE_COMMAND} -E tar "cfv" "../crag.zip" --format=zip
-				"${CRAG_TARGET_FILE_DIR}/SDL2.dll"
-				"${CRAG_TARGET_FILE_DIR}/SDL2_image.dll"
-				"${CRAG_TARGET_FILE_DIR}/README-SDL.txt"
-				"${CRAG_TARGET_FILE_DIR}/crag.exe"
-				"${CRAG_TARGET_FILE_DIR}/README.md"
-				"${CRAG_TARGET_FILE_DIR}/assets")
+	list(APPEND CRAG_ARCHIVE_SOURCES
+		"${SDL2_DLL}"
+		"${SDL2_IMAGE_DLL}")
 else ()
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-exceptions -fno-unwind-tables -Wall -Wextra -Wfatal-errors -Werror")
 	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fno-rtti -Ofast")
@@ -493,8 +466,32 @@ else ()
 	target_link_libraries(crag "dl" "pthread" "stdc++" "m")
 endif ()
 
-# Organize VS Solution
+# Copy files to same directory as binary
+foreach(SOURCE ${CRAG_ARCHIVE_SOURCES})
+	add_custom_command(TARGET crag POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy_if_different
+		"${SOURCE}" "${CRAG_TARGET_FILE_DIR}")
+	get_filename_component(FILENAME "${SOURCE}" NAME)
+	list(APPEND CRAG_ARCHIVE_FILES "${CRAG_TARGET_FILE_DIR}/${FILENAME}")
+endforeach(SOURCE)
 
+list(APPEND CRAG_ARCHIVE_FILES 
+	"${CRAG_TARGET_FILE_DIR}/crag${CMAKE_EXECUTABLE_SUFFIX}"
+	"${CRAG_TARGET_FILE_DIR}/assets")
+
+add_custom_command(TARGET crag POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy_directory
+		${CMAKE_SOURCE_DIR}/assets ${CRAG_TARGET_FILE_DIR}/assets)
+
+add_custom_target(zip
+	DEPENDS crag
+	COMMAND
+	cd "${CRAG_TARGET_FILE_DIR}"
+	COMMAND
+	${CMAKE_COMMAND} -E tar "cfv" "../crag.zip" --format=zip
+	${CRAG_ARCHIVE_FILES})
+
+# Organize VS Solution
 source_group_by_folder("${PROJECT_FILES}")
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT crag)
