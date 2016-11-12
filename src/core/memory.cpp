@@ -241,6 +241,10 @@ void operator delete (void* ptr) throw ()
 {
 	Free(ptr);
 }
+void operator delete (void* ptr, std::size_t) throw ()
+{
+	Free(ptr);
+}
 
 void * operator new (std::size_t size, const std::nothrow_t &) throw()
 {
@@ -256,6 +260,10 @@ void * operator new[] (std::size_t size) throw (std::bad_alloc)
 	return Allocate(size);
 }
 void operator delete[] (void* ptr) throw ()
+{
+	Free(ptr);
+}
+void operator delete[] (void* ptr, std::size_t) throw ()
 {
 	Free(ptr);
 }
