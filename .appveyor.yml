@@ -1,0 +1,27 @@
+﻿version: 0.0.{build}
+
+image: Visual Studio 2015
+
+environment:
+  fast_finish: true     # set this flag to immediately finish build once one of the jobs fails.
+  matrix:
+    - platform: x86
+      configuration: Release
+      cmake_generator: "Visual Studio 14 2015"
+      msbuild_property: win32
+    - platform: x64
+      configuration: Release
+      cmake_generator: "Visual Studio 14 2015 Win64"
+      msbuild_property: x64
+
+build_script:
+- cmd: >-
+    cmake -G "%cmake_generator%" .
+
+    MSBuild.exe /maxcpucount /property:Configuration=Release /property:Platform=%msbuild_property% zip.vcxproj
+
+shallow_clone: true
+
+artifacts:
+- path: crag.zip
+  name: crag.zip
