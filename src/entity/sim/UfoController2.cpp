@@ -38,7 +38,7 @@ namespace
 	{
 		auto const & eye_transformation = pov.GetTransformation();
 		auto const & eye_translation = eye_transformation.GetTranslation();
-		auto const & screen_position = pov.PixelToWorld(geom::Cast<Scalar>(pixel_position));
+		auto const & screen_position = pov.PixelToWorld(static_cast<Vector2>(pixel_position));
 		return Ray3(eye_translation, screen_position - eye_translation);
 	}
 	
@@ -92,7 +92,8 @@ UfoController2::UfoController2(Entity & entity, std::shared_ptr<Entity> const & 
 , _thrust(thrust)
 {
 	auto & frustum = _pov.GetFrustum();
-	frustum.depth_range = { 1, 2 };
+	frustum.depth_range.x = 1;
+	frustum.depth_range.y = 2;
 
 	CRAG_VERIFY(* this);
 }

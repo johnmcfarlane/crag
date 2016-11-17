@@ -120,7 +120,7 @@ void UfoController1::ApplyTilt(Vector2 pointer_delta)
 	auto & body = core::StaticCast<physics::Body>(* location);
 	
 	auto resolution = app::GetResolution();
-	auto factor = ufo_controller1_sensitivity / geom::Magnitude(geom::Cast<float>(resolution));
+	auto factor = ufo_controller1_sensitivity / geom::Magnitude(static_cast<Vector2>(resolution));
 	Vector2 drag(pointer_delta.x * factor, pointer_delta.y * factor);
 	
 	auto touch_pad_right = geom::GetAxis(_camera_rotation, geom::Direction::right);
@@ -221,5 +221,5 @@ void UfoController1::HandleKeyboardEvent(SDL_Scancode scancode, bool down)
 
 void UfoController1::operator() (gfx::SetCameraEvent const & event)
 {
-	_camera_rotation = geom::Cast<Scalar>(event.transformation.GetRotation());
+	_camera_rotation = static_cast<Matrix33>(event.transformation.GetRotation());
 }

@@ -212,7 +212,7 @@ Vector3 Body::GetRelativePointVelocity(Vector3 const & point) const
 
 	Vector3 velocity;
 
-	dBodyGetRelPointVel (_body_handle, point.x, point.y, point.z, velocity.GetAxes());
+	dBodyGetRelPointVel (_body_handle, point.x, point.y, point.z, velocity.data());
 
 	return velocity;
 }
@@ -225,7 +225,7 @@ Vector3 Body::GetVelocity() const
 	}
 
 	Vector3 velocity;
-	dBodyGetRelPointVel (_body_handle, 0, 0, 0, velocity.GetAxes());
+	dBodyGetRelPointVel (_body_handle, 0, 0, 0, velocity.data());
 
 	return velocity;
 }

@@ -21,7 +21,7 @@ namespace gfx
 	{
 	public:
 		// functions
-		Pov();
+		Pov() = default;
 		Pov(Transformation const & transformation, Frustum const & frustum);
 		
 		void SetFrustum(Frustum const & frustum);

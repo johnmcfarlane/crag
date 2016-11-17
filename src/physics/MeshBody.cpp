@@ -41,7 +41,7 @@ MeshBody::MeshBody(Transformation const & transformation, Vector3 const * veloci
 	auto const & indices = mesh.GetIndices();
 	
 	dGeomTriMeshDataBuildSingle(_mesh_data,
-		vertices.front().pos.GetAxes(), static_cast<int>(sizeof(Mesh::value_type)), static_cast<int>(vertices.size()),
+		vertices.front().pos.data(), static_cast<int>(sizeof(Mesh::value_type)), static_cast<int>(vertices.size()),
 		indices.data(), static_cast<int>(indices.size()), static_cast<int>(sizeof(Mesh::index_type)));
 
 	dGeomTriMeshSetData(_collision_handle, _mesh_data);

@@ -17,11 +17,6 @@ using namespace gfx;
 ////////////////////////////////////////////////////////////////////////////////
 // gfx::Pov member definitions
 
-Pov::Pov()
-: _transformation(Transformation::Matrix44::Identity())
-{
-}
-
 Pov::Pov(Transformation const & transformation, Frustum const & frustum)
 : _transformation(transformation)
 , _frustum(frustum)
@@ -94,7 +89,7 @@ Vector2 Pov::WorldToScreen(Vector3 const & world_position) const
 
 Vector3 Pov::ScreenToWorld(Vector2 const & screen_position) const
 {
-	auto resolution = geom::Cast<float>(_frustum.resolution);
+	auto resolution = static_cast<Vector2>(_frustum.resolution);
 
 	Vector3 normalized(
 		2.f * (screen_position.x / resolution.x) - 1.f,
@@ -104,8 +99,8 @@ Vector3 Pov::ScreenToWorld(Vector2 const & screen_position) const
 	Vector4 clip(
 		screen_position.x,
 		screen_position.y,
-		-1,
-		1);
+		-1.f,
+		1.f);
 		
 	auto projection_matrix = Inverse(_frustum.CalcProjectionMatrix());
 	auto camera = projection_matrix * clip;

@@ -23,49 +23,46 @@ namespace geom
 	public:
 		typedef S Scalar;
 		
-		Vector() 
+		Vector() noexcept
 #if defined(CRAG_DEBUG)
 		: x(std::numeric_limits<S>::signaling_NaN())
 		, y(std::numeric_limits<S>::signaling_NaN())
 #endif
 		{ 
 		}
-		
-		Vector(Vector const & rhs) 
-		: Vector(rhs.x, rhs.y)
-		{ 
-		}
-		
-		Vector(S rhs_x, S rhs_y) 
-		: x(rhs_x)
-		, y(rhs_y)
-		{ 
+
+		template <typename RHS_S>
+		constexpr explicit Vector(Vector<RHS_S, 2> const & rhs) noexcept
+		: Vector(rhs.x, rhs.y) {
 		}
 
-		static constexpr std::size_t Size()
-		{
+		template <typename RHS_S>
+		constexpr explicit Vector(RHS_S const & rhs_x, RHS_S const & rhs_y) noexcept
+		: x(static_cast<S>(rhs_x))
+		, y(static_cast<S>(rhs_y)) {
+		}
+
+		static constexpr std::size_t size() noexcept {
 			return 3;
 		}
 		
 		// Returns vector as a C-style array. Very unsafe. 
-		S const * GetAxes() const
-		{
+		constexpr S const * data() const noexcept {
 			return reinterpret_cast<S const *>(this);
 		}	
-		S * GetAxes()
-		{
+		S * data() noexcept {
 			return reinterpret_cast<S *>(this);
 		}
 		
 		S const & operator [] (int index) const
 		{
 			ASSERT(index >= 0 && index < 2);
-			return GetAxes() [index];
+			return data() [index];
 		}
 		S & operator [] (int index)
 		{
 			ASSERT(index >= 0 && index < 2);
-			return GetAxes() [index];
+			return data() [index];
 		}
 		
 		static Vector Zero() 
@@ -82,15 +79,6 @@ namespace geom
 
 		S x, y;
 	};
-
-	// casts between 2d matrices of different scalar types
-	template <typename LHS_S, typename RHS_S>
-	Vector<LHS_S, 2> Cast(Vector<RHS_S, 2> const & rhs)
-	{
-		return Vector<LHS_S, 2>(
-			static_cast<LHS_S>(rhs.x),
-			static_cast<LHS_S>(rhs.y));
-	}
 
 	template <typename S>
 	Vector<S, 2> MakeVector(S x, S y)

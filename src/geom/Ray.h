@@ -67,20 +67,6 @@ namespace geom
 		return ray.position + ray.direction * proportion;
 	}
 
-	// catches pointless casts and bypasses them
-	template <typename S, int N>
-	Ray<S, N> const & Cast(Ray<S, N> const & rhs)
-	{
-		return rhs;
-	}
-
-	// casts between rays of different scalar types
-	template <typename LHS_S, typename RHS_S, int N>
-	typename std::enable_if<! std::is_same<LHS_S, RHS_S>::value, Ray<LHS_S, N>>::type Cast(Ray<RHS_S, N> const & rhs)
-	{
-		return Ray<LHS_S, N>(Cast<LHS_S>(rhs.position), Cast<LHS_S>(rhs.direction));
-	}
-	
 	template <typename S, int N>
 	bool operator==(Ray<S, N> const & lhs, Ray<S, N> const & rhs)
 	{

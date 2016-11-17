@@ -76,13 +76,13 @@ namespace
 				Random random (1);
 
 				geom::Sphere<float, 3> star;
-				float const * axes = star.center.GetAxes();
+				auto axes = star.center.data();
 				//float & star_x = axes[x_axis];
 				//float & star_y = axes[y_axis];
 				float const & star_z = axes[z_axis];
 
 				geom::Vector3f line_direction;
-				float * line_axes = line_direction.GetAxes();
+				auto line_axes = line_direction.data();
 				float & line_x = line_axes[x_axis];
 				float & line_y = line_axes[y_axis];
 				float & line_z = line_axes[z_axis];
@@ -161,7 +161,7 @@ namespace
 			star.center.z = random.GetFloatInclusive<float>() - .5f;
 			star.radius = Squared(random.GetFloatInclusive<float>());
 		
-			float const * axes = star.center.GetAxes();
+			auto axes = star.center.data();
 			float w = axes[axis];
 			if ((w > 0) != (pole != 0) || w == 0)
 			{

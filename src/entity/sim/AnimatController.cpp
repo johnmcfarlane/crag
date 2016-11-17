@@ -37,7 +37,7 @@ namespace
 	Ray3 ShiftedToSphereSurface(Ray3 const & ray)
 	{
 		Scalar t1, t2;
-		if (! geom::GetIntersection(Sphere3(Vector3::Zero(), 1), ray, t1, t2))
+		if (! geom::GetIntersection(Sphere3(Vector3::Zero(), 1.f), ray, t1, t2))
 		{
 			CRAG_DEBUG_DUMP(ray);
 			DEBUG_BREAK("GetIntersection failed:");

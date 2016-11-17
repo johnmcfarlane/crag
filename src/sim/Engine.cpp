@@ -128,7 +128,7 @@ Ray3 const & Engine::GetCamera() const
 void Engine::operator() (gfx::SetSpaceEvent const & event)
 {
 	// figure out the delta
-	auto delta = geom::Cast<Scalar>(event.space - _space);
+	auto delta = static_cast<Vector3>(event.space - _space);
 
 	// quit if there's no change
 	if (geom::MagnitudeSq(delta) == 0)
