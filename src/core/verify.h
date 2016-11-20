@@ -159,10 +159,22 @@ namespace crag
 		template <typename Type>
 		void VerifyRef(Type const & ref) noexcept
 		{
-			// a reference is everything a pointer is, plus it's non-null
-			CRAG_VERIFY_TRUE(& ref);
+			auto ptr = std::addressof(ref);
 
-			VerifyPtr(& ref);
+			// a reference is everything a pointer is, plus it's non-null
+			VerifyPtr(ptr);
+
+#if defined(CRAG_COMPILER_GCC)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Waddress"
+			if (ptr == nullptr)
+#pragma GCC diagnostic pop
+#else
+			if (ptr == nullptr)
+#endif
+			{
+				DEBUG_BREAK("reference is null: \"%p\"", ptr);
+			}
 		}
 
 		// void pointer
