@@ -42,8 +42,9 @@ Execute the following from the Windows Command Prompt (`cmd`):
 
    ```shell
    cmake .
-   MSBuild crag.sln
-   Debug/crag.exe
+   MSBuild.exe crag.sln
+   cd src
+   crag.exe
    ```
 
    or a 64-bit Release binary:
@@ -51,6 +52,15 @@ Execute the following from the Windows Command Prompt (`cmd`):
    64-bit Release
    ```shell
    cmake -G "Visual Studio 14 2015 Win64" .
-   MSBuild crag.sln /p:Platform=x64 /p:Configuration=Release
-   Release/crag.exe
+   MSBuild.exe crag.sln /p:Platform=x64 /p:Configuration=Release
+   cd src
+   crag.exe
+   ```
+
+4. Install:
+
+   ```
+   cmake -DCMAKE_INSTALL_PREFIX:PATH=some_place .
+   MSBuild.exe crag.sln
+   MSBuild.exe INSTALL.vcxproj
    ```
