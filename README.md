@@ -27,7 +27,7 @@ This package in known to work on a number of popular modern devices. It is prima
 
 ### Windows
 
-Download [[here](https://drive.google.com/file/d/0BzcKPEavdc2NQVVyMy1qSW9nTWs/edit?usp=sharing)].
+Search for *artifacts* [[here](https://ci.appveyor.com/project/johnmcfarlane/crag)].
 
 This archive contains a copy of the demo and its necessary assets developed against Windows 7. All files must be expanded and the appropriate C run-time libraries installed. Your best bet is to install [this Microsoft package](https://www.microsoft.com/en-us/download/details.aspx?id=40784) first.
 

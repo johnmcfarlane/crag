@@ -16,9 +16,13 @@ environment:
 
 build_script:
 - cmd: >-
-    cmake -G "%cmake_generator%" .
+    cmake -G "%cmake_generator%" -DCMAKE_INSTALL_PREFIX:PATH=crag .
 
-    MSBuild.exe /maxcpucount /property:Configuration=Release /property:Platform=%msbuild_property% zip.vcxproj
+    MSBuild.exe /maxcpucount /property:Configuration=Release /property:Platform=%msbuild_property% crag.sln
+    
+    MSBuild.exe INSTALL.vcxproj
+    
+    cmake -E tar "cfv" crag.zip --format=zip crag
 
 shallow_clone: true
 
