@@ -151,7 +151,7 @@ namespace geom
 		// types
 		
 		// the relative origin against which relative coordinates are offset
-		OriginType _origin = OriginType::Zero();
+		OriginType _origin;
 	};
 
 	////////////////////////////////////////////////////////////////////////////////

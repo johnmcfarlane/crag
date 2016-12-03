@@ -74,8 +74,8 @@ namespace geom
 
 		// if inputs are flipped, CrossProduct must be flipped also
 		auto cp = (TriMod(a2 + 1) == a1)
-			? geom::CrossProduct<S>
-			: core::Twizzle<Vector, Vector const &, geom::CrossProduct<S>>;
+			? glm::cross<S>
+			: core::Twizzle<Vector, Vector const &, glm::cross<S>>;
 
 		// set axes apart from one another
 		Vector axis3 = Normalized(cp(axis2, axis1));

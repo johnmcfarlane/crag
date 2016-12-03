@@ -1,7 +1,7 @@
 
 include(ExternalProject)
 
-set(FIXED_POINT_TAG "0e5dcfd3c9d7e884e74ec8a74a445d1f6485f896")
+set(FIXED_POINT_TAG "95aad39ec28d146d1024c61cba11a974f074b74a")
 set(FIXED_POINT_PROJECT "https://github.com/johnmcfarlane/fixed_point")
 
 if (${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)

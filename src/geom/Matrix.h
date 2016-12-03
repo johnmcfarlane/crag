@@ -13,8 +13,6 @@
 namespace geom
 {
 	// This is the un-specialized version of the Matrix class.
-	// Matrix classes mostly store and calculate geometric transformations. 
-	template<typename S, int R, int C> class Matrix
-	{
-	};
+	// Matrix classes mostly store and calculate geometric transformations.
+	template<typename S, int R, int C> class Matrix;
 }
