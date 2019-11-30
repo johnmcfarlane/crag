@@ -403,6 +403,7 @@ target_link_libraries(crag debug "${ODE_LIBRARY_DEBUG}")
 target_link_libraries(crag optimized "${ODE_LIBRARY_OPTIMIZED}")
 
 # Graphics library
+set(OpenGL_GL_PREFERENCE GLVND) 
 find_package(OpenGL)
 if (OPENGL_FOUND)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DCRAG_GL")
