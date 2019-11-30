@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include <sg14/fixed_point>
+#include <cnl/fixed_point.h>
 
 namespace crag
 {
@@ -52,7 +52,7 @@ namespace crag
 			template <class Output, typename std::enable_if<std::is_integral<Output>::value, int>::type _Dummy = 0>
 			constexpr Output integral() const noexcept
 			{
-				using intermediate_type = sg14::set_width_t<Output, sg14::width<ReprType>::value + sg14::width<Output>::value>;
+				using intermediate_type = cnl::set_digits_t<Output, cnl::digits<ReprType>::value + cnl::digits<Output>::value>;
 				return intermediate_type{_repr} * std::numeric_limits<Output>::max() / _max;
 			}
 

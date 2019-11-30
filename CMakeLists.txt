@@ -11,7 +11,7 @@ project(crag)
 
 # dependencies
 include("cmake/common.cmake")
-include("cmake/fixed_point.cmake")
+include("cmake/cnl.cmake")
 include("cmake/GLEW.cmake")
 include("cmake/ODE.cmake")
 include("cmake/SDL2.cmake")

@@ -335,7 +335,7 @@ set(DOC_FILES
 
 set(SCRIPT_FILES
 	"${CRAG_ROOT_DIRECTORY}/CMakeLists.txt"
-	"${CRAG_ROOT_DIRECTORY}/cmake/fixed_point.cmake"
+	"${CRAG_ROOT_DIRECTORY}/cmake/cnl.cmake"
 	"${CRAG_ROOT_DIRECTORY}/cmake/GLEW.cmake"
 	"${CRAG_ROOT_DIRECTORY}/cmake/ODE.cmake"
 	"${CRAG_ROOT_DIRECTORY}/cmake/SDL2.cmake"
@@ -396,8 +396,8 @@ set(CMAKE_CXX_FLAGS_PROFILE "${CMAKE_CXX_FLAGS_RELEASE} -DPROFILE")
 
 target_include_directories(crag PRIVATE ${CRAG_SOURCE_DIRECTORY})
 
-add_dependencies(crag fixed_point opende sdl2 sdl2_image)
-target_include_directories(crag SYSTEM PRIVATE "${FIXED_POINT_INCLUDE_DIR}" "${ODE_INCLUDE_DIR}" "${SDL2_INCLUDE_DIR}" "${SDL2_IMAGE_INCLUDE_DIR}")
+add_dependencies(crag cnl opende sdl2 sdl2_image)
+target_include_directories(crag SYSTEM PRIVATE "${CNL_INCLUDE_DIR}" "${ODE_INCLUDE_DIR}" "${SDL2_INCLUDE_DIR}" "${SDL2_IMAGE_INCLUDE_DIR}")
 target_link_libraries(crag "${SDL2_LIBRARY}" "${SDL2_IMAGE_LIBRARY}" "${SDL2_MAIN_LIBRARY}")
 target_link_libraries(crag debug "${ODE_LIBRARY_DEBUG}")
 target_link_libraries(crag optimized "${ODE_LIBRARY_OPTIMIZED}")
