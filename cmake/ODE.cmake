@@ -2,7 +2,7 @@
 include(ExternalProject)
 
 set(ODE_URL "https://bitbucket.org/odedevs/ode/downloads/ode-0.14.tar.gz")
-set(ODE_URL_MD5 "7c0f3841adf9914b4fcb67bcf5d7b1c3")
+set(ODE_URL_MD5 "c5e154d45656a8a70092a4a7c5214fc0")
 
 if (${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
 	if (${CMAKE_GENERATOR} STREQUAL "Visual Studio 14 2015 Win64")
