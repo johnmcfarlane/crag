@@ -47,7 +47,16 @@ namespace gfx
 		{
 
 		}
-		
+
+		constexpr Color4& operator=(Color4 const& rhs)
+		{
+			r=rhs.r;
+			g=rhs.g;
+			b=rhs.b;
+			a=rhs.a;
+			return *this;
+		}
+
 		static constexpr std::size_t Size()
 		{
 			return 4;

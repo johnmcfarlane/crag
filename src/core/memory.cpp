@@ -233,46 +233,46 @@ void FreePage(void * allocation, int num_bytes)
 // As well as not liking the exception, there is a mismatch somewhere 
 // which manifests itself as an assert deep within std::mutex
 #if ! defined(CRAG_OS_WINDOWS)
-void * operator new (std::size_t size) throw (std::bad_alloc)
+void * operator new (std::size_t size)
 {
 	return Allocate(size);
 }
-void operator delete (void* ptr) throw ()
+void operator delete (void* ptr) noexcept
 {
 	Free(ptr);
 }
-void operator delete (void* ptr, std::size_t) throw ()
+void operator delete (void* ptr, std::size_t) noexcept
 {
 	Free(ptr);
 }
 
-void * operator new (std::size_t size, const std::nothrow_t &) throw()
+void * operator new (std::size_t size, const std::nothrow_t &) noexcept
 {
 	return Allocate(size);
 }
-void operator delete (void* ptr, const std::nothrow_t &) throw()
+void operator delete (void* ptr, const std::nothrow_t &) noexcept
 {
 	Free(ptr);
 }
 
-void * operator new[] (std::size_t size) throw (std::bad_alloc)
+void * operator new[] (std::size_t size)
 {
 	return Allocate(size);
 }
-void operator delete[] (void* ptr) throw ()
+void operator delete[] (void* ptr) noexcept
 {
 	Free(ptr);
 }
-void operator delete[] (void* ptr, std::size_t) throw ()
+void operator delete[] (void* ptr, std::size_t) noexcept
 {
 	Free(ptr);
 }
 
-void * operator new[] (std::size_t size, const std::nothrow_t &) throw()
+void * operator new[] (std::size_t size, const std::nothrow_t &) noexcept
 {
 	return Allocate(size);
 }
-void operator delete[] (void* ptr, const std::nothrow_t &) throw()
+void operator delete[] (void* ptr, const std::nothrow_t &) noexcept
 {
 	Free(ptr);
 }
