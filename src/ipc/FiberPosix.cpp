@@ -19,6 +19,7 @@
 //#define CRAG_FIBER_VERIFY
 #endif
 
+#include <signal.h>
 
 using namespace ipc;
 
