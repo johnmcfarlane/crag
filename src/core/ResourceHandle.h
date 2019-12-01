@@ -48,6 +48,12 @@ namespace crag
 			{
 				CRAG_VERIFY(* this);
 			}
+
+			ResourceHandle& operator=(ResourceHandle const& rhs)
+			{
+				_resource=rhs._resource;
+				return *this;
+			}
 			
 			// cast to base types
 			template <typename BaseType> 

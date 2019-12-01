@@ -35,6 +35,13 @@ namespace geom
 		{
 		}
 
+		Ray& operator=(Ray const& rhs)
+		{
+			position=rhs.position;
+			direction=rhs.direction;
+			return *this;
+		}
+
 #if defined(CRAG_VERIFY_ENABLED)
 		static void VerifyInvariants(Ray const & object)
 		{

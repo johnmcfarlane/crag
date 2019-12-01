@@ -9,19 +9,11 @@
 
 #pragma once
 
-#include <sg14/fixed_point>
+#include <cnl/fixed_point.h>
+#include <cnl/cmath.h>
 
 namespace crag
 {
-	namespace core
-	{
-		using namespace sg14;
-	}
-}
-
-namespace std
-{
-	// somewhat prematurely promoted to std in order to match signature of existing std::* overloads
-	using sg14::sqrt;
-	using sg14::abs;
+	using cnl::sqrt;
+	using cnl::abs;
 }

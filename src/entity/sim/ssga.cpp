@@ -275,7 +275,7 @@ namespace
 			// get controller
 			auto pool_index = Random::sequence.GetInt(pool_size);
 
-			auto parent_controller = static_cast<AnimatController * const>(nullptr);
+			AnimatController * parent_controller{nullptr};
 			pool.for_each([& pool_index, & parent_controller] (AnimatController & controller) {
 				if (! pool_index)
 				{

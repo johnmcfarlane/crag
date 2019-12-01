@@ -35,8 +35,8 @@ namespace
 	VALUE_TYPE make_open(crag::core::unit_interval<REPR_TYPE> _value) noexcept
 	{
 		using repr_type = REPR_TYPE;
-		constexpr auto next_width = sg14::width<repr_type>::value * 2;
-		using next_repr_type = sg14::set_width_t<repr_type, next_width>;
+		constexpr auto next_digits = cnl::digits<repr_type>::value * 2;
+		using next_repr_type = cnl::set_digits_t<repr_type, next_digits>;
 
 		// unit_type is higher precision than float;
 		// add/subtract these margins from 0/1 to ensure (0.f, 1.f) range

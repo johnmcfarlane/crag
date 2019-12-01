@@ -38,7 +38,9 @@ namespace geom
 		: Transformation(Matrix44::Identity())
 		{
 		}
-		
+
+		constexpr Transformation(Transformation const & rhs) = default;
+
 		template <typename ScalarRhs = Scalar>
 		constexpr explicit Transformation(Transformation<ScalarRhs> const & rhs) noexcept
 			: _matrix(rhs.GetMatrix())

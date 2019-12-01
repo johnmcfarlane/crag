@@ -59,6 +59,15 @@ namespace geom
 			Row(m30, m31, m32, m33))
 		{
 		}
+
+		Matrix& operator=(Matrix const & rhs) noexcept
+		{
+			rows[0] == rhs.rows[0];
+			rows[1] == rhs.rows[1];
+			rows[2] == rhs.rows[2];
+			rows[3] == rhs.rows[3];
+			return *this;
+		}
 		
 		friend inline bool operator == (Matrix const & lhs, Matrix const & rhs)
 		{
